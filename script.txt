@@ -1,0 +1,110 @@
+[GAME]
+{
+	HostIP=localhost;
+	HostPort=8452;
+	IsHost=1;
+	MyPlayerName=abma;
+
+	ModHash=133369194;
+	MapHash=2248727990;
+	Mapname=2Lakes.smf;
+	GameType=Balanced Annihilation V7.01;
+
+	startpostype=3;
+	[mapoptions]
+	{
+	}
+	[modoptions]
+	{
+		diminishingmms=0;
+		disablemapdamage=0;
+		fixedallies=0;
+		ghostedbuildings=1;
+		limitdgun=0;
+		mo_comgate=0;
+		mo_coop=0;
+		mo_greenfields=0;
+		mo_noowner=0;
+		mo_noshare=1;
+		mo_nowrecks=0;
+		maxspeed=30;
+		maxunits=500;
+		minspeed=0.3;
+		mo_hilltime=15;
+		startenergy=1000;
+		startmetal=1000;
+		deathmode=killall;
+		gamemode=0;
+	}
+	NumRestrictions=0;
+	[RESTRICT]
+	{
+	}
+
+	NumPlayers=1;
+	NumUsers=3;
+
+	[PLAYER2]
+	{
+		Name=abma;
+		CountryCode=de;
+		Spectator=1;
+		Rank=2;
+		IsFromDemo=0;
+		Team=1;
+	}
+	[AI0]
+	{
+		Name=Bot1;
+		ShortName=AGAI;
+		Version=0.1;
+		Team=0;
+		IsFromDemo=0;
+		Host=2;
+		[Options]
+		{
+		}
+	}
+	[AI1]
+	{
+		Name=Bot2;
+		ShortName=NullAI;
+		Version=0.1;
+		Team=1;
+		IsFromDemo=0;
+		Host=2;
+		[Options]
+		{
+		}
+	}
+
+	[TEAM0]
+	{
+		TeamLeader=2;
+		StartPosX=496;
+		StartPosZ=1924;
+		AllyTeam=1;
+		RGBColor=0.976471 1 0;
+		Side=ARM;
+		Handicap=0;
+	}
+	[TEAM1]
+	{
+		TeamLeader=2;
+		StartPosX=456;
+		StartPosZ=893;
+		AllyTeam=2;
+		RGBColor=0.509804 0.498039 1;
+		Side=ARM;
+		Handicap=0;
+	}
+
+	[ALLYTEAM1]
+	{
+		NumAllies=0;
+	}
+	[ALLYTEAM2]
+	{
+		NumAllies=0;
+	}
+}
