@@ -18,20 +18,15 @@
 package agai;
 
 
+import agai.loader.IAGAI;
+
 import com.springrts.ai.AICommand;
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.command.AddPointDrawAICommand;
 import com.springrts.ai.command.SendTextMessageAICommand;
 import com.springrts.ai.oo.*;
 
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
 import java.util.List;
-import java.util.logging.*;
-
 
 
 
@@ -42,41 +37,10 @@ import java.util.logging.*;
  * @author	Matze
  * @version	0.1
  */
-public class AGAI extends AbstractOOAI implements OOAI {
+public class AGAI extends AbstractOOAI implements IAGAI {
 
-	/**
-	 * The Class MyCustomLogFormatter.
-	 */
-	private static class MyCustomLogFormatter extends Formatter {
-
-		/** The date format. */
-		private DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS dd.MM.yyyy");
-
-		/* (non-Javadoc)
-		 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
-		 */
-		public String format(LogRecord record) {
-
-			// Create a StringBuffer to contain the formatted record
-			// start with the date.
-			StringBuffer sb = new StringBuffer();
-
-			// Get the date from the LogRecord and add it to the buffer
-			Date date = new Date(record.getMillis());
-			sb.append(dateFormat.format(date));
-			sb.append(" ");
-
-			// Get the level name and add it to the buffer
-			sb.append(record.getLevel().getName());
-			sb.append(": ");
-
-			// Get the formatted message (includes localization
-			// and substitution of paramters) and add it to the buffer
-			sb.append(formatMessage(record));
-			sb.append("\n");
-
-			return sb.toString();
-		}
+	public AGAI() {
+		System.out.println("Default Constructor");
 	}
 
 	/**
@@ -86,33 +50,12 @@ public class AGAI extends AbstractOOAI implements OOAI {
 	 * @param level the level
 	 * @param props the props
 	 */
-	private static void logProperties(Logger log, Level level, Properties props) {
-
-		log.log(level, "properties (items: " + props.size() + "):");
-		for (String key : props.stringPropertyNames()) {
-			log.log(level, key + " = " + props.getProperty(key));
-		}
-	}
-
 	/** The team id. */
 	private int teamId = -1;
-	
-	/** The info. */
-	private Properties info = null;
-	
-	/** The option values. */
-	private Properties optionValues = null;
 	
 	/** The clb. */
 	private OOAICallback clb = null;
 	
-	/** The my log file. */
-	private String myLogFile = null;
-	
-	/** The log. */
-	private Logger log = null;
-
-
 	/** The a gu. */
 	private AGUnits aGU = null;
 	
@@ -135,35 +78,6 @@ public class AGAI extends AbstractOOAI implements OOAI {
 	private Resource energy = null;
 	
 	/**
-	 * Instantiates a new anti george ai.
-	 * 
-	 * @param teamId the team id
-	 * @param callback the callback
-	 */
-	AGAI(int teamId, OOAICallback callback) {
-
-		this.teamId = teamId;
-		this.clb = callback;
-
-		info = new Properties();
-		Info inf = clb.getSkirmishAI().getInfo();
-		int numInfo = inf.getSize();
-		for (int i=0; i < numInfo; i++) {
-			String key = inf.getKey(i);
-			String value = inf.getValue(i);
-			info.setProperty(key, value);
-		}
-		optionValues = new Properties();
-		OptionValues opVals = clb.getSkirmishAI().getOptionValues();
-		int numOpVals = opVals.getSize();
-		for (int i=0; i < numOpVals; i++) {
-			String key = opVals.getKey(i);
-			String value = opVals.getValue(i);
-			optionValues.setProperty(key, value);
-		}
-	}
-	
-	/**
 	 * Inits the.
 	 * 
 	 * @param teamId the team id
@@ -173,42 +87,8 @@ public class AGAI extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int init(int teamId, OOAICallback callback) {
-		int ret = -1;
 		this.clb = callback;
-		// initialize the log
-		try {
-			myLogFile = callback.getDataDirs().allocatePath("log-team-" + teamId + ".txt", true, true, false, false);
-			FileHandler fileLogger = new FileHandler(myLogFile, false);
-			fileLogger.setFormatter(new MyCustomLogFormatter());
-			fileLogger.setLevel(Level.ALL);
-			log = Logger.getLogger("nulloojavaai");
-			log.addHandler(fileLogger);
-			if (AGAIFactory.isDebugging()) {
-				log.setLevel(Level.ALL);
-			} else {
-				log.setLevel(Level.INFO);
-			}
-		} catch (Exception ex) {
-			msg("NullOOJavaAI: Failed initializing the logger!");
-			ex.printStackTrace();
-			ret = -2;
-		}
-		this.clb = callback;
-
-		try {
-			log.info("initializing team " + teamId);
-
-			log.log(Level.FINE, "info:");
-			logProperties(log, Level.FINE, info);
-
-			log.log(Level.FINE, "options:");
-			logProperties(log, Level.FINE, optionValues);
-
-			ret = 0;
-		} catch (Exception ex) {
-			log.log(Level.SEVERE, "Failed initializing", ex);
-			ret = -3;
-		}
+		this.teamId=teamId;
 		List <Resource> res=this.getClb().getResources();
 		metal=res.get(0);
 		energy=res.get(1);
@@ -219,7 +99,7 @@ public class AGAI extends AbstractOOAI implements OOAI {
 		this.aGP = new AGPoIs(this);
 		this.aGF = new AGFilter(this);
 		this.aGT = new AGTaskManagers(this);
-		return ret;
+		return 0;
 	}
 
 	/**

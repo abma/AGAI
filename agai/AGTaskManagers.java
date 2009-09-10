@@ -172,13 +172,12 @@ public class AGTaskManagers {
 	 * 
 	 * @return the list
 	 */
-	private AGTaskManager getList(Class classname){
+	private AGTaskManager getList(Object classname){
 		for(int i=0; i<list.size();i++){
-			if (list.get(i).getClass()==classname)
+			if (list.get(i).getClass().equals(classname.getClass()))
 				return list.get(i);
 		}
 		return null;
-		
 	}
 	
 	/**

@@ -10,7 +10,7 @@ local infos = {
 	},
 	{
 		key    = 'className',
-		value  = 'agai.AGAIFactory',
+		value  = 'agai.loader.AGAIFactory',
 		desc   = 'fully qualified name of a class that implements interface com.springrts.ai.AI',
 	},
 	{
