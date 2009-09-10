@@ -99,6 +99,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		this.aGP = new AGPoIs(this);
 		this.aGF = new AGFilter(this);
 		this.aGT = new AGTaskManagers(this);
+		msg("");
 		return 0;
 	}
 

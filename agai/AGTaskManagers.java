@@ -172,11 +172,12 @@ public class AGTaskManagers {
 	 * 
 	 * @return the list
 	 */
-	private AGTaskManager getList(Object classname){
+	private AGTaskManager getList(Class <?> classname){
 		for(int i=0; i<list.size();i++){
-			if (list.get(i).getClass().equals(classname.getClass()))
+			if (list.get(i).getClass()==classname)
 				return list.get(i);
 		}
+		ai.msg("Couldn't find required class!"+classname.getClass());
 		return null;
 	}
 	
