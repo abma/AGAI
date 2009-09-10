@@ -3,7 +3,7 @@
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -40,6 +40,8 @@ abstract class AGTask{
 	
 	/** The Constant statusFinished. */
 	final static int statusFinished = 2;
+	
+	/** The Constant statusFailed. */
 	final static int statusFailed = 3;
 	
 	/** The ai. */
@@ -48,7 +50,7 @@ abstract class AGTask{
 	/** child unit assigned to task (for ex. unit that is built */
 	private Unit unitChild=null;
 	
-	/** The poi where the task refers to */
+	/** The poi where the task refers to. */
 	private AGPoI poi=null;
 
 	/**
@@ -132,7 +134,7 @@ abstract class AGTask{
 	}
 	
 	/**
-	 * Sets the task to failed
+	 * Sets the task to failed.
 	 */
 	public void setFailed(){
 		status=statusFailed;
@@ -146,18 +148,38 @@ abstract class AGTask{
 		setStatusFinished();
 	}
 
+	/**
+	 * Gets the unit child.
+	 * 
+	 * @return the unit child
+	 */
 	public Unit getUnitChild() {
 		return unitChild;
 	}
 
+	/**
+	 * Sets the unit child.
+	 * 
+	 * @param unitChild the new unit child
+	 */
 	public void setUnitChild(Unit unitChild) {
 		this.unitChild = unitChild;
 	}
 
+	/**
+	 * Gets the poi.
+	 * 
+	 * @return the poi
+	 */
 	public AGPoI getPoi() {
 		return poi;
 	}
 
+	/**
+	 * Sets the poi.
+	 * 
+	 * @param poi the new poi
+	 */
 	public void setPoi(AGPoI poi) {
 		this.poi = poi;
 	}
