@@ -11,11 +11,27 @@ import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.WeaponDef;
 
 
+/**
+ * The Class AGLoader.
+ */
 public class AGLoader extends AbstractOOAI implements OOAI{
 
+	/** The sub ai. */
 	private IAGAI subAI;
+	
+	/** The clb. */
 	private OOAICallback clb;
+	
+	/** The team id. */
 	private int teamId;
+	
+	/**
+	 * Gets the uRL class loader.
+	 * 
+	 * @param jarURL the jar url
+	 * 
+	 * @return the uRL class loader
+	 */
 	private URLClassLoader getURLClassLoader(URL jarURL) {
 		ClassLoader baseClassLoader=AGLoader.class.getClassLoader();
 		if (baseClassLoader==null)
@@ -23,6 +39,13 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		return new URLClassLoader(new URL[]{jarURL}, baseClassLoader);
 	}
 	
+	/**
+	 * Reload the class.
+	 * 
+	 * @return the iAGAI
+	 * 
+	 * @throws Exception the exception
+	 */
 	public IAGAI reloadTheClass() throws Exception {
 		subAI=null;
 		URLClassLoader urlLoader = getURLClassLoader(new URL("file", null, "/home/matze/Projects/agai/SkirmishAIReal.jar"));
@@ -34,6 +57,14 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		return (IAGAI)newInstance;
 	}
 	
+	/**
+	 * Do reload.
+	 * 
+	 * @param teamId the team id
+	 * @param clb the clb
+	 * 
+	 * @throws Exception the exception
+	 */
 	public void doReload(int teamId, OOAICallback clb) throws Exception {
 		subAI=null;
 		System.runFinalization();
@@ -43,6 +74,9 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		subAI.init(teamId, clb);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#message(int, java.lang.String)
+	 */
 	@Override
 	public int message(int player, String message) {
 		if (message.equalsIgnoreCase("reload"))
@@ -61,6 +95,9 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#init(int, com.springrts.ai.oo.OOAICallback)
+	 */
 	@Override
 	public int init(int teamId, OOAICallback callback) {
 		this.clb=callback;
@@ -75,6 +112,9 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#unitCreated(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int unitCreated(Unit unit, Unit builder) {
 		try {
@@ -85,6 +125,9 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		return 0;
 	} 
 
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#unitFinished(com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int unitFinished(Unit unit) {
 		try {
@@ -94,6 +137,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#unitIdle(com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int unitIdle(Unit unit) {
 		try {
@@ -103,6 +150,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#unitMoveFailed(com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int unitMoveFailed(Unit unit) {
 		try {
@@ -112,6 +163,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#unitDamaged(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit, float, com.springrts.ai.AIFloat3, com.springrts.ai.oo.WeaponDef, boolean)
+	 */
 	@Override
 	public int unitDamaged(Unit unit, Unit attacker, float damage, AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
 		try {
@@ -121,6 +176,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#unitDestroyed(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int unitDestroyed(Unit unit, Unit attacker) {
 		try {
@@ -130,6 +189,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#enemyEnterLOS(com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int enemyEnterLOS(Unit enemy) {
 		try {
@@ -139,6 +202,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#enemyLeaveLOS(com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int enemyLeaveLOS(Unit enemy) {
 		try {
@@ -148,6 +215,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#enemyEnterRadar(com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int enemyEnterRadar(Unit enemy) { //never call enemy.getDef().getName()!!
 		try {
@@ -157,6 +228,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#enemyLeaveRadar(com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int enemyLeaveRadar(Unit enemy) { //never call enemy.getDef().getName()!!
 		try {
@@ -166,6 +241,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#enemyDamaged(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit, float, com.springrts.ai.AIFloat3, com.springrts.ai.oo.WeaponDef, boolean)
+	 */
 	@Override
 	public int enemyDamaged(Unit enemy, Unit attacker, float damage, AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
 		try {
@@ -175,6 +254,10 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#enemyDestroyed(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit)
+	 */
 	@Override
 	public int enemyDestroyed(Unit enemy, Unit attacker) {
 		try {
@@ -185,6 +268,9 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#commandFinished(com.springrts.ai.oo.Unit, int, int)
+	 */
 	@Override
 	public int commandFinished(Unit unit, int commandId, int commandTopicId) {
 		try {
@@ -195,6 +281,9 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.springrts.ai.oo.AbstractOOAI#update(int)
+	 */
 	@Override
 	public int update(int frame) {
 		try {

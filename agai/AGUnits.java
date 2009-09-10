@@ -50,6 +50,8 @@ public class AGUnits {
 	 * Adds the.
 	 * 
 	 * @param unit the unit
+	 * 
+	 * @return the AG unit
 	 */
 	public AGUnit add(Unit unit){
         units.add(new AGUnit(ai, unit));

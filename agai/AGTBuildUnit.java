@@ -188,9 +188,7 @@ public class AGTBuildUnit extends AGTaskManager{
 	 * Builds the unit and adds all needed tasks (if for ex. a factory is needed)
 	 * 
 	 * @param unit the unit to be built
-	 * @param parent the parent
 	 * 
-	 * @return the building task if successfull
 	 */
 	private void BuildUnit(UnitDef unit){
 		ai.msg(unit.getName());

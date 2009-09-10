@@ -39,17 +39,14 @@ import java.util.List;
  */
 public class AGAI extends AbstractOOAI implements IAGAI {
 
+	/**
+	 * Instantiates a new aGAI.
+	 */
 	public AGAI() {
 		System.out.println("Default Constructor");
 	}
 
-	/**
-	 * Log properties.
-	 * 
-	 * @param log the log
-	 * @param level the level
-	 * @param props the props
-	 */
+	/** Log properties. */
 	/** The team id. */
 	private int teamId = -1;
 	
@@ -616,7 +613,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	}
 	
 	/**
-	 * Print a debug message on console
+	 * Print a debug message on console.
 	 * 
 	 * @param str the str
 	 */
@@ -631,6 +628,15 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		System.out.println(str);
 		
 	}
+	
+	/**
+	 * Gets the production.
+	 * 
+	 * @param unit the unit
+	 * @param res the res
+	 * 
+	 * @return the production
+	 */
 	public float getProduction(UnitDef unit, Resource res){
 	 return 
 	 	(unit.getUpkeep(res) *-1) + unit.getResourceMake(res) + 
@@ -638,6 +644,13 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				+ unit.getMakesResource(res);
 	}
 	
+	/**
+	 * Gets the total price.
+	 * 
+	 * @param unit the unit
+	 * 
+	 * @return the total price
+	 */
 	public float getTotalPrice(UnitDef unit){
 		float cost=0;
 		List <Resource> res=clb.getResources();

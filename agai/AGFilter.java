@@ -97,7 +97,9 @@ abstract class AGUnitPropertyEvaluator{
 	}
 
 	/**
-	 * Sets the min and max for from getValue
+	 * Sets the min and max for from getValue.
+	 * 
+	 * @param unit the unit
 	 */
 	public void updateMinMax(UnitDef unit){
 		List <AGBuildTreeUnit> list=ai.getAGB().getUnitList();
@@ -109,12 +111,11 @@ abstract class AGUnitPropertyEvaluator{
 				min=tmp;
 		}
 	}
+	
 	/**
-	 * Normalize a value and multiplicates with weighting
+	 * Normalize a value and multiplicates with weighting.
 	 * 
-	 * @param value the value
-	 * @param min the min
-	 * @param max the max
+	 * @param unit the unit
 	 * 
 	 * @return the float
 	 */

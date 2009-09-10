@@ -106,8 +106,11 @@ abstract class AGTask{
 	public int getPriority() {
 		return priority;
 	}
+	
 	/**
 	 * Sets the status of this task to be under process.
+	 * 
+	 * @param unit the unit
 	 */
 	public void setStatusWorking(AGUnit unit) {
 		unit.setTask(this);
