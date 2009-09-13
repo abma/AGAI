@@ -144,6 +144,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				aGT.addTask(new AGTaskScout(this));
 			}else if (argv[0].equalsIgnoreCase("dumpunits")){
 				aGU.dump();
+			}else if (argv[0].equalsIgnoreCase("dumpunitdefs")){
+				dumpUnitDefs();
 			}else if (argv[0].equalsIgnoreCase("dumpbuildtree")){
 				aGB.dumpUnits();
 			}
@@ -630,7 +632,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	}
 	
 	/**
-	 * Gets the production.
+	 * Gets the production
 	 * 
 	 * @param unit the unit
 	 * @param res the res
@@ -660,4 +662,32 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		return cost;
 	}
 
+	private void dumpUnitDefs(){
+		List <AGBuildTreeUnit> list= aGB.getUnitList();
+		for (int i=0; i<list.size(); i++){
+			UnitDef u=list.get(i).getUnit();
+			System.out.print(u.getName());
+			System.out.print("\t" + u.getHumanName());
+
+			System.out.print("\t" + u.getUpkeep(getEnergy()));
+			System.out.print("\t" + u.getUpkeep(getMetal()));
+
+			System.out.print("\t" + u.getCost(getEnergy()));
+			System.out.print("\t" + u.getCost(getMetal()));
+
+			System.out.print("\t" + u.getTidalResourceGenerator(getEnergy()));
+			System.out.print("\t" + u.getTidalResourceGenerator(getMetal()));
+
+			System.out.print("\t" + u.getResourceMake(getEnergy()));
+			System.out.print("\t" + u.getResourceMake(getMetal()));
+
+			System.out.print("\t" + u.getMakesResource(getEnergy()));
+			System.out.print("\t" + u.getMakesResource(getMetal()));
+
+			System.out.print("\t" + u.getWindResourceGenerator(getEnergy()));
+			System.out.print("\t" + u.getWindResourceGenerator(getMetal()));
+
+			System.out.println();
+		}
+	}
 }
