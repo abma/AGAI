@@ -17,6 +17,7 @@
 
 package agai;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.springrts.ai.AIFloat3;
@@ -25,12 +26,12 @@ import com.springrts.ai.oo.Resource;
 import com.springrts.ai.oo.UnitDef;
 
 
-// TODO: Auto-generated Javadoc
 // Class to search for Resource Extractors, sort by max. production
 class UnitPropertyResourceGenerator extends AGUnitProperty{
-
-	UnitPropertyResourceGenerator(AGAI ai) {
+	private Resource res;
+	UnitPropertyResourceGenerator(AGAI ai, Resource res) {
 		super(ai);
+		this.res=res;
 	}
 	
 	/* (non-Javadoc)
@@ -38,14 +39,10 @@ class UnitPropertyResourceGenerator extends AGUnitProperty{
 	 */
 	@Override
 	public boolean isInlist(UnitDef unit) {
-		List <Resource> res=ai.getClb().getResources();
 		AGBuildTreeUnit tree = ai.getAGB().searchNode(unit);
 		if ((tree!=null) && (tree.getBacklink()==null)) //unit can't be build! (filter commander out)
 			return false;
-		for (int i=0; i<res.size(); i++){
-			if (((unit.getResourceExtractorRange(res.get(i))>0) && (unit.getExtractsResource(res.get(i))>0))
-				|| (unit.getMakesResource(res.get(i))>0)
-				|| (ai.getProduction(unit,res.get(i))>0))
+		if (ai.getProduction(unit, res)>0){
 				return true;
 		}
 		return false;
@@ -56,13 +53,10 @@ class UnitPropertyResourceGenerator extends AGUnitProperty{
 	 */
 	public int compare(AGBuildTreeUnit o1, AGBuildTreeUnit o2) {
 		double a=0, b=0;
-		List <Resource> res=ai.getClb().getResources();
 		UnitDef u1=o1.getUnit();
 		UnitDef u2=o2.getUnit();
-		for (int i=0; i<res.size(); i++){ //calculate a value depending on production and price, if bigger, then better
-			a=a+ai.getProduction(u1, res.get(i))-u1.getCost(res.get(i))*0.6;
-			b=b+ai.getProduction(u2, res.get(i))-u2.getCost(res.get(i))*0.6;
-		}
+		a=a+ai.getProduction(u1, res);
+		b=b+ai.getProduction(u2, res);
 		if (a>b)
 			return 1;
 		if (a<b)
@@ -102,6 +96,10 @@ class AGTaskBuildResource extends AGTask{
 		return res;
 	}
 
+	public int getResIdx(){
+		return res.getResourceId();
+	}
+
 }
 
 /**
@@ -109,8 +107,8 @@ class AGTaskBuildResource extends AGTask{
  */
 public class AGTBuildResource extends AGTaskManager {
 	
-	/** The list. */
-	protected List <AGBuildTreeUnit> list;
+	/** The list with units to build resource, the first id is the resid, the secound for the units sorted by priority to built (best units first) */
+	protected List <List <AGBuildTreeUnit>> list;
 
 	/**
 	 * Instantiates a new aGT build AGTBuildResource.
@@ -121,12 +119,16 @@ public class AGTBuildResource extends AGTaskManager {
 		super(ai);
 		this.map=ai.getClb().getMap();
 		List <Resource> res=ai.getClb().getResources();
-		for (int i=0; i<res.size(); i++)
+		list=new ArrayList  <List <AGBuildTreeUnit>>();
+		for (int i=0; i<res.size(); i++){
 			initializeSpots(res.get(i));
-		list=ai.getAGF().Filter(new UnitPropertyResourceGenerator(ai));
+			list.add(i,ai.getAGF().Filter(new UnitPropertyResourceGenerator(ai, res.get(i))));
+		}
 		for (int i=0; i<list.size();i++){
-			UnitDef u=list.get(i).getUnit();
-			ai.msg(i +" "+u.getName() +"\tPrice: "+ai.getTotalPrice(u)+"\t" +u.getHumanName() );
+			for (int j=0; j<list.get(i).size(); j++){
+				UnitDef u=list.get(i).get(j).getUnit();
+				ai.msg(i +" "+u.getName() +"\tPrice: "+ai.getTotalPrice(u)+"\t" +u.getHumanName() + "\t" + ai.getProduction(u, res.get(i)) );
+			}
 		}
 	}
 
@@ -143,7 +145,7 @@ public class AGTBuildResource extends AGTaskManager {
 		List<AIFloat3> spots=map.getResourceMapSpotsPositions(res);
 		for(int i=0; i<spots.size(); i++ ){
 			spots.get(i).y=map.getElevationAt(spots.get(i).x, spots.get(i).z); //FIXME this is a engine-bug workaround
-			ai.drawPoint(spots.get(i),"Pos " + i);
+//			ai.drawPoint(spots.get(i),"Pos " + i);
 			ai.getAGP().add(spots.get(i), res.getResourceId());
 		}
 	}
@@ -159,11 +161,13 @@ public class AGTBuildResource extends AGTaskManager {
 		AGPoI poi=null;
 		AIFloat3 pos=null; 
 		AGTaskBuildResource t=(AGTaskBuildResource) task;
-		for(int i=0; i<list.size(); i++){ //search from units that fits best to the worst.. skip when unit can be built and enough resources found
-			builder=ai.getAGU().getBuilder(list.get(i).getUnit());
+		List <AGBuildTreeUnit> tmp=list.get(t.getResIdx());
+
+		for(int i=0; i<tmp.size(); i++){ //search from units that fits best to the worst.. skip when unit can be built and enough resources found
+			builder=ai.getAGU().getBuilder(tmp.get(i).getUnit());
 			if (builder!=null){ //unit can be built! :-)
 				poi=ai.getAGP().getNearestFreePoi(builder.getPos(), t.getRes().getResourceId());
-				unit=list.get(i).getUnit();
+				unit=tmp.get(i).getUnit();
 				if ((poi!=null) && (unit.getExtractsResource(t.getRes())>0)){ //unit needs spot to be built
 					pos=poi.getPos();
 					radius=Math.round(ai.getClb().getMap().getExtractorRadius(t.getRes()));
@@ -190,7 +194,5 @@ public class AGTBuildResource extends AGTaskManager {
 			ai.msg("Can't build resource unit");
 			task.setStatusIdle(); //retry, because we need resources
 		}
-		
 	}
-
 }

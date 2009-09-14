@@ -631,8 +631,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		
 	}
 	
+	private float average=-1;
+
 	/**
-	 * Gets the production
+	 * Gets the production of a Unit
 	 * 
 	 * @param unit the unit
 	 * @param res the res
@@ -640,12 +642,23 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * @return the production
 	 */
 	public float getProduction(UnitDef unit, Resource res){
+		if (average==-1){
+			List <AIFloat3> list = clb.getMap().getResourceMapSpotsPositions(res);
+			float sum=0;
+			for (int i=0; i<list.size(); i++){
+				sum=sum+list.get(i).y;
+			}
+			if (list.size()>0)
+				average=sum/list.size();
+		}
+
 	 return 
 	 	(unit.getUpkeep(res) *-1) + unit.getResourceMake(res) + 
 				unit.getWindResourceGenerator(res) +unit.getTidalResourceGenerator(res)
-				+ unit.getMakesResource(res);
+				+ unit.getMakesResource(res) + 
+				(unit.getExtractsResource(res)*average);
 	}
-	
+
 	/**
 	 * Gets the total price.
 	 * 
