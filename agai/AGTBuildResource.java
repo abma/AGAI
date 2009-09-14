@@ -42,7 +42,7 @@ class UnitPropertyResourceGenerator extends AGUnitProperty{
 		AGBuildTreeUnit tree = ai.getAGB().searchNode(unit);
 		if ((tree!=null) && (tree.getBacklink()==null)) //unit can't be build! (filter commander out)
 			return false;
-		if (ai.getProduction(unit, res)>0){
+		if (ai.getAGU().getProduction(unit, res)>0){
 				return true;
 		}
 		return false;
@@ -55,8 +55,8 @@ class UnitPropertyResourceGenerator extends AGUnitProperty{
 		double a=0, b=0;
 		UnitDef u1=o1.getUnit();
 		UnitDef u2=o2.getUnit();
-		a=a+ai.getProduction(u1, res);
-		b=b+ai.getProduction(u2, res);
+		a=a+ai.getAGU().getProduction(u1, res);
+		b=b+ai.getAGU().getProduction(u2, res);
 		if (a>b)
 			return 1;
 		if (a<b)
@@ -127,7 +127,7 @@ public class AGTBuildResource extends AGTaskManager {
 		for (int i=0; i<list.size();i++){
 			for (int j=0; j<list.get(i).size(); j++){
 				UnitDef u=list.get(i).get(j).getUnit();
-				ai.msg(i +" "+u.getName() +"\tPrice: "+ai.getTotalPrice(u)+"\t" +u.getHumanName() + "\t" + ai.getProduction(u, res.get(i)) );
+				ai.msg(i +" "+u.getName() +"\tPrice: "+ai.getAGU().getTotalPrice(u)+"\t" +u.getHumanName() + "\t" + ai.getAGU().getProduction(u, res.get(i)) );
 			}
 		}
 	}

@@ -145,7 +145,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			}else if (argv[0].equalsIgnoreCase("dumpunits")){
 				aGU.dump();
 			}else if (argv[0].equalsIgnoreCase("dumpunitdefs")){
-				dumpUnitDefs();
+				aGU.dumpUnitDefs();
 			}else if (argv[0].equalsIgnoreCase("dumpbuildtree")){
 				aGB.dumpUnits();
 			}
@@ -631,76 +631,4 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		
 	}
 	
-	private float average=-1;
-
-	/**
-	 * Gets the production of a Unit
-	 * 
-	 * @param unit the unit
-	 * @param res the res
-	 * 
-	 * @return the production
-	 */
-	public float getProduction(UnitDef unit, Resource res){
-		if (average==-1){
-			List <AIFloat3> list = clb.getMap().getResourceMapSpotsPositions(res);
-			float sum=0;
-			for (int i=0; i<list.size(); i++){
-				sum=sum+list.get(i).y;
-			}
-			if (list.size()>0)
-				average=sum/list.size();
-		}
-
-	 return 
-	 	(unit.getUpkeep(res) *-1) + unit.getResourceMake(res) + 
-				unit.getWindResourceGenerator(res) +unit.getTidalResourceGenerator(res)
-				+ unit.getMakesResource(res) + 
-				(unit.getExtractsResource(res)*average);
-	}
-
-	/**
-	 * Gets the total price.
-	 * 
-	 * @param unit the unit
-	 * 
-	 * @return the total price
-	 */
-	public float getTotalPrice(UnitDef unit){
-		float cost=0;
-		List <Resource> res=clb.getResources();
-		for (int i=0; i<res.size(); i++ ){
-			cost=cost+unit.getCost(res.get(i));
-		}
-		return cost;
-	}
-
-	private void dumpUnitDefs(){
-		List <AGBuildTreeUnit> list= aGB.getUnitList();
-		for (int i=0; i<list.size(); i++){
-			UnitDef u=list.get(i).getUnit();
-			System.out.print(u.getName());
-			System.out.print("\t" + u.getHumanName());
-
-			System.out.print("\t" + u.getUpkeep(getEnergy()));
-			System.out.print("\t" + u.getUpkeep(getMetal()));
-
-			System.out.print("\t" + u.getCost(getEnergy()));
-			System.out.print("\t" + u.getCost(getMetal()));
-
-			System.out.print("\t" + u.getTidalResourceGenerator(getEnergy()));
-			System.out.print("\t" + u.getTidalResourceGenerator(getMetal()));
-
-			System.out.print("\t" + u.getResourceMake(getEnergy()));
-			System.out.print("\t" + u.getResourceMake(getMetal()));
-
-			System.out.print("\t" + u.getMakesResource(getEnergy()));
-			System.out.print("\t" + u.getMakesResource(getMetal()));
-
-			System.out.print("\t" + u.getWindResourceGenerator(getEnergy()));
-			System.out.print("\t" + u.getWindResourceGenerator(getMetal()));
-
-			System.out.println();
-		}
-	}
 }

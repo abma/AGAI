@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 
+import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.*;
 
 // TODO: Auto-generated Javadoc
@@ -207,5 +208,95 @@ public class AGUnits {
 			ai.msg(units.get(i).getUnit().hashCode() +" "+ units.get(i).toString());
 		}
 		
+	}
+	private float average=-1;
+
+	/**
+	 * Gets the production of a Unit
+	 *
+	 * @param unit the unit
+	 * @param res the res
+	 *
+	 * @return the production
+	 */
+	public float getProduction(UnitDef unit, Resource res){
+		if (average==-1){
+			List <AIFloat3> list = ai.getClb().getMap().getResourceMapSpotsPositions(res);
+			float sum=0;
+			for (int i=0; i<list.size(); i++){
+				sum=sum+list.get(i).y;
+			}
+			if (list.size()>0)
+				average=sum/list.size();
+		}
+
+	 return
+			(unit.getUpkeep(res) *-1) + unit.getResourceMake(res) +
+			unit.getWindResourceGenerator(res) +unit.getTidalResourceGenerator(res)
+				+ unit.getMakesResource(res) +
+				(unit.getExtractsResource(res)*average);
+	}
+
+	/**
+	 * Returns true, if a Unit has an Upkeep
+	 *
+	 * @param unit the unit
+	 * @param res the res
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasUpKeep(UnitDef unit, Resource res){
+		List <Resource> ress=ai.getClb().getResources();
+		for (int i=0; i<ress.size(); i++){
+			if (!ress.get(i).equals(res)){
+				if (unit.getUpkeep(res)>0)
+					return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * Gets the total price.
+	 *
+	 * @param unit the unit
+	 *
+	 * @return the total price
+	 */
+	public float getTotalPrice(UnitDef unit){
+		float cost=0;
+		List <Resource> res=ai.getClb().getResources();
+		for (int i=0; i<res.size(); i++ ){
+			cost=cost+unit.getCost(res.get(i));
+		}
+		return cost;
+	}
+
+	public void dumpUnitDefs(){
+		List <AGBuildTreeUnit> list= ai.getAGB().getUnitList();
+		for (int i=0; i<list.size(); i++){
+			UnitDef u=list.get(i).getUnit();
+			System.out.print(u.getName());
+			System.out.print("\t" + u.getHumanName());
+
+			System.out.print("\t" + u.getUpkeep(ai.getEnergy()));
+			System.out.print("\t" + u.getUpkeep(ai.getMetal()));
+
+			System.out.print("\t" + u.getCost(ai.getEnergy()));
+			System.out.print("\t" + u.getCost(ai.getMetal()));
+
+			System.out.print("\t" + u.getTidalResourceGenerator(ai.getEnergy()));
+			System.out.print("\t" + u.getTidalResourceGenerator(ai.getMetal()));
+
+			System.out.print("\t" + u.getResourceMake(ai.getEnergy()));
+			System.out.print("\t" + u.getResourceMake(ai.getMetal()));
+
+			System.out.print("\t" + u.getMakesResource(ai.getEnergy()));
+			System.out.print("\t" + u.getMakesResource(ai.getMetal()));
+
+			System.out.print("\t" + u.getWindResourceGenerator(ai.getEnergy()));
+			System.out.print("\t" + u.getWindResourceGenerator(ai.getMetal()));
+
+			System.out.println();
+		}
 	}
 }

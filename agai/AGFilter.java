@@ -52,7 +52,7 @@ class AGUnitPropertyEvaluatorPrice extends AGUnitPropertyEvaluator{
 	}
 	@Override
 	public float getValue(UnitDef unit) {
-		return ai.getTotalPrice(unit)*-1;
+		return ai.getAGU().getTotalPrice(unit)*-1;
 	}
 }
 

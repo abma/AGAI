@@ -89,7 +89,7 @@ public class AGTScout extends AGTaskManager{
 		super(ai);
 		list=ai.getAGF().Filter(new UnitPropertyScout(ai));
 		for (int i=0; i<list.size(); i++){
-			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getTotalPrice(list.get(i).getUnit()) );
+			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getAGU().getTotalPrice(list.get(i).getUnit()) );
 		}
 		
 	}
