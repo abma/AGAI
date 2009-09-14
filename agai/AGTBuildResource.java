@@ -40,7 +40,7 @@ class UnitPropertyResourceGenerator extends AGUnitProperty{
 	@Override
 	public boolean isInlist(UnitDef unit) {
 		AGBuildTreeUnit tree = ai.getAGB().searchNode(unit);
-		if ((tree!=null) && (tree.getBacklink()==null)) //unit can't be build! (filter commander out)
+		if ((tree!=null) && ((tree.getBacklink()==null) || (tree.getBacklink().size()==0))) //unit can't be build! (filter commander out)
 			return false;
 		if (ai.getAGU().getProduction(unit, res)>0){
 				return true;
@@ -57,9 +57,9 @@ class UnitPropertyResourceGenerator extends AGUnitProperty{
 		UnitDef u2=o2.getUnit();
 		a=a+ai.getAGU().getProduction(u1, res);
 		b=b+ai.getAGU().getProduction(u2, res);
-		if (a>b)
-			return 1;
 		if (a<b)
+			return 1;
+		if (a>b)
 			return -1;
 		return 0;
 	}
