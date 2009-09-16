@@ -130,7 +130,7 @@ abstract class AGTask{
 	 * @return the string
 	 */
 	public String toString(){
-		return this.getClass().getName()+this.priority+this.status+" +dump not implemented!";
+		return this.getClass().getName()+" "+this.priority+" "+this.status+" +dump not implemented!";
 	}
 	
 	/**
