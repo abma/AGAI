@@ -205,7 +205,7 @@ class AGUnit{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		String str=this.getClass().getName() + unit.getDef().getName();
+		String str=this.getClass().getName() +" "+unit.getDef().getName();
 		if (task!=null)
 			str=str+task.toString();
 		return str;

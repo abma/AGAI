@@ -191,7 +191,10 @@ public class AGTBuildResource extends AGTaskManager {
 			buildtask.setPoi(poi);
 			ai.getAGT().addTask(buildtask);
 		}else{
-			ai.msg("Can't build resource unit");
+			if (builder==null)
+				ai.msg("No builder found ");
+			if (unit==null)
+				ai.msg("No resource producing unit found");
 			task.setStatusIdle(); //retry, because we need resources
 		}
 	}

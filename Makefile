@@ -16,5 +16,5 @@ loader:
 
 run:
 	cp script.txt ~/.spring/testai.txt
-	${SPRING}/bin/spring --window -x 1024 -y 768 testai.txt
+	nice ${SPRING}/bin/spring --window -x 1024 -y 768 testai.txt
 
