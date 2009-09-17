@@ -119,11 +119,13 @@ public class AGUnits {
 	 * @return the builder
 	 */
 	public AGUnit getBuilder(UnitDef type){ //FIXME: this function is really slow!
-		for(int i=0; i<units.size();i++){
+		for(int i=0; i<units.size();i++){ //walk through all units, and check if they can build type
 			List<UnitDef> buildOptions = units.get(i).getUnit().getDef().getBuildOptions();
-	        for (UnitDef unitDef : buildOptions) {
-	        	if (unitDef.equals(type)){
-	        		return units.get(i);
+			int j;
+			for (j=0; j<buildOptions.size(); j++){
+				if (buildOptions.get(j).getUnitDefId()==type.getUnitDefId()){
+					ai.msg("Builder found to build "+type.getName());
+					return units.get(i);
 	        	}
 			}
 		}
@@ -209,7 +211,7 @@ public class AGUnits {
 		}
 		
 	}
-	private float average=-1;
+	private float averageres=-1;
 
 	/**
 	 * Gets the production of a Unit
@@ -220,21 +222,23 @@ public class AGUnits {
 	 * @return the production
 	 */
 	public float getProduction(UnitDef unit, Resource res){
-		if (average==-1){
+		if (averageres==-1){
 			List <AIFloat3> list = ai.getClb().getMap().getResourceMapSpotsPositions(res);
 			float sum=0;
 			for (int i=0; i<list.size(); i++){
 				sum=sum+list.get(i).y;
 			}
 			if (list.size()>0)
-				average=sum/list.size();
+				averageres=sum/list.size();
 		}
+		//TODO: calculate energy a unit produces on map
 
-	 return
+		float wind=Math.min(unit.getWindResourceGenerator(res),ai.getClb().getMap().getMinWind()); //worst case
+		float tidal=unit.getTidalResourceGenerator(res)*ai.getClb().getMap().getTidalStrength();
+		return
 			(unit.getUpkeep(res) *-1) + unit.getResourceMake(res) +
-			unit.getWindResourceGenerator(res) +unit.getTidalResourceGenerator(res)
-				+ unit.getMakesResource(res) +
-				(unit.getExtractsResource(res)*average);
+			wind + tidal + unit.getMakesResource(res) +
+			(unit.getExtractsResource(res)*averageres);
 	}
 
 	/**

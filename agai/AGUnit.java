@@ -210,5 +210,25 @@ class AGUnit{
 			str=str+task.toString();
 		return str;
 	}
-	
+
+	/**
+	 * Can build at.
+	 *
+	 * @param pos the pos
+	 * @param unit the unit to build
+	 * @param radius the radius
+	 * @param minDistance the min distance
+	 *
+	 * @return true, if successful
+	 */
+	public boolean canBuildAt(AIFloat3 pos, UnitDef unit, int radius, int minDistance){
+		AIFloat3 tmp=ai.getClb().getMap().findClosestBuildSite(unit, pos, radius, minDistance, 0);
+		if ((tmp.x==-1) && (tmp.y==0) && (tmp.z==0)){
+			ai.msg("Can't build here!");
+			return false;
+		}
+		ai.msg("Can build at " + tmp.x +" "+ tmp.y +" " +tmp.z);
+		return true;
+	}
+
 }

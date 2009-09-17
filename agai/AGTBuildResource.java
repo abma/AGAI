@@ -168,15 +168,24 @@ public class AGTBuildResource extends AGTaskManager {
 			if (builder!=null){ //unit can be built! :-)
 				poi=ai.getAGP().getNearestFreePoi(builder.getPos(), t.getRes().getResourceId());
 				unit=tmp.get(i).getUnit();
-				if ((poi!=null) && (unit.getExtractsResource(t.getRes())>0)){ //unit needs spot to be built
+				if (unit.getExtractsResource(t.getRes())>0){ //unit needs spot to be built
+					if (poi==null) //no point found to build, next building
+						continue;
 					pos=poi.getPos();
 					radius=Math.round(ai.getClb().getMap().getExtractorRadius(t.getRes()));
+					if (!builder.canBuildAt(pos, unit, radius, 2)){
+						ai.msg("Can't build here!");
+						continue;
+					}else{
+						ai.msg("Can build here!");
+						break;
+					}
 				}else { //doesn't need spot, delete pos and radius
 					pos=null;
 					radius=100;
 				}
 				Resource res=ai.enoughResourcesToBuild(unit);
-				if (res==null){ //no resource is missing
+				if (res==null){ //no resource is missing, building is ok!
 					break;
 				}
 			}
