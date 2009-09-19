@@ -36,6 +36,7 @@ class AGTaskBuildUnit extends AGTask{
 	/** The radius. */
 	private int radius;
 	private boolean solved;
+	private int mindistance;
 
 	/**
 	 * Instantiates a new aG task build unit.
@@ -45,11 +46,12 @@ class AGTaskBuildUnit extends AGTask{
 	 * @param pos where to build the unit
 	 * @param radius at which radius
 	 */
-	AGTaskBuildUnit(AGAI ai, UnitDef unit, AIFloat3 pos, int radius) {
+	AGTaskBuildUnit(AGAI ai, UnitDef unit, AIFloat3 pos, int radius, int mindistance) {
 		super(ai);
 		this.pos=pos;
 		this.unit=unit;
 		this.radius=radius;
+		this.mindistance=mindistance;
 		solved=false;
 	}
 
@@ -130,6 +132,10 @@ class AGTaskBuildUnit extends AGTask{
 	public void setSolved() {
 		this.solved = true;
 	}
+
+	public int getMinDistance() {
+		return this.mindistance;
+	}
 }
 
 /**
@@ -156,19 +162,12 @@ public class AGTBuildUnit extends AGTaskManager{
 	 * @return the int
 	 */
 	private int realBuild(AGUnit unit, AGTaskBuildUnit task){
-		int mindist=3;
-		int facing=0;
 		AIFloat3 pos=task.getPos();
 		if (unit.getDef().getSpeed()>0){ //Unit who builds can move
 			ai.msg("Mobile builder ");
-			if ((task.getPos()==null) ||
-					((task.getPos().equals(new AIFloat3())))){//position was not initialized, use builder pos
-				ai.msg("Using Unit pos to build, because pos wasn't initialized.");
-				pos=unit.getPos();
-			}
-			pos=ai.getClb().getMap().findClosestBuildSite(task.getUnit(), pos , task.getRadius(), mindist, facing);
-			if (!ai.getClb().getMap().isPossibleToBuildAt(task.getUnit(), pos, facing) || pos.equals(new AIFloat3(-1.0f, 0.0f, 0.0f))){
-				ai.msg("AGTBuildUnit.realBuild(): Can't build at pos " + pos.x + " " + pos.y + " " + pos.z);
+			pos=unit.canBuildAt(pos, task.getUnit(), task.getRadius(), task.getMinDistance());
+			if (pos==null){
+				ai.msg("Can't build at pos");
 				task.setFailed();
 				return -1;
 			}
@@ -178,7 +177,7 @@ public class AGTBuildUnit extends AGTaskManager{
 				pos=unit.getPos();
 		}
 		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnit().getName()+pos);
-		int res=unit.buildUnit(task.getUnit(), pos, facing);
+		int res=unit.buildUnit(task.getUnit(), pos, 0);
 		task.setStatusWorking(unit);
 		return res;
 	}
@@ -197,7 +196,7 @@ public class AGTBuildUnit extends AGTaskManager{
 		AGBuildTreeUnit tmp=ai.getAGB().searchNode(builder.getUnit().getDef(),unit);
 		if (tmp!=null){
 			while(tmp.getUnit()!=builder.getUnit().getDef()){
-				AGTaskBuildUnit cur=new AGTaskBuildUnit(ai, tmp.getUnit(),null, 200);
+				AGTaskBuildUnit cur=new AGTaskBuildUnit(ai, tmp.getUnit(),null, 200, 2);
 				cur.setSolved();
 				if (!unit.equals(cur.getUnit())) //don't add the unit to build, because it's already in the task list
 					ai.getAGT().addTask(cur);

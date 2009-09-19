@@ -221,14 +221,16 @@ class AGUnit{
 	 *
 	 * @return true, if successful
 	 */
-	public boolean canBuildAt(AIFloat3 pos, UnitDef unit, int radius, int minDistance){
+	public AIFloat3 canBuildAt(AIFloat3 pos, UnitDef unit, int radius, int minDistance){
+		if ((pos==null)||((pos.x==-1) && (pos.y==0) && (pos.z==0)))
+			pos=this.unit.getPos();
 		AIFloat3 tmp=ai.getClb().getMap().findClosestBuildSite(unit, pos, radius, minDistance, 0);
 		if ((tmp.x==-1) && (tmp.y==0) && (tmp.z==0)){
-			ai.msg("Can't build here!");
-			return false;
+			ai.msg("Can't build here: radius "+radius+" x " +pos.x+" y "+pos.y+" z "+pos.z);
+			return null;
 		}
 		ai.msg("Can build at " + tmp.x +" "+ tmp.y +" " +tmp.z);
-		return true;
+		return tmp;
 	}
 
 }

@@ -157,12 +157,11 @@ public class AGTBuildResource extends AGTaskManager {
 	public void solve(AGTask task) {
 		UnitDef unit=null;
 		AGUnit builder=null;
-		int radius=100;
 		AGPoI poi=null;
 		AIFloat3 pos=null; 
 		AGTaskBuildResource t=(AGTaskBuildResource) task;
 		List <AGBuildTreeUnit> tmp=list.get(t.getResIdx());
-
+		int radius=100; //default radius to search for buildings
 		for(int i=0; i<tmp.size(); i++){ //search from units that fits best to the worst.. skip when unit can be built and enough resources found
 			builder=ai.getAGU().getBuilder(tmp.get(i).getUnit());
 			if (builder!=null){ //unit can be built! :-)
@@ -173,16 +172,20 @@ public class AGTBuildResource extends AGTaskManager {
 						continue;
 					pos=poi.getPos();
 					radius=Math.round(ai.getClb().getMap().getExtractorRadius(t.getRes()));
-					if (!builder.canBuildAt(pos, unit, radius, 2)){
+					pos=builder.canBuildAt(pos, unit, radius, 2);
+					if (pos==null){
 						ai.msg("Can't build here!");
 						continue;
 					}else{
 						ai.msg("Can build here!");
 						break;
 					}
-				}else { //doesn't need spot, delete pos and radius
-					pos=null;
-					radius=100;
+				}else { //doesn't need spot, build at next point to builder
+					ai.msg("No spot needed");
+					pos=builder.canBuildAt(pos, unit, radius, 2);
+					if (pos==null) //can't build, next unit
+						continue;
+					pos=null; //delete pos, because builder could have already a task and is moving
 				}
 				Resource res=ai.enoughResourcesToBuild(unit);
 				if (res==null){ //no resource is missing, building is ok!
@@ -195,7 +198,7 @@ public class AGTBuildResource extends AGTaskManager {
 				poi.setBuilt(true);
 			}
 			ai.msg("Sending command to build unit");
-			AGTask buildtask=new AGTaskBuildUnit(ai, unit, pos, radius);
+			AGTask buildtask=new AGTaskBuildUnit(ai, unit, pos, radius, 2);
 			task.setStatusFinished();//task is done, we are building a resource producing unit
 			buildtask.setPoi(poi);
 			ai.getAGT().addTask(buildtask);

@@ -131,7 +131,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				if (argv.length==2){
 					UnitDef u=aGU.getUnitDef(argv[1]);
 					if (u!=null){
-						aGT.addTask(new AGTaskBuildUnit(this, u, null, 100));
+						aGT.addTask(new AGTaskBuildUnit(this, u, null, 100, 2));
 					}
 				}
 			}else if (argv[0].equalsIgnoreCase("dump")){
