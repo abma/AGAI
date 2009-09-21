@@ -68,6 +68,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	/** The a gf. */
 	private AGFilter aGF = null;
 	
+	/** The a gm. */
+	private AGMap aGM = null;
+
 	/** The metal. */
 	private Resource metal = null;
 	
@@ -102,8 +105,14 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		this.aGP = new AGPoIs(this);
 		this.aGF = new AGFilter(this);
 		this.aGT = new AGTaskManagers(this);
+		this.aGM = new AGMap(this);
+
 		msg("");
 		return 0;
+	}
+
+	public AGMap getAGM() {
+		return aGM;
 	}
 
 	/**
@@ -154,6 +163,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				aGU.dumpUnitDefs();
 			}else if (argv[0].equalsIgnoreCase("dumpbuildtree")){
 				aGB.dumpUnits();
+			}else if (argv[0].equalsIgnoreCase("dumpmap")){
+				aGM.dump();
 			}
 		}
 		return 0; 

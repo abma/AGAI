@@ -32,8 +32,8 @@ class UnitPropertyScout extends AGUnitProperty{
 
 	UnitPropertyScout(AGAI ai) {
 		super(ai);
-//		properties.add(new AGUnitPropertyEvaluatorLosRadius(ai, 0.01f, this));
-//		properties.add(new AGUnitPropertyEvaluatorSpeed(ai, 0.03f, this));
+		properties.add(new AGUnitPropertyEvaluatorLosRadius(ai, 0.01f, this));
+		properties.add(new AGUnitPropertyEvaluatorSpeed(ai, 0.03f, this));
 		properties.add(new AGUnitPropertyEvaluatorPrice(ai, 0.99f, this));
 	}
 	public int compare(AGBuildTreeUnit o1, AGBuildTreeUnit o2) {
