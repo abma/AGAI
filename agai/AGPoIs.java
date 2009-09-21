@@ -31,7 +31,7 @@ import com.springrts.ai.AIFloat3;
 class AGPoI{ //Point of Interest
 	private AIFloat3 pos;
 	private boolean visited;
-	private int type = 0;
+	private int type = -1;
 	private boolean built;
 	AGPoI(AIFloat3 pos, int type){
 		this.pos=pos;
@@ -143,8 +143,8 @@ public class AGPoIs {
 			return ret;
 		}
 		for(int i=0; i<poi.size(); i++){
-			if (((type==0) || (poi.get(i).getType()==type))  &&   (!visited || !poi.get(i).getVisited()) && (!free || !poi.get(i).isBuilt()) ){
-				tmp=ai.getDifference(curpos, poi.get(i).getPos());
+			if (((type==-1) || (poi.get(i).getType()==type))  &&   (!visited || !poi.get(i).getVisited()) && (!free || !poi.get(i).isBuilt()) ){
+				tmp=ai.getDistance(curpos, poi.get(i).getPos());
 				if (tmp<mindistance){
 					mindistance=tmp;
 					ret=poi.get(i);
@@ -210,7 +210,7 @@ public class AGPoIs {
 	public AGPoI get(int index, int type){
 		int count=0;
 		for(int i=0; i<poi.size(); i++){
-			if ( (poi.get(i).getType() & type) != 0){
+			if ( (poi.get(i).getType() & type) != -1){
 				if (count==index)
 					return poi.get(i);
 				count++;

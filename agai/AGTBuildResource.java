@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.Feature;
 import com.springrts.ai.oo.Map;
 import com.springrts.ai.oo.Resource;
 import com.springrts.ai.oo.UnitDef;
@@ -124,6 +125,13 @@ public class AGTBuildResource extends AGTaskManager {
 			initializeSpots(res.get(i));
 			list.add(i,ai.getAGF().Filter(new UnitPropertyResourceGenerator(ai, res.get(i))));
 		}
+		List<Feature> f=ai.getClb().getFeatures();
+		for (int i=0; i<f.size(); i++){ //FIXME: Engine issue, adds geothermal spots to PoI
+			if (f.get(i).getDef().isGeoThermal()){
+				ai.getAGP().add(f.get(i).getPosition(), ai.getEnergy().getResourceId());
+//				ai.drawPoint(f.get(i).getPosition(),"Pos " + i + ai.getEnergy().getName());
+			}
+		}
 		for (int i=0; i<list.size();i++){
 			for (int j=0; j<list.get(i).size(); j++){
 				UnitDef u=list.get(i).get(j).getUnit();
@@ -145,7 +153,7 @@ public class AGTBuildResource extends AGTaskManager {
 		List<AIFloat3> spots=map.getResourceMapSpotsPositions(res);
 		for(int i=0; i<spots.size(); i++ ){
 			spots.get(i).y=map.getElevationAt(spots.get(i).x, spots.get(i).z); //FIXME this is a engine-bug workaround
-//			ai.drawPoint(spots.get(i),"Pos " + i);
+//			ai.drawPoint(spots.get(i),"Pos " + i + res.getName());
 			ai.getAGP().add(spots.get(i), res.getResourceId());
 		}
 	}
@@ -160,6 +168,8 @@ public class AGTBuildResource extends AGTaskManager {
 		AGPoI poi=null;
 		AIFloat3 pos=null; 
 		AGTaskBuildResource t=(AGTaskBuildResource) task;
+		int min=AGAI.minDistance;
+
 		List <AGBuildTreeUnit> tmp=list.get(t.getResIdx());
 		int radius=100; //default radius to search for buildings
 		for(int i=0; i<tmp.size(); i++){ //search from units that fits best to the worst.. skip when unit can be built and enough resources found
@@ -167,12 +177,17 @@ public class AGTBuildResource extends AGTaskManager {
 			if (builder!=null){ //unit can be built! :-)
 				poi=ai.getAGP().getNearestFreePoi(builder.getPos(), t.getRes().getResourceId());
 				unit=tmp.get(i).getUnit();
-				if (unit.getExtractsResource(t.getRes())>0){ //unit needs spot to be built
+				if ((unit.getExtractsResource(t.getRes())>0) || unit.isNeedGeo()){ //unit needs spot to be built
 					if (poi==null) //no point found to build, next building
 						continue;
 					pos=poi.getPos();
 					radius=Math.round(ai.getClb().getMap().getExtractorRadius(t.getRes()));
-					pos=builder.canBuildAt(pos, unit, radius, 2);
+					if (unit.isNeedGeo()){
+						if (radius==0)
+							radius=100;
+						min=0; //the only way to build on geo spots (?)
+					}
+					pos=builder.canBuildAt(pos, unit, radius, min);
 					if (pos==null){
 						ai.msg("Can't build here!");
 						continue;

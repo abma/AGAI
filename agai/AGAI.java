@@ -74,6 +74,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	/** The energy. */
 	private Resource energy = null;
 	
+	/** The default minimal distance between buildings. */
+	public static final int minDistance=2; //default min distance between buildings
 	/**
 	 * Inits the.
 	 * 
@@ -557,7 +559,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * 
 	 * @return the difference
 	 */
-	public double getDifference(AIFloat3 pos1, AIFloat3 pos2){
+	public double getDistance(AIFloat3 pos1, AIFloat3 pos2){
 		return Math.sqrt((Math.pow(pos1.x-pos2.x,2) + Math.pow(pos1.y-pos2.y,2) + Math.pow(pos1.z-pos2.z,2 )));
 	}
 
