@@ -196,7 +196,7 @@ public class AGTBuildUnit extends AGTaskManager{
 		AGBuildTreeUnit tmp=ai.getAGB().searchNode(builder.getUnit().getDef(),unit);
 		if (tmp!=null){
 			while(tmp.getUnit()!=builder.getUnit().getDef()){
-				AGTaskBuildUnit cur=new AGTaskBuildUnit(ai, tmp.getUnit(),null, 200, AGAI.minDistance);
+				AGTaskBuildUnit cur=new AGTaskBuildUnit(ai, tmp.getUnit(),null, AGAI.searchDistance, AGAI.minDistance);
 				cur.setSolved();
 				if (!unit.equals(cur.getUnit())) //don't add the unit to build, because it's already in the task list
 					ai.getAGT().addTask(cur);

@@ -184,7 +184,7 @@ public class AGTBuildResource extends AGTaskManager {
 					radius=Math.round(ai.getClb().getMap().getExtractorRadius(t.getRes()));
 					if (unit.isNeedGeo()){
 						if (radius==0)
-							radius=100;
+							radius=AGAI.searchDistance;
 						min=0; //the only way to build on geo spots (?)
 					}
 					pos=builder.canBuildAt(pos, unit, radius, min);

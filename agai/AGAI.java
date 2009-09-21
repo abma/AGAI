@@ -75,7 +75,11 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	private Resource energy = null;
 	
 	/** The default minimal distance between buildings. */
-	public static final int minDistance=2; //default min distance between buildings
+	public static final int minDistance=2;
+
+	/** The default distance to search for building poisitions */
+	public static final int searchDistance=100;
+
 	/**
 	 * Inits the.
 	 * 
