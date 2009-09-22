@@ -35,6 +35,7 @@ class AGBuildTreeUnit{
 	private UnitDef unit;
 	private int mark; //for search path
 	private AGBuildTreeUnit parent; //for search path
+	private int unitcount;
 	
 	public AGBuildTreeUnit getParent() {
 		return parent;
@@ -46,6 +47,7 @@ class AGBuildTreeUnit{
 		this.unit=unit;
 		this.mark=0;
 		this.parent=null;
+		this.unitcount=0;
 	}
 	
 	public UnitDef getUnit(){
@@ -74,6 +76,15 @@ class AGBuildTreeUnit{
 
 	public LinkedList<AGBuildTreeUnit> getNodes() {
 		return nodes;
+	}
+	public void incUnitcount(){
+		unitcount++;
+	}
+	public void decUnitCount(){
+		unitcount--;
+	}
+	public int getUnitcount(){
+		return unitcount;
 	}
 }
 
@@ -156,7 +167,7 @@ public class AGBuildTree {
 	
 	
 	/**
-	 * Gets the builder to build the unit.
+	 * Gets an avaiable builder to build the unit.
 	 * 
 	 * @param unit the unit
 	 * 
@@ -169,9 +180,12 @@ public class AGBuildTree {
 		LinkedList <AGBuildTreeUnit> list=node.getBacklink();
 		LinkedList <AGUnit> res=new LinkedList<AGUnit>();
 		for(int i=0; i<list.size(); i++){
-			List <AGUnit> units=ai.getAGU().getUnits(list.get(i).getUnit());
-			for(int j=0; j<units.size(); j++)
-				res.add(units.get(j));
+			if (list.get(i).getUnitcount()>0){ //search only for units avaiable
+				List <AGUnit> units=ai.getAGU().getUnits(list.get(i).getUnit());
+				for(int j=0; j<units.size(); j++){
+					res.add(units.get(j));
+				}
+			}
 		}
 		if (res.size()==0)
 			ai.msg("found no builder to build unit: "+unit.getName());

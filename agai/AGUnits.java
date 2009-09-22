@@ -57,8 +57,8 @@ public class AGUnits {
 	public AGUnit add(Unit unit){
         units.add(new AGUnit(ai, unit));
         ai.msg("size "+units.size());
+        ai.getAGB().searchNode(unit.getDef()).incUnitcount();
         return units.get(units.size()-1);
-		
 	}
 	
 	/**
@@ -140,6 +140,7 @@ public class AGUnits {
 	 * @param attacker the attacker
 	 */
 	public void destroyed(Unit unit, Unit attacker){
+		ai.getAGB().searchNode(unit.getDef()).decUnitCount();
 		for(int i=0; i<units.size();i++)
 			if (units.get(i).getUnit().equals(unit)){
 				units.get(i).destroyed();
