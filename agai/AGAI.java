@@ -107,6 +107,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		this.aGT = new AGTaskManagers(this);
 		this.aGM = new AGMap(this);
 
+		List <Unit> list=clb.getTeamUnits();
+		for(int i=0; i<list.size(); i++){
+			aGU.add(list.get(i));
+		}
 		msg("");
 		return 0;
 	}
