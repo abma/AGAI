@@ -312,5 +312,21 @@ public class AGBuildTree {
 		}
 	}
 	
+	/**
+	 * Dump graph to stdout
+	 * copy the text into a file and then convert it with graphiz:
+	 * dot -Tpdf techtree.dot -o techtree.pdf
+	 */
+	public void dumpGraph(){
+		System.out.println("digraph G {");
+		for(int i=0; i<unitList.size();i++){
+			AGBuildTreeUnit u=unitList.get(i);
+			for (int j=0; j<u.getNodes().size(); j++){
+				AGBuildTreeUnit child=u.getNodes().get(j);
+				System.out.println( u.getUnit().getName() + " -> "+child.getUnit().getName()+";");
+			}
+		}
+		System.out.println("}");
+	}
 }
 
