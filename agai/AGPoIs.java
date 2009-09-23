@@ -134,7 +134,7 @@ public class AGPoIs {
 	 * 
 	 * @return the nearest poi
 	 */
-	private AGPoI getNearestPoi(AIFloat3 curpos, int type, boolean free, boolean visited){
+	public AGPoI getNearestPoi(AIFloat3 curpos, int type, boolean free, boolean visited){
 		double mindistance=Double.MAX_VALUE;
 		double tmp;
 		AGPoI ret=null;

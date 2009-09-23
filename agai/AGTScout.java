@@ -74,13 +74,14 @@ class AGTaskScout extends AGTask{
 	@Override
 	public void unitCommandFinished(AGUnit unit){
 		ai.msg("");
-		AGPoI p=ai.getAGP().getNearestFreePoi(unit.getPos(), AGPoIs.PoIAny);
+		AGPoI p=ai.getAGP().getNearestPoi(unit.getPos(), AGPoIs.PoIAny, true, true);
 		if (p!=null){
 			ai.msg("moving to "+p.getPos().x +" " +p.getPos().z);
 			unit.moveTo(p.getPos());
 			p.setVisited(true);
-		}else
+		}else{
 			ai.msg("No point to scout found!");
+		}
 	}
 
 	@Override
@@ -126,9 +127,10 @@ public class AGTScout extends AGTaskManager{
 	@Override
 	public void solve(AGTask task) {
 		ai.msg("");
+		UnitDef unit=null;
 		if (task.getUnit()==null){
 			for(int i=0; i<list.size(); i++){
-				UnitDef unit=list.get(i).getUnit();
+				unit=list.get(i).getUnit();
 				AGUnit u=ai.getAGU().getIdle(unit);
 				if (u!=null){ //unit to scout exists, assign task!
 					u.setTask(task);
@@ -145,6 +147,11 @@ public class AGTScout extends AGTaskManager{
 				}
 			}
 		}
-		ai.msg("scouting!");
+		//no scout found / couldn't build scout, build cheapest one
+		if (unit!=null){
+			AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance);
+			task.setStatusWorking();
+			ai.getAGT().addTask(buildtask);
+		}
 	}
 }
