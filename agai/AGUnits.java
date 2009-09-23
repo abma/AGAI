@@ -73,7 +73,7 @@ public class AGUnits {
 		for(int i=0; i<units.size();i++)
 			if (units.get(i).getUnit().equals(unit))
 				return units.get(i);
-		return null;
+		return add(unit);
 	}
 	
 	

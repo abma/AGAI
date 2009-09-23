@@ -47,9 +47,6 @@ abstract class AGTask{
 	/** The ai. */
 	protected AGAI ai;
 	
-	/** child unit assigned to task (for ex. unit that is built */
-	private Unit unitChild=null;
-	
 	/** The poi where the task refers to. */
 	private AGPoI poi=null;
 
@@ -149,24 +146,6 @@ abstract class AGTask{
 	}
 
 	/**
-	 * Gets the unit child.
-	 * 
-	 * @return the unit child
-	 */
-	public Unit getUnitChild() {
-		return unitChild;
-	}
-
-	/**
-	 * Sets the unit child.
-	 * 
-	 * @param unitChild the new unit child
-	 */
-	public void setUnitChild(Unit unitChild) {
-		this.unitChild = unitChild;
-	}
-
-	/**
 	 * Gets the poi.
 	 * 
 	 * @return the poi
@@ -183,5 +162,48 @@ abstract class AGTask{
 	public void setPoi(AGPoI poi) {
 		this.poi = poi;
 	}
+	public void unitCommandFinished(AGUnit unit){
+		ai.msg("");
+		unit.setTask(null);
+		this.setStatusFinished();
+	}
 	
+	public void unitDestroyed(){
+		ai.msg("");
+		setStatusIdle();
+		ai.getAGT().addTask(this);
+	}
+	public void unitIdle(){
+		ai.msg("");
+		this.solve();
+	}
+	public void unitMoveFailed(){
+		ai.msg("");
+		this.solve();
+	}
+	public void unitDamaged(){
+		ai.msg("");
+	}
+	public void unitCaptured(){
+		ai.msg("");
+	}
+	public void unitCreated(){
+		ai.msg("");
+	}
+	public void unitWeaponFired(){
+		ai.msg("");
+	}
+	public void unitEnemyDamaged(){
+		ai.msg("");
+	}
+	public void unitEnemyDestroyed(){
+		ai.msg("");
+	}
+	public void unitFinished(){
+		ai.msg("");
+		this.setStatusFinished();
+	}
+	public void unitGiven() {
+		ai.msg("");
+	}
 }

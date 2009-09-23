@@ -42,7 +42,17 @@ class AGUnit{
 	
 	/** The task. */
 	private AGTask task=null;
+
+	private AGTask unitCreatedTask=null;
 	
+	public AGTask getUnitCreatedTask() {
+		return unitCreatedTask;
+	}
+
+	public void setUnitCreatedTask(AGTask unitCreatedTask) {
+		this.unitCreatedTask = unitCreatedTask;
+	}
+
 	/** The ai. */
 	protected AGAI ai=null;
 	
@@ -136,15 +146,6 @@ class AGUnit{
 	 */
 	public AIFloat3 getPos(){
 		return unit.getPos();
-	}
-	
-	/**
-	 * Sets the Units status to Idle and Marks the Task as finished.
-	 */
-	public void setTaskFinished(){
-		if (task!=null)
-			task.setStatusFinished();
-		task=null;
 	}
 	
 	/**
