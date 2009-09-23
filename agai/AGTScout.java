@@ -59,16 +59,39 @@ class UnitPropertyScout extends AGUnitProperty{
 }
 
 class AGTaskScout extends AGTask{
-
+	int i;
 	AGTaskScout(AGAI ai) {
 		super(ai);
+		i=0;
 	}
 
 	@Override
 	public void solve() {
+		ai.msg("");
 		ai.getAGT().getScout().solve(this);
 	}
-	
+
+	@Override
+	public void unitCommandFinished(AGUnit unit){
+		ai.msg("");
+		AGPoI p=ai.getAGP().getNearestFreePoi(unit.getPos(), AGPoIs.PoIAny);
+		if (p!=null){
+			ai.msg("moving to "+p.getPos().x +" " +p.getPos().z);
+			unit.moveTo(p.getPos());
+			p.setVisited(true);
+		}else
+			ai.msg("No point to scout found!");
+	}
+
+	@Override
+	public void unitIdle(AGUnit unit){
+		ai.msg("");
+		unitCommandFinished(unit);
+	}
+
+	public String toString(){
+		return "";
+	}
 }
 
 
@@ -99,18 +122,19 @@ public class AGTScout extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
-		/*		AGUnit scout=ai.getAGU().getIdle(type)
-		if (scout==null){ //no idle scout found, build scout
-			ai.msg("No scout found, Building scout!");
-			ai.getAGT().getBuildunit().add(ai.getAGU().getUnitDef(AGUnitScout.class), null);
-			return;
+		if (task.getUnit()==null){
+			for(int i=0; i<list.size(); i++){
+				UnitDef unit=list.get(i).getUnit();
+				AGUnit builder=ai.getAGU().getBuilder(unit);
+				if (builder!=null){
+					AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance);
+					builder.setUnitCreatedTask(task);
+					task.setStatusWorking();
+					ai.getAGT().addTask(buildtask);
+					return;
+				}
+			}
 		}
-		PoI point=ai.getAGP().getNearestPoi(scout.getPos(),AGPoIs.PoIAny);
-		point.setVisited(true);
-//		scout.setTask(this);
-		if ((scout.moveTo(point.getPos())==0))
-//			this.setStatus(AGTask.statusWorking);
- * 
- */
+		ai.msg("scouting!");
 	}
 }

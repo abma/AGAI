@@ -17,8 +17,6 @@
 
 package agai;
 
-import com.springrts.ai.oo.Unit;
-
 
 // TODO: Auto-generated Javadoc
 /**
@@ -44,6 +42,16 @@ abstract class AGTask{
 	/** The Constant statusFailed. */
 	final static int statusFailed = 3;
 	
+	private AGUnit unit;
+
+	public AGUnit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(AGUnit unit) {
+		this.unit = unit;
+	}
+
 	/** The ai. */
 	protected AGAI ai;
 	
@@ -108,11 +116,8 @@ abstract class AGTask{
 	
 	/**
 	 * Sets the status of this task to be under process.
-	 * 
-	 * @param unit the unit
 	 */
-	public void setStatusWorking(AGUnit unit) {
-		unit.setTask(this);
+	public void setStatusWorking(){
 		status=statusWorking;
 	}
 	
@@ -127,7 +132,7 @@ abstract class AGTask{
 	 * @return the string
 	 */
 	public String toString(){
-		return this.getClass().getName()+" "+this.priority+" "+this.status+" +dump not implemented!";
+		return this.getClass().getName()+" "+this.priority+" "+this.status+" toString not implemented!";
 	}
 	
 	/**
@@ -164,22 +169,16 @@ abstract class AGTask{
 	}
 	public void unitCommandFinished(AGUnit unit){
 		ai.msg("");
-		unit.setTask(null);
-		this.setStatusFinished();
 	}
 	
 	public void unitDestroyed(){
 		ai.msg("");
-		setStatusIdle();
-		ai.getAGT().addTask(this);
 	}
-	public void unitIdle(){
+	public void unitIdle(AGUnit unit){
 		ai.msg("");
-		this.solve();
 	}
 	public void unitMoveFailed(){
 		ai.msg("");
-		this.solve();
 	}
 	public void unitDamaged(){
 		ai.msg("");
@@ -187,7 +186,7 @@ abstract class AGTask{
 	public void unitCaptured(){
 		ai.msg("");
 	}
-	public void unitCreated(){
+	public void unitCreated(AGUnit unit){
 		ai.msg("");
 	}
 	public void unitWeaponFired(){
@@ -201,7 +200,6 @@ abstract class AGTask{
 	}
 	public void unitFinished(){
 		ai.msg("");
-		this.setStatusFinished();
 	}
 	public void unitGiven() {
 		ai.msg("");

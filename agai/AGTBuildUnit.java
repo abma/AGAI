@@ -31,7 +31,7 @@ class AGTaskBuildUnit extends AGTask{
 	private AIFloat3 pos;
 	
 	/** The unit. */
-	private UnitDef unit;
+	private UnitDef unitdef;
 	
 	/** The radius. */
 	private int radius;
@@ -46,10 +46,10 @@ class AGTaskBuildUnit extends AGTask{
 	 * @param pos where to build the unit
 	 * @param radius at which radius
 	 */
-	AGTaskBuildUnit(AGAI ai, UnitDef unit, AIFloat3 pos, int radius, int mindistance) {
+	AGTaskBuildUnit(AGAI ai, UnitDef unitdef, AIFloat3 pos, int radius, int mindistance) {
 		super(ai);
 		this.pos=pos;
-		this.unit=unit;
+		this.unitdef=unitdef;
 		this.radius=radius;
 		this.mindistance=mindistance;
 		solved=false;
@@ -69,10 +69,9 @@ class AGTaskBuildUnit extends AGTask{
 	 * 
 	 * @return the unit
 	 */
-	public UnitDef getUnit() {
-		return unit;
+	public UnitDef getUnitDef() {
+		return unitdef;
 	}
-
 
 	/**
 	 * Gets the radius.
@@ -107,14 +106,14 @@ class AGTaskBuildUnit extends AGTask{
 			return false;
 		if (obj.getClass()==this.getClass()){
 			AGTaskBuildUnit tmp=(AGTaskBuildUnit)obj;
-			return tmp.unit.equals(unit); //FIXME: more checks : pos, radius (?)
+			return tmp.getUnitDef().equals(getUnitDef()); //FIXME: more checks : pos, radius (?)
 		}
 		return false;
 	}
 
 	@Override
 	public String toString() {
-		return "AGTaskBuildUnit " + unit.getName() + " "+ unit.getHumanName();
+		return "AGTaskBuildUnit " + unitdef.getName() + " "+ unitdef.getHumanName();
 	}
 
 	/**
@@ -135,6 +134,18 @@ class AGTaskBuildUnit extends AGTask{
 
 	public int getMinDistance() {
 		return this.mindistance;
+	}
+
+	/* (non-Javadoc)
+	 * @see agai.AGTask#unitCreated(agai.AGUnit)
+	 */
+	@Override
+	public void unitCreated(AGUnit unit){
+		setStatusFinished();
+	}
+
+	@Override
+	public void unitMoveFailed(){
 	}
 }
 
@@ -165,7 +176,7 @@ public class AGTBuildUnit extends AGTaskManager{
 		AIFloat3 pos=task.getPos();
 		if (unit.getDef().getSpeed()>0){ //Unit who builds can move
 			ai.msg("Mobile builder ");
-			pos=unit.canBuildAt(pos, task.getUnit(), task.getRadius(), task.getMinDistance());
+			pos=unit.canBuildAt(pos, task.getUnitDef(), task.getRadius(), task.getMinDistance());
 			if (pos==null){
 				ai.msg("Can't build at pos");
 				task.setFailed();
@@ -176,9 +187,9 @@ public class AGTBuildUnit extends AGTaskManager{
 			if (pos==null)
 				pos=unit.getPos();
 		}
-		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnit().getName()+pos);
-		int res=unit.buildUnit(task.getUnit(), pos, 0);
-		task.setStatusWorking(unit);
+		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnitDef().getName()+pos);
+		int res=unit.buildUnit(task.getUnitDef(), pos, 0);
+		task.setStatusWorking();
 		return res;
 	}
 	
@@ -214,7 +225,7 @@ public class AGTBuildUnit extends AGTaskManager{
 	public void solve(AGTask task) {
 		ai.msg(""+task);
 		AGTaskBuildUnit t=(AGTaskBuildUnit)task;
-		List <AGUnit> builder=ai.getAGB().getBuilder(t.getUnit());
+		List <AGUnit> builder=ai.getAGB().getBuilder(t.getUnitDef());
 		if (builder.size()>0){ //found unit who can build.. try it
 			for (int j=0; j<builder.size(); j++){
 				if (builder.get(j).isIdle()){
@@ -228,7 +239,7 @@ public class AGTBuildUnit extends AGTaskManager{
 			}
 		}else{ //found no builder -> resolve
 			if (!t.isSolved()){
-				BuildUnit(t.getUnit());
+				BuildUnit(t.getUnitDef());
 				t.setSolved();
 			}
 		}

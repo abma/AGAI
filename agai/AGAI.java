@@ -189,16 +189,15 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		msg (unit.getDef().getName());
 		//search builder and check if he has a task, when so, add unit to units and set task from builder (if unit gets destroyed, only re-add to tasklist...)
 		AGUnit u=aGU.getUnit(unit);
-		AGTask t=u.getTask();
-		if ((u!=null) && (t!=null)){
-			t.unitCreated();
-		}
-		if (builder!=null){//unit was created by task, try to asign it
+		if (builder!=null){
 			AGUnit b=aGU.getUnit(builder);
 			if (b!=null){
-				AGTask task=b.getUnitCreatedTask();
-				if (b!=null){
-					u.setTask(task);
+				AGTask task = b.getUnitCreatedTask();
+				if (task!=null){
+					msg("assigned task");
+					u.setTask(b.getUnitCreatedTask());
+					b.setUnitCreatedTask(null);
+					task.unitCreated(u);
 				}
 			}
 		}
@@ -231,11 +230,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitIdle(Unit unit) {
-		msg(""+unit.getDef());
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
-			t.unitIdle();
+			t.unitIdle(u);
 		return 0; 
 	}
 
@@ -477,7 +475,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int commandFinished(Unit unit, int commandId, int commandTopicId) {
-		msg("");
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))

@@ -45,8 +45,8 @@ class AGPoI{ //Point of Interest
 	 * 
 	 * @return the visited
 	 */
-	public boolean getVisited(){
-		return visited || built;
+	public boolean isVisited(){
+		return visited;
 	}
 	
 	/**
@@ -129,8 +129,8 @@ public class AGPoIs {
 	 * 
 	 * @param curpos position to search the nearest point from
 	 * @param type the type
-	 * @param free the free
-	 * @param visited the visited
+	 * @param free list all free PoIs?
+	 * @param visited list already visted PoIs?
 	 * 
 	 * @return the nearest poi
 	 */
@@ -143,7 +143,7 @@ public class AGPoIs {
 			return ret;
 		}
 		for(int i=0; i<poi.size(); i++){
-			if (((type==-1) || (poi.get(i).getType()==type))  &&   (!visited || !poi.get(i).getVisited()) && (!free || !poi.get(i).isBuilt()) ){
+			if (((type==PoIAny) || (poi.get(i).getType()==type)) && (visited || !poi.get(i).isVisited()) && (free || !poi.get(i).isBuilt()) ){
 				tmp=ai.getDistance(curpos, poi.get(i).getPos());
 				if (tmp<mindistance){
 					mindistance=tmp;
