@@ -168,7 +168,7 @@ abstract class AGTask{
 		this.poi = poi;
 	}
 	public void unitCommandFinished(AGUnit unit){
-		ai.msg("");
+		ai.msg(unit.getUnit().getDef().getName());
 	}
 	
 	public void unitDestroyed(){
@@ -198,7 +198,7 @@ abstract class AGTask{
 	public void unitEnemyDestroyed(){
 		ai.msg("");
 	}
-	public void unitFinished(){
+	public void unitFinished(AGUnit unit){
 		ai.msg("");
 	}
 	public void unitGiven() {

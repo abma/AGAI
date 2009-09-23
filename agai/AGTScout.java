@@ -88,7 +88,10 @@ class AGTaskScout extends AGTask{
 		ai.msg("");
 		unitCommandFinished(unit);
 	}
-
+	@Override
+	public void unitDestroyed(){
+		setStatusIdle();
+	}
 	public String toString(){
 		return "";
 	}
@@ -122,9 +125,16 @@ public class AGTScout extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
+		ai.msg("");
 		if (task.getUnit()==null){
 			for(int i=0; i<list.size(); i++){
 				UnitDef unit=list.get(i).getUnit();
+				AGUnit u=ai.getAGU().getIdle(unit);
+				if (u!=null){ //unit to scout exists, assign task!
+					u.setTask(task);
+					task.setStatusWorking();
+					return;
+				}
 				AGUnit builder=ai.getAGU().getBuilder(unit);
 				if (builder!=null){
 					AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance);

@@ -143,7 +143,9 @@ public class AGPoIs {
 			return ret;
 		}
 		for(int i=0; i<poi.size(); i++){
-			if (((type==PoIAny) || (poi.get(i).getType()==type)) && (visited || !poi.get(i).isVisited()) && (free || !poi.get(i).isBuilt()) ){
+			if (((type==PoIAny) || (poi.get(i).getType()==type)) &&
+					!(visited && poi.get(i).isVisited()) &&
+					!(free && poi.get(i).isBuilt()) ){
 				tmp=ai.getDistance(curpos, poi.get(i).getPos());
 				if (tmp<mindistance){
 					mindistance=tmp;

@@ -92,6 +92,8 @@ class AGUnit{
 	 * @param task the new task
 	 */
 	public void setTask(AGTask task) {
+		if (this.task!=null)
+			ai.msg("Info: Overwriting old task!");
 		this.task=task;
 	}
 
@@ -227,7 +229,7 @@ class AGUnit{
 			pos=this.unit.getPos();
 		AIFloat3 tmp=ai.getClb().getMap().findClosestBuildSite(unit, pos, radius, minDistance, 0);
 		if ((tmp.x==-1) && (tmp.y==0) && (tmp.z==0)){
-			ai.msg("Can't build here: radius "+radius+" x " +pos.x+" y "+pos.y+" z "+pos.z);
+			ai.msg("Can't build here: "+unit.getName()+" radius "+radius+" x " +pos.x+" y "+pos.y+" z "+pos.z);
 			return null;
 		}
 		ai.msg("Can build at " + tmp.x +" "+ tmp.y +" " +tmp.z);

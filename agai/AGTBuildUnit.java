@@ -136,16 +136,15 @@ class AGTaskBuildUnit extends AGTask{
 		return this.mindistance;
 	}
 
-	/* (non-Javadoc)
-	 * @see agai.AGTask#unitCreated(agai.AGUnit)
-	 */
-	@Override
-	public void unitCreated(AGUnit unit){
-		setStatusFinished();
-	}
-
 	@Override
 	public void unitMoveFailed(){
+		ai.msg("");
+	}
+	@Override
+	public void unitCommandFinished(AGUnit unit){
+		ai.msg("");
+		setStatusFinished();
+		unit.setTask(null);
 	}
 }
 
@@ -188,6 +187,7 @@ public class AGTBuildUnit extends AGTaskManager{
 				pos=unit.getPos();
 		}
 		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnitDef().getName()+pos);
+		unit.setTask(task);
 		int res=unit.buildUnit(task.getUnitDef(), pos, 0);
 		task.setStatusWorking();
 		return res;

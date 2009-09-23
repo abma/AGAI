@@ -217,7 +217,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
-			t.unitFinished();
+			t.unitFinished(u);
 		return 0; 
 	}
 
@@ -670,7 +670,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		}
 		catch (Exception e){
 			str=e.getStackTrace()[1].getClassName()+"."+e.getStackTrace()[1].getMethodName()+":"+e.getStackTrace()[1].getLineNumber()+" "+str;
-			
 		}
 		System.out.println(str);
 	}
