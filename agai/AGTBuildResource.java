@@ -209,6 +209,8 @@ public class AGTBuildResource extends AGTaskManager {
 			}
 		}
 		if ((unit!=null)&&(builder!=null)){ //unit with builder found, build it!
+			if (!builder.isIdle())
+				return;
 			if (poi!=null){ //build only one time at a spot
 				poi.setBuilt(true);
 			}
