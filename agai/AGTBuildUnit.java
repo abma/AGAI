@@ -37,6 +37,15 @@ class AGTaskBuildUnit extends AGTask{
 	private int radius;
 	private boolean solved;
 	private int mindistance;
+	private AGTask tasktoassign;
+
+	public AGTask getTasktoassign() {
+		return tasktoassign;
+	}
+
+	public void setTasktoassign(AGTask tasktoassign) {
+		this.tasktoassign = tasktoassign;
+	}
 
 	/**
 	 * Instantiates a new aG task build unit.
@@ -46,12 +55,13 @@ class AGTaskBuildUnit extends AGTask{
 	 * @param pos where to build the unit
 	 * @param radius at which radius
 	 */
-	AGTaskBuildUnit(AGAI ai, UnitDef unitdef, AIFloat3 pos, int radius, int mindistance) {
+	AGTaskBuildUnit(AGAI ai, UnitDef unitdef, AIFloat3 pos, int radius, int mindistance, AGTask tasktoassign) {
 		super(ai);
 		this.pos=pos;
 		this.unitdef=unitdef;
 		this.radius=radius;
 		this.mindistance=mindistance;
+		this.tasktoassign=tasktoassign;
 		solved=false;
 	}
 
@@ -145,6 +155,15 @@ class AGTaskBuildUnit extends AGTask{
 		ai.msg("");
 		setStatusFinished();
 		unit.setTask(null);
+		AGUnit u=unit.getLastUnitCreated();
+		if (u!=null){
+			u.setTask(this.tasktoassign);
+			u.setIdle();
+		}
+	}
+	@Override
+	public void unitCreated(AGUnit builder, AGUnit unit){
+		builder.setLastUnitCreated(unit);
 	}
 }
 
@@ -207,7 +226,7 @@ public class AGTBuildUnit extends AGTaskManager{
 		AGBuildTreeUnit tmp=ai.getAGB().searchNode(builder.getUnit().getDef(),unit);
 		if (tmp!=null){
 			while(tmp.getUnit()!=builder.getUnit().getDef()){
-				AGTaskBuildUnit cur=new AGTaskBuildUnit(ai, tmp.getUnit(),null, AGAI.searchDistance, AGAI.minDistance);
+				AGTaskBuildUnit cur=new AGTaskBuildUnit(ai, tmp.getUnit(),null, AGAI.searchDistance, AGAI.minDistance, null);
 				cur.setSolved();
 				if (!unit.equals(cur.getUnit())) //don't add the unit to build, because it's already in the task list
 					ai.getAGT().addTask(cur);

@@ -56,7 +56,6 @@ public class AGUnits {
 	 */
 	public AGUnit add(Unit unit){
         units.add(new AGUnit(ai, unit));
-        ai.msg("size "+units.size());
         ai.getAGB().searchNode(unit.getDef()).incUnitcount();
         return units.get(units.size()-1);
 	}
@@ -69,7 +68,6 @@ public class AGUnits {
 	 * @return the unit
 	 */
 	public AGUnit getUnit(Unit unit){
-		ai.msg("size "+units.size());
 		for(int i=0; i<units.size();i++)
 			if (units.get(i).getUnit().equals(unit))
 				return units.get(i);

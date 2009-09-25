@@ -26,6 +26,7 @@ import com.springrts.ai.command.AttackUnitAICommand;
 import com.springrts.ai.command.BuildUnitAICommand;
 import com.springrts.ai.command.MoveUnitAICommand;
 import com.springrts.ai.command.SetOnOffUnitAICommand;
+import com.springrts.ai.command.StopUnitAICommand;
 import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
@@ -43,14 +44,25 @@ class AGUnit{
 	/** The task. */
 	private AGTask task=null;
 
-	private AGTask unitCreatedTask=null;
+	/** The last unit created. */
+	private AGUnit lastUnitCreated=null;
 	
-	public AGTask getUnitCreatedTask() {
-		return unitCreatedTask;
+	/**
+	 * Gets the last unit created.
+	 *
+	 * @return the last unit created
+	 */
+	public AGUnit getLastUnitCreated() {
+		return lastUnitCreated;
 	}
 
-	public void setUnitCreatedTask(AGTask unitCreatedTask) {
-		this.unitCreatedTask = unitCreatedTask;
+	/**
+	 * Sets the last unit created.
+	 *
+	 * @param lastUnitCreated the new last unit created
+	 */
+	public void setLastUnitCreated(AGUnit lastUnitCreated) {
+		this.lastUnitCreated = lastUnitCreated;
 	}
 
 	/** The ai. */
@@ -234,6 +246,14 @@ class AGUnit{
 		}
 		ai.msg("Can build at " + tmp.x +" "+ tmp.y +" " +tmp.z);
 		return tmp;
+	}
+
+	/**
+	 * Sets Unit to Idle (Stop current command)
+	 */
+	public void setIdle() {
+		AICommand command = new StopUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 0);
+		ai.handleEngineCommand(command);
 	}
 
 }

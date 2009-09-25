@@ -150,7 +150,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				if (argv.length==2){
 					UnitDef u=aGU.getUnitDef(argv[1]);
 					if (u!=null){
-						aGT.addTask(new AGTaskBuildUnit(this, u, null, 100, 2));
+						aGT.addTask(new AGTaskBuildUnit(this, u, null, 100, 2, null));
 					}
 				}
 			}else if (argv[0].equalsIgnoreCase("dump")){
@@ -160,7 +160,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			}else if (argv[0].equalsIgnoreCase("buildmetal")){
 				aGT.addTask(new AGTaskBuildResource(this,getMetal()));
 			}else if (argv[0].equalsIgnoreCase("scout")){
-				aGT.addTask(new AGTaskScout(this));
+				aGT.addTask(new AGTaskBuildScout(this));
 			}else if (argv[0].equalsIgnoreCase("dumpunits")){
 				aGU.dump();
 			}else if (argv[0].equalsIgnoreCase("dumpunitdefs")){
@@ -192,13 +192,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		if (builder!=null){
 			AGUnit b=aGU.getUnit(builder);
 			if (b!=null){
-				AGTask task = b.getUnitCreatedTask();
-				if (task!=null){
-					msg("assigned task");
-					u.setTask(b.getUnitCreatedTask());
-					b.setUnitCreatedTask(null);
-					task.unitCreated(u);
-				}
+				AGTask t=b.getTask();
+				if (t!=null)
+					t.unitCreated(b, u);
 			}
 		}
 		return 0;
@@ -230,6 +226,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitIdle(Unit unit) {
+		msg("");
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))

@@ -186,7 +186,7 @@ abstract class AGTask{
 	public void unitCaptured(){
 		ai.msg("");
 	}
-	public void unitCreated(AGUnit unit){
+	public void unitCreated(AGUnit builder, AGUnit unit){
 		ai.msg("");
 	}
 	public void unitWeaponFired(){

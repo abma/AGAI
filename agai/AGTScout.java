@@ -61,17 +61,31 @@ class UnitPropertyScout extends AGUnitProperty{
 	}
 }
 
-class AGTaskScout extends AGTask{
-	int i;
-	AGTaskScout(AGAI ai) {
+class AGTaskBuildScout extends AGTask{
+
+	AGTaskBuildScout(AGAI ai) {
 		super(ai);
-		i=0;
 	}
 
 	@Override
 	public void solve() {
 		ai.msg("");
 		ai.getAGT().getScout().solve(this);
+	}
+	public void unitFinished(AGUnit unit){
+		ai.msg("");
+		this.setStatusFinished();
+	}
+}
+
+class AGTaskScout extends AGTask{
+	AGTaskScout(AGAI ai) {
+		super(ai);
+	}
+
+	@Override
+	public void solve() {
+		ai.msg("");
 	}
 
 	@Override
@@ -88,13 +102,10 @@ class AGTaskScout extends AGTask{
 	}
 
 	@Override
-	public void unitIdle(AGUnit unit){
-		ai.msg("");
-		unitCommandFinished(unit);
-	}
-	@Override
 	public void unitDestroyed(){
-		setStatusIdle();
+		ai.msg("");
+		ai.getAGT().addTask(new AGTaskBuildScout(ai));
+		this.setStatusFinished();
 	}
 	public String toString(){
 		return "";
@@ -136,15 +147,16 @@ public class AGTScout extends AGTaskManager{
 				unit=list.get(i).getUnit();
 				AGUnit u=ai.getAGU().getIdle(unit);
 				if (u!=null){ //unit to scout exists, assign task!
-					u.setTask(task);
-					task.setStatusWorking();
+					ai.msg("assigned task to existing scout");
+					u.setTask(new AGTaskScout(ai));
+					u.setIdle(); //avoid delay, instantly use scout task
+					task.setStatusFinished();
 					return;
 				}
 				AGUnit builder=ai.getAGU().getBuilder(unit);
 				if (builder!=null){
-					AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance);
-					builder.setUnitCreatedTask(task);
-					task.setStatusWorking();
+					AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance, new AGTaskScout(ai));
+					task.setStatusFinished();
 					ai.getAGT().addTask(buildtask);
 					return;
 				}
@@ -152,8 +164,8 @@ public class AGTScout extends AGTaskManager{
 		}
 		//no scout found / couldn't build scout, build cheapest one
 		if (unit!=null){
-			AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance);
-			task.setStatusWorking();
+			AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance, new AGTaskScout(ai));
+			task.setStatusFinished();
 			ai.getAGT().addTask(buildtask);
 		}
 	}
