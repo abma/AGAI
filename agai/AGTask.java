@@ -204,4 +204,10 @@ abstract class AGTask{
 	public void unitGiven() {
 		ai.msg("");
 	}
+	public void assign(AGUnit unit){
+		ai.msg("");
+	}
+	public void unassign(AGUnit unit){
+		ai.msg("");
+	}
 }

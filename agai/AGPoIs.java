@@ -153,7 +153,7 @@ public class AGPoIs {
 				}
 			}
 		}
-		if (ret==null){ //all points visited.. start from beginning
+		if ((free)&&(ret==null)){ //all points visited.. start from beginning
 			ai.msg("no valid point found, clearing visited flag");
 			for(int i=0; i<poi.size(); i++){
 				poi.get(i).setVisited(false);

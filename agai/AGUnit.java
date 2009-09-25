@@ -104,9 +104,12 @@ class AGUnit{
 	 * @param task the new task
 	 */
 	public void setTask(AGTask task) {
-		if (this.task!=null)
-			ai.msg("Info: Overwriting old task!");
+		if (this.task!=null){
+			this.task.unassign(this);
+		}
 		this.task=task;
+		if (task!=null)
+			task.assign(this);
 	}
 
 	/**

@@ -45,9 +45,11 @@ class UnitPropertyScout extends AGUnitProperty{
 			a=a+properties.get(i).getNormValue(u1);
 			b=b+properties.get(i).getNormValue(u2);
 		}
-		if (a>b)
+		if (a<b)
 			return 1;
-		else return 0;
+		if (a>b)
+			return -1;
+		return 0;
 	}
 	public boolean isInlist(UnitDef unit){
 		AGBuildTreeUnit tree = ai.getAGB().searchNode(unit);
@@ -110,6 +112,16 @@ class AGTaskScout extends AGTask{
 	public String toString(){
 		return "";
 	}
+	@Override
+	public void assign(AGUnit unit){
+		unit.setIdle();
+		ai.getAGT().getScout().incScouts();
+	}
+
+	@Override
+	public void unassign(AGUnit unit){
+		ai.getAGT().getScout().decScouts();
+	}
 }
 
 
@@ -117,6 +129,25 @@ class AGTaskScout extends AGTask{
  * The Class AGTScout.
  */
 public class AGTScout extends AGTaskManager{
+	
+	/** The count of all scouts */
+	private int scouts = 0;
+	
+	/**
+	 * Dec scouts.
+	 */
+	public void decScouts() {
+		scouts--;
+		ai.msg(""+scouts);
+	}
+
+	/**
+	 * Inc scouts.
+	 */
+	public void incScouts() {
+		scouts++;
+		ai.msg(""+scouts);
+	}
 
 	/** The list. */
 	protected List <AGBuildTreeUnit> list;
@@ -149,15 +180,14 @@ public class AGTScout extends AGTaskManager{
 				if (u!=null){ //unit to scout exists, assign task!
 					ai.msg("assigned task to existing scout");
 					u.setTask(new AGTaskScout(ai));
-					u.setIdle(); //avoid delay, instantly use scout task
 					task.setStatusFinished();
 					return;
 				}
 				AGUnit builder=ai.getAGU().getBuilder(unit);
 				if (builder!=null){
 					AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance, new AGTaskScout(ai));
-					task.setStatusFinished();
 					ai.getAGT().addTask(buildtask);
+					task.setStatusFinished();
 					return;
 				}
 			}
@@ -165,8 +195,8 @@ public class AGTScout extends AGTaskManager{
 		//no scout found / couldn't build scout, build cheapest one
 		if (unit!=null){
 			AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance, new AGTaskScout(ai));
-			task.setStatusFinished();
 			ai.getAGT().addTask(buildtask);
+			task.setStatusFinished();
 		}
 	}
 }

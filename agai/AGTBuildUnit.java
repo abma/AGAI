@@ -158,7 +158,6 @@ class AGTaskBuildUnit extends AGTask{
 		AGUnit u=unit.getLastUnitCreated();
 		if (u!=null){
 			u.setTask(this.tasktoassign);
-			u.setIdle();
 		}
 	}
 	@Override
