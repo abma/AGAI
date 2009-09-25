@@ -169,6 +169,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				aGB.dumpUnits();
 			}else if (argv[0].equalsIgnoreCase("dumpmap")){
 				aGM.dump();
+			}else if (argv[0].equalsIgnoreCase("attack")){
+				aGT.addTask(new AGTaskBuildAttacker(this));
 			}else if (argv[0].equalsIgnoreCase("dumpgraph")){
 				aGB.dumpGraph();
 			}

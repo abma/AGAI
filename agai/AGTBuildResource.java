@@ -75,7 +75,7 @@ class AGTaskBuildResource extends AGTask{
 
 	@Override
 	public void solve() {
-		ai.getAGT().getBuildResource().solve(this);
+		ai.getAGT().get(AGTBuildResource.class).solve(this);
 	}
 	
 	/* (non-Javadoc)

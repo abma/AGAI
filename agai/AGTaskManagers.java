@@ -172,7 +172,7 @@ public class AGTaskManagers {
 	 * 
 	 * @return the list
 	 */
-	private AGTaskManager getList(Class <?> classname){
+	public AGTaskManager get(Class <?> classname){
 		for(int i=0; i<list.size();i++){
 			if (list.get(i).getClass()==classname)
 				return list.get(i);
@@ -181,52 +181,6 @@ public class AGTaskManagers {
 		return null;
 	}
 	
-	/**
-	 * Gets the attack.
-	 * 
-	 * @return the attack taskmanager
-	 */
-	public AGTAttack getAttack() {
-		return (AGTAttack)getList(AGTAttack.class);
-	}
-
-	/**
-	 * Gets the energy.
-	 * 
-	 * @return the energy taskmanager
-	 */
-	public AGTBuildResource getResource() {
-		return (AGTBuildResource)getList(AGTBuildResource.class);
-	}
-
-	/**
-	 * Gets the scout.
-	 * 
-	 * @return the scout taskmanager
-	 */
-	public AGTScout getScout() {
-		return (AGTScout)getList(AGTScout.class);
-	}
-
-	/**
-	 * Gets the buildunit.
-	 * 
-	 * @return the buildunit taskmanager
-	 */
-	public AGTBuildUnit getBuildunit() {
-		return (AGTBuildUnit)getList(AGTBuildUnit.class);
-	}
-
-	
-	/**
-	 * Gets the buildmetal.
-	 * 
-	 * @return the buildmetal taskmanager
-	 */
-	public AGTBuildResource getBuildResource() {
-		return (AGTBuildResource)getList(AGTBuildResource.class);
-	}
-
 	/**
 	 * Adds the Task.
 	 * 

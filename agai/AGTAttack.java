@@ -29,10 +29,26 @@ class AGTaskAttack extends AGTask{
 
 	@Override
 	public void solve() {
-		ai.getAGT().getAttack().solve(this);
+		ai.getAGT().get(AGTAttack.class).solve(this);
 		
 	}
 
+}
+class AGTaskBuildAttacker extends AGTask{
+
+	AGTaskBuildAttacker(AGAI ai) {
+		super(ai);
+	}
+
+	@Override
+	public void solve() {
+		ai.msg("");
+		ai.getAGT().get(AGTAttack.class).solve(this);
+	}
+	public void unitFinished(AGUnit unit){
+		ai.msg("");
+		this.setStatusFinished();
+	}
 }
 
 

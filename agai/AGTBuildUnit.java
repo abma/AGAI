@@ -97,7 +97,7 @@ class AGTaskBuildUnit extends AGTask{
 	 */
 	@Override
 	public void solve() {
-		ai.getAGT().getBuildunit().solve(this);
+		ai.getAGT().get(AGTBuildUnit.class).solve(this);
 	}
 	
 	/* (non-Javadoc)
@@ -105,7 +105,7 @@ class AGTaskBuildUnit extends AGTask{
 	 */
 	@Override
 	public void solveFailed(){
-		ai.getAGT().getBuildunit().solveFailed(this);
+		ai.getAGT().get(AGTBuildUnit.class).solveFailed(this);
 	}
 	
 	//To avoid duplicate buildings

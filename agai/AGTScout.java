@@ -72,7 +72,7 @@ class AGTaskBuildScout extends AGTask{
 	@Override
 	public void solve() {
 		ai.msg("");
-		ai.getAGT().getScout().solve(this);
+		ai.getAGT().get(AGTScout.class).solve(this);
 	}
 	public void unitFinished(AGUnit unit){
 		ai.msg("");
@@ -92,7 +92,6 @@ class AGTaskScout extends AGTask{
 
 	@Override
 	public void unitCommandFinished(AGUnit unit){
-		ai.msg("");
 		AGPoI p=ai.getAGP().getNearestPoi(unit.getPos(), AGPoIs.PoIAny, true, true);
 		if (p!=null){
 			ai.msg("moving to "+p.getPos().x +" " +p.getPos().z);
@@ -115,12 +114,12 @@ class AGTaskScout extends AGTask{
 	@Override
 	public void assign(AGUnit unit){
 		unit.setIdle();
-		ai.getAGT().getScout().incScouts();
+		((AGTScout) ai.getAGT().get(AGTScout.class)).incScouts();
 	}
 
 	@Override
 	public void unassign(AGUnit unit){
-		ai.getAGT().getScout().decScouts();
+		((AGTScout) ai.getAGT().get(AGTScout.class)).decScouts();
 	}
 }
 
