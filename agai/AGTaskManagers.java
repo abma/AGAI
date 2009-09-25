@@ -177,7 +177,7 @@ public class AGTaskManagers {
 			if (list.get(i).getClass()==classname)
 				return list.get(i);
 		}
-		ai.msg("Couldn't find required class!"+classname.getClass());
+		ai.msg("Couldn't find required class!"+classname.getCanonicalName());
 		return null;
 	}
 	

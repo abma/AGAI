@@ -99,11 +99,12 @@ public class AGUnits {
 	 * @return the idle
 	 */
 	public AGUnit getIdle(UnitDef type){
+		ai.msg(""+type);
 		for (int i=0; i<units.size(); i++){
 			if (units.get(i).isIdle())
 				if (type==null)
 					return units.get(i);
-				else if (units.get(i).getUnit().getDef().equals(type)) //FIXME?
+				else if (units.get(i).getDef().equals(type))
 					return units.get(i);
 		}
 		return null;

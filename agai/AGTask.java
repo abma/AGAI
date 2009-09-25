@@ -42,16 +42,6 @@ abstract class AGTask{
 	/** The Constant statusFailed. */
 	final static int statusFailed = 3;
 	
-	private AGUnit unit;
-
-	public AGUnit getUnit() {
-		return unit;
-	}
-
-	public void setUnit(AGUnit unit) {
-		this.unit = unit;
-	}
-
 	/** The ai. */
 	protected AGAI ai;
 	
@@ -170,7 +160,6 @@ abstract class AGTask{
 	public void unitCommandFinished(AGUnit unit){
 		ai.msg(unit.getUnit().getDef().getName());
 	}
-	
 	public void unitDestroyed(){
 		ai.msg("");
 	}

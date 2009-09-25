@@ -23,6 +23,7 @@ import agai.loader.IAGAI;
 import com.springrts.ai.AICommand;
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.command.AddPointDrawAICommand;
+import com.springrts.ai.command.RemovePointDrawAICommand;
 import com.springrts.ai.command.SendTextMessageAICommand;
 import com.springrts.ai.oo.*;
 
@@ -171,11 +172,22 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				aGM.dump();
 			}else if (argv[0].equalsIgnoreCase("attack")){
 				aGT.addTask(new AGTaskBuildAttacker(this));
+			}else if (argv[0].equalsIgnoreCase("clear")){
+				clear();
 			}else if (argv[0].equalsIgnoreCase("dumpgraph")){
 				aGB.dumpGraph();
 			}
 		}
 		return 0; 
+	}
+
+	private void clear() {
+		List <Point>l=clb.getMap().getPoints(true);
+		for(int i=0; i<l.size(); i++){
+			RemovePointDrawAICommand cmd=new RemovePointDrawAICommand();
+			cmd.pos=l.get(i).getPosition();
+			this.handleEngineCommand(cmd);
+		}
 	}
 
 	/**
@@ -342,6 +354,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	@Override
 	public int enemyEnterLOS(Unit enemy) {
 		msg("");
+		aGM.addAttacker(enemy.getPos());
 		return 0; 
 	}
 
@@ -368,6 +381,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	@Override
 	public int enemyEnterRadar(Unit enemy) { //never call enemy.getDef().getName()!!
 		msg("");
+		aGM.addAttacker(enemy.getPos());
 		return 0; 
 	}
 
@@ -604,7 +618,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * @return the difference
 	 */
 	public double getDistance(AIFloat3 pos1, AIFloat3 pos2){
-		return Math.sqrt((Math.pow(pos1.x-pos2.x,2) + Math.pow(pos1.y-pos2.y,2) + Math.pow(pos1.z-pos2.z,2 )));
+		return Math.sqrt((Math.pow(pos1.x-pos2.x,2) + Math.pow(pos1.z-pos2.z,2 )));
 	}
 
 	/**
@@ -673,5 +687,41 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			str=e.getStackTrace()[1].getClassName()+"."+e.getStackTrace()[1].getMethodName()+":"+e.getStackTrace()[1].getLineNumber()+" "+str;
 		}
 		System.out.println(str);
+	}
+
+	/**
+	 * Builds a best fitting unit and assigns task
+	 *
+	 * @param task the task
+	 * @param list the list
+	 * @param tasktoassign the tasktoassign
+	 */
+	public void buildUnit(AGTask task, List <AGBuildTreeUnit> list, AGTask tasktoassign){
+		UnitDef unit=null;
+		for(int i=0; i<list.size(); i++){ //searching for existing unit
+			unit=list.get(i).getUnit();
+			AGUnit u=getAGU().getIdle(unit);
+			if (u!=null){ //unit to scout exists, assign task!
+				msg("assigned task to existing idle unit");
+				u.setTask(tasktoassign);
+				task.setStatusFinished();
+				return;
+			}
+		}
+		for(int i=0; i<list.size(); i++){ //no unit found, try to build with exisiting factories
+			AGUnit builder=getAGU().getBuilder(unit);
+			if (builder!=null){
+				AGTask buildtask=new AGTaskBuildUnit(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
+				getAGT().addTask(buildtask);
+				task.setStatusFinished();
+				return;
+			}
+		}
+		//no unit found, build cheapest one
+		if (unit!=null){
+			AGTask buildtask=new AGTaskBuildUnit(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
+			getAGT().addTask(buildtask);
+			task.setStatusFinished();
+		}
 	}
 }

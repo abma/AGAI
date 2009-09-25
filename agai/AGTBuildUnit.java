@@ -227,8 +227,9 @@ public class AGTBuildUnit extends AGTaskManager{
 			while(tmp.getUnit()!=builder.getUnit().getDef()){
 				AGTaskBuildUnit cur=new AGTaskBuildUnit(ai, tmp.getUnit(),null, AGAI.searchDistance, AGAI.minDistance, null);
 				cur.setSolved();
-				if (!unit.equals(cur.getUnit())) //don't add the unit to build, because it's already in the task list
-					ai.getAGT().addTask(cur);
+				if (!unit.equals(cur.getUnitDef())) //don't add the unit to build, because it's already in the task list
+					if (tmp.getUnitcount()<=0) //don't build builders that are already present (see FIXME also)
+						ai.getAGT().addTask(cur);
 				tmp=tmp.getParent();
 			}
 		}else

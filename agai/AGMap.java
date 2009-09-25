@@ -25,11 +25,17 @@ class AGSector{
 	private int danger; //enemy attackers seen
 	private int lastvisit; //frame
 	private int x;
-	private int y;
-
-	AGSector(int x, int y){
+	private int z;
+	private AIFloat3 pos;
+	public AIFloat3 getPos() {
+		return pos;
+	}
+	private AGAI ai;
+	AGSector(AGAI ai, int x, int z, AIFloat3 pos){
+		this.ai=ai;
 		this.x=x;
-		this.y=y;
+		this.z=z;
+		this.pos=pos;
 	}
 
 	public void incDanger(int danger){
@@ -51,7 +57,7 @@ class AGSector{
 	}
 
 	public int getY() {
-		return y;
+		return z;
 	}
 
 	public int getLastvisit() {
@@ -59,6 +65,9 @@ class AGSector{
 	}
 	public void setLastvisit(int lastvisit) {
 		this.lastvisit = lastvisit;
+	}
+	public double getDistance(AIFloat3 pos){
+		return ai.getDistance(this.pos, pos);
 	}
 }
 
@@ -75,10 +84,10 @@ public class AGMap {
 	private AGSector map [][];
 	
 	/** The width of map sectors. */
-	private int width;
+	private int secWidth;
 	
 	/** The height of map sectors */
-	private int height;
+	private int secHeight;
 	
 	/** The ai. */
 	private AGAI ai;
@@ -98,17 +107,19 @@ public class AGMap {
 		for (int i=0; i<list.size(); i++){
 			tmp=tmp+list.get(i).getUnit().getLosRadius();
 		}
-		avgLos=tmp/list.size();
-		width=Math.round(ai.getClb().getMap().getWidth()/avgLos);
-		height=Math.round(ai.getClb().getMap().getHeight()/avgLos);
-		if ((width==0) || (height==0))
+		avgLos=Math.round((tmp*8)/list.size());
+		secWidth=Math.round((ai.getClb().getMap().getWidth()*8)/avgLos);
+		secHeight=Math.round((ai.getClb().getMap().getHeight()*8)/avgLos);
+		ai.msg(secWidth + " x " + secHeight + "real map size"+ai.getClb().getMap().getWidth()*8 +"x"+ai.getClb().getMap().getHeight()*8);
+		if ((secWidth==0) || (secHeight==0))
 			ai.msg("Fatal: Couldn't create sector map!");
-		map=new AGSector[width][height];
-		for(int i=0;i<width; i++){
-			for(int j=0;j<height; j++){
-				map[i][j]=new AGSector(i,j);
+		map=new AGSector[secWidth][secHeight];
+		for(int i=0;i<secWidth; i++){
+			for(int j=0;j<secHeight; j++){
+				map[i][j]=new AGSector(ai, i,j, new AIFloat3((avgLos*i), 0, (avgLos*j)));
 			}
 		}
+		ai.msg("real map size"+ai.getClb().getMap().getWidth()*8 +"x"+ai.getClb().getMap().getHeight()*8);
 	}
 	
 	/**
@@ -120,10 +131,10 @@ public class AGMap {
 	 */
 	public AGSector getSector(AIFloat3 pos){
 		int x, y;
-		x=Math.round(pos.x / width);
-		y=Math.round(pos.z / height);
-		if ((x>0) && (x<width)
-			&& (y>0) && (y<height))
+		x=Math.round(pos.x / avgLos);
+		y=Math.round(pos.z / avgLos);
+		if ((x>0) && (x<secWidth)
+			&& (y>0) && (y<secHeight))
 				return map[x][y];
 		return null;
 	}
@@ -142,13 +153,15 @@ public class AGMap {
 	 * Dump.
 	 */
 	public void dump(){
-		for(int i=0;i<width; i++){
+		for(int i=0;i<map.length; i++){
 			String line="";
-			for(int j=0;j<height; j++){
+			for(int j=0;j<map[i].length; j++){
 				line = line + map[i][j].toString();
 			}
 			ai.msg(line);
 		}
+		for (int i=1; i<10; i++)
+			ai.drawPoint(map[map.length-i][map[0].length-i].getPos(),""+ i);
 	}
 
 	/**
@@ -170,12 +183,39 @@ public class AGMap {
 			for (int j=0; j<=size*2; j++){
 				posx=x+i-size;
 				posy=y+j-size;
-				if ((posx>0) && (posx<width)
-						&& (posy>0) && (posy<height))
+				if ((posx>0) && (posx<secWidth)
+						&& (posy>0) && (posy<secHeight))
 				danger=danger + map[posx][posy].getDanger() /
 						(Math.abs(size-i) + Math.abs(size-j))+1; //greater distance, lower weight
 			}
 		}
 		return danger;
 	}
+
+	public void setDanger(AIFloat3 pos, int danger){
+		AGSector tmp=getSector(pos);
+		tmp.setAttacker(danger);
+	}
+
+	public AGSector getNextEnemyTarget(AIFloat3 pos,int minDanger){
+		LinkedList <AGSector> secs=new LinkedList <AGSector>();
+		for(int i=0; i<map.length; i++){
+			for(int j=0; j<map[i].length; j++){
+				if (map[i][j].getDanger()>minDanger)
+					secs.add(map[i][j]);
+			}
+		}
+		float min=Float.MAX_VALUE;
+		int p=0;
+		for (int i=0; i<secs.size(); i++){
+			double diff=secs.get(i).getDistance(pos);
+			if (diff<min){
+				p=i;
+			}
+		}
+		if (secs.size()>0)
+			return secs.get(p);
+		return null;
+	}
+
 }

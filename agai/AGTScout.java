@@ -35,28 +35,21 @@ class UnitPropertyScout extends AGUnitProperty{
 		properties.add(new AGUnitPropertyEvaluatorLosRadius(ai, 0.01f, this));
 		properties.add(new AGUnitPropertyEvaluatorSpeed(ai, 0.03f, this));
 		properties.add(new AGUnitPropertyEvaluatorPrice(ai, 0.99f, this));
+		this.update();
 	}
 	public int compare(AGBuildTreeUnit o1, AGBuildTreeUnit o2) {
 		UnitDef u1=o1.getUnit();
 		UnitDef u2=o2.getUnit();
-		float a=0;
-		float b=0;
-		for(int i=0; i<properties.size(); i++){
-			a=a+properties.get(i).getNormValue(u1);
-			b=b+properties.get(i).getNormValue(u2);
-		}
-		if (a<b)
-			return 1;
-		if (a>b)
-			return -1;
-		return 0;
+		return (int)(ai.getAGU().getTotalPrice(u2)-ai.getAGU().getTotalPrice(u1));
 	}
+
 	public boolean isInlist(UnitDef unit){
 		AGBuildTreeUnit tree = ai.getAGB().searchNode(unit);
 		if ((tree!=null) && ((tree.getBacklink()==null) || (tree.getBacklink().size()==0))) //filter commander out
 			return false;
-		if  (((unit.getSpeed()>0) && (unit.getLosRadius()>0))){
-			updateMinMax(unit); //This call is needed to "add" the list to the properties list
+		if  ((unit.getSpeed()>0) && (unit.getLosRadius()>0) &&
+				(properties.get(1).getAverageComp(unit)>0) &&  //faster than average
+				(properties.get(2).getAverageComp(unit)>0)){ //cheaper than average
 			return true;
 		}
 		return false;
@@ -162,7 +155,6 @@ public class AGTScout extends AGTaskManager{
 		for (int i=0; i<list.size(); i++){
 			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getAGU().getTotalPrice(list.get(i).getUnit()) );
 		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -170,32 +162,6 @@ public class AGTScout extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
-		ai.msg("");
-		UnitDef unit=null;
-		if (task.getUnit()==null){
-			for(int i=0; i<list.size(); i++){
-				unit=list.get(i).getUnit();
-				AGUnit u=ai.getAGU().getIdle(unit);
-				if (u!=null){ //unit to scout exists, assign task!
-					ai.msg("assigned task to existing scout");
-					u.setTask(new AGTaskScout(ai));
-					task.setStatusFinished();
-					return;
-				}
-				AGUnit builder=ai.getAGU().getBuilder(unit);
-				if (builder!=null){
-					AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance, new AGTaskScout(ai));
-					ai.getAGT().addTask(buildtask);
-					task.setStatusFinished();
-					return;
-				}
-			}
-		}
-		//no scout found / couldn't build scout, build cheapest one
-		if (unit!=null){
-			AGTask buildtask=new AGTaskBuildUnit(ai, unit, null, AGAI.searchDistance, AGAI.minDistance, new AGTaskScout(ai));
-			ai.getAGT().addTask(buildtask);
-			task.setStatusFinished();
-		}
+		ai.buildUnit(task, list, new AGTaskScout(ai));
 	}
 }

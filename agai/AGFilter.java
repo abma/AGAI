@@ -82,6 +82,20 @@ abstract class AGUnitPropertyEvaluator{
 	private float NORMMAX = 1;
 	private float max;
 	private float min;
+	private float average;
+
+	/**
+	 * Gets the average value of a property.
+	 *
+	 * @param unit the unit
+	 *
+	 * @return the average
+	 */
+	public float getAverageComp(UnitDef unit) {
+		ai.msg("Unit "+unit.getName()+" "+this.getValue(unit)+" "+average);
+		return this.getValue(unit)-average;
+	}
+
 	protected AGAI ai;
 	
 	/**
@@ -94,7 +108,15 @@ abstract class AGUnitPropertyEvaluator{
 	AGUnitPropertyEvaluator(AGAI ai, float max, AGUnitProperty prop){
 		this.ai=ai;
 		NORMMAX=max;
-		
+	}
+
+	private void updateAverageValue(){
+		List <AGBuildTreeUnit> list=ai.getAGB().getUnitList();
+		float tmp=0;
+		for (int i=0; i<list.size(); i++){
+			tmp=tmp + getValue(list.get(i).getUnit());
+		}
+		this.average=tmp/list.size();
 	}
 
 	/**
@@ -102,7 +124,7 @@ abstract class AGUnitPropertyEvaluator{
 	 * 
 	 * @param unit the unit
 	 */
-	public void updateMinMax(UnitDef unit){
+	private void updateMinMax(){
 		List <AGBuildTreeUnit> list=ai.getAGB().getUnitList();
 		for(int i=0; i<list.size(); i++){
 			float tmp=getValue(list.get(i).getUnit());
@@ -112,7 +134,15 @@ abstract class AGUnitPropertyEvaluator{
 				min=tmp;
 		}
 	}
-	
+
+	/**
+	 * Update values.
+	 */
+	public void update(){
+		updateMinMax();
+		updateAverageValue();
+	}
+
 	/**
 	 * Normalize a value and multiplicates with weighting.
 	 * 
@@ -146,9 +176,14 @@ abstract class AGUnitProperty implements Comparator<AGBuildTreeUnit>{
 	 */
 	abstract public boolean isInlist(UnitDef unit);
 	
-	public void updateMinMax(UnitDef unit){
+	/**
+	 * To be called after the list is changed
+	 *
+	 * @param unit the unit
+	 */
+	protected void update(){
 		for(int i=0; i<properties.size(); i++){
-			properties.get(i).updateMinMax(unit);
+			properties.get(i).update();
 		}
 	}
 	
@@ -195,7 +230,8 @@ public class AGFilter{
 				res.add(list.get(i));
 			}
 		}
-	
+		props.update();
+
 		if (res.size()>0){
 			if (props.sort()){
 				Collections.sort(res,props);

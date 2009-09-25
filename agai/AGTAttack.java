@@ -17,11 +17,48 @@
 
 package agai;
 
+import java.util.List;
+
 import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.UnitDef;
+
+class UnitPropertyAttacker extends AGUnitProperty{
+
+	UnitPropertyAttacker(AGAI ai) {
+		super(ai);
+		properties.add(new AGUnitPropertyEvaluatorLosRadius(ai, 0.01f, this));
+		properties.add(new AGUnitPropertyEvaluatorSpeed(ai, 0.03f, this));
+		properties.add(new AGUnitPropertyEvaluatorPrice(ai, 0.99f, this));
+	}
+	public int compare(AGBuildTreeUnit o1, AGBuildTreeUnit o2) {
+		UnitDef u1=o1.getUnit();
+		UnitDef u2=o2.getUnit();
+		float a=0;
+		float b=0;
+		for(int i=0; i<properties.size(); i++){
+			a=a+properties.get(i).getNormValue(u1);
+			b=b+properties.get(i).getNormValue(u2);
+		}
+		if (a<b)
+			return 1;
+		if (a>b)
+			return -1;
+		return 0;
+	}
+	public boolean isInlist(UnitDef unit){
+		AGBuildTreeUnit tree = ai.getAGB().searchNode(unit);
+		if ((tree!=null) && ((tree.getBacklink()==null) || (tree.getBacklink().size()==0))) //filter commander out
+			return false;
+		if  (((unit.getSpeed()>0) && (unit.getLosRadius()>0))){
+			return true;
+		}
+		return false;
+	}
+}
 
 // TODO: Auto-generated Javadoc
 class AGTaskAttack extends AGTask{
-
+	AGSector sec;
 	AGTaskAttack(AGAI ai) {
 		super(ai);
 		// TODO Auto-generated constructor stub
@@ -29,11 +66,35 @@ class AGTaskAttack extends AGTask{
 
 	@Override
 	public void solve() {
-		ai.getAGT().get(AGTAttack.class).solve(this);
+		ai.msg("attacking");
 		
 	}
-
+	@Override
+	public void assign(AGUnit unit){
+		ai.msg("unit assigned");
+		unit.setIdle();
+	}
+	@Override
+	public void unitCommandFinished(AGUnit unit){
+		ai.msg(""+unit);
+		AGSector sec=ai.getAGM().getNextEnemyTarget(unit.getPos(), 0);
+		if(sec!=null)//unit reached sec, cleaned!
+			sec.setAttacker(0);
+		if (sec!=null){
+			unit.moveTo(sec.getPos());
+			ai.msg("attacking at "+sec.getPos().x + sec.getPos().z);
+			ai.drawPoint(sec.getPos(), "attacking");
+			this.sec=sec;
+			return;
+		}
+		ai.msg("nothing to attack found!");
+	}
+	@Override
+	public void unitIdle(AGUnit unit){
+		ai.msg("");
+	}
 }
+
 class AGTaskBuildAttacker extends AGTask{
 
 	AGTaskBuildAttacker(AGAI ai) {
@@ -60,6 +121,7 @@ class AGTaskBuildAttacker extends AGTask{
  */
 public class AGTAttack extends AGTaskManager{
 	
+	protected List <AGBuildTreeUnit> list;
 	/**
 	 * Instantiates a new aG task attack.
 	 * 
@@ -67,6 +129,10 @@ public class AGTAttack extends AGTaskManager{
 	 */
 	AGTAttack(AGAI ai) {
 		super(ai);
+		list=ai.getAGF().Filter(new UnitPropertyAttacker(ai));
+		for (int i=0; i<list.size(); i++){
+			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getAGU().getTotalPrice(list.get(i).getUnit()) );
+		}
 	}
 	
 	/**
@@ -94,8 +160,6 @@ public class AGTAttack extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
-		// TODO Auto-generated method stub
-		
+		ai.buildUnit(task, list, new AGTaskAttack(ai));
 	}
-
 }
