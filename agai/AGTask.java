@@ -158,45 +158,45 @@ abstract class AGTask{
 		this.poi = poi;
 	}
 	public void unitCommandFinished(AGUnit unit){
-		ai.msg(unit.getUnit().getDef().getName());
+		ai.msg(unit.getDef().getName());
 	}
 	public void unitDestroyed(){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitIdle(AGUnit unit){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitMoveFailed(){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitDamaged(){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitCaptured(){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitCreated(AGUnit builder, AGUnit unit){
-		ai.msg("");
+		ai.msg(this.getClass().getName()+" "+builder.getDef().getName()+" "+unit.getDef().getName());
 	}
 	public void unitWeaponFired(){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitEnemyDamaged(){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitEnemyDestroyed(){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitFinished(AGUnit unit){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unitGiven() {
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void assign(AGUnit unit){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 	public void unassign(AGUnit unit){
-		ai.msg("");
+		ai.msg(this.getClass().getName());
 	}
 }

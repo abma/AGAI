@@ -55,6 +55,10 @@ public class AGUnits {
 	 * @return the AG unit
 	 */
 	public AGUnit add(Unit unit){
+		if (unit==null){
+			ai.msg("Error: tried to add null");
+			return null;
+		}
         units.add(new AGUnit(ai, unit));
         ai.getAGB().searchNode(unit.getDef()).incUnitcount();
         return units.get(units.size()-1);
@@ -68,6 +72,10 @@ public class AGUnits {
 	 * @return the unit
 	 */
 	public AGUnit getUnit(Unit unit){
+		if (unit==null){
+			ai.msg("Null requested!");
+			return null;
+		}
 		for(int i=0; i<units.size();i++)
 			if (units.get(i).getUnit().equals(unit))
 				return units.get(i);
@@ -99,13 +107,17 @@ public class AGUnits {
 	 * @return the idle
 	 */
 	public AGUnit getIdle(UnitDef type){
-		ai.msg(""+type);
+		if (type==null){
+			ai.msg("Null!");
+			return null;
+		}
 		for (int i=0; i<units.size(); i++){
-			if (units.get(i).isIdle())
+			if (units.get(i).isIdle()){
 				if (type==null)
 					return units.get(i);
-				else if (units.get(i).getDef().equals(type))
+				else if ((units.get(i).getDef()!=null) && (units.get(i).getDef().equals(type)))
 					return units.get(i);
+			}
 		}
 		return null;
 	}
@@ -130,7 +142,6 @@ public class AGUnits {
 		}
 		return null;
 	}
-	
 
 	/**
 	 * Unit is destroyed.
@@ -140,7 +151,7 @@ public class AGUnits {
 	 */
 	public void destroyed(Unit unit, Unit attacker){
 		ai.getAGB().searchNode(unit.getDef()).decUnitCount();
-		for(int i=0; i<units.size();i++)
+		for(int i=units.size()-1; i>=0;i--)
 			if (units.get(i).getUnit().equals(unit)){
 				units.get(i).destroyed();
 				units.remove(i);
@@ -181,8 +192,10 @@ public class AGUnits {
 	 */
 	public List <AGUnit> getUnits(UnitDef type) {
 		List<AGUnit> res=new ArrayList<AGUnit>();
-		for (int i=0; i<units.size(); i++){
-			if (units.get(i).getUnit().getDef().equals(type))
+		for (int i=units.size()-1; i>=0; i--){
+			if (units.get(i).getDef()==null){ //FIXME: unit was killed (?)
+				units.remove(i);
+			}else if (units.get(i).getUnit().getDef().equals(type))
 				res.add(units.get(i));
 		}
 		return res;

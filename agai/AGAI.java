@@ -79,10 +79,28 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	private Resource energy = null;
 	
 	/** The default minimal distance between buildings. */
-	public static final int minDistance=2;
+	public static final int minDistance=4;
 
 	/** The default distance to search for building poisitions */
 	public static final int searchDistance=100;
+
+	public static final int defaultFacing=0;
+
+	public static enum ElementType{
+		unitAny(0),
+		unitFly(1),
+		unitSwim(2),
+		unitSub(4),
+		unitLand(8),
+		unitAmphibian(16);
+		private int type;
+		public int getType() {
+			return type;
+		}
+		ElementType(int type){
+			this.type=type;
+		}
+	}
 
 	/**
 	 * Inits the.
@@ -171,7 +189,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			}else if (argv[0].equalsIgnoreCase("dumpmap")){
 				aGM.dump();
 			}else if (argv[0].equalsIgnoreCase("attack")){
-				aGT.addTask(new AGTaskBuildAttacker(this));
+				aGT.addTask(new AGTaskBuildAttacker(this, AGAI.ElementType.unitLand));
 			}else if (argv[0].equalsIgnoreCase("clear")){
 				clear();
 			}else if (argv[0].equalsIgnoreCase("dumpgraph")){
@@ -337,6 +355,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	@Override
 	public int unitCaptured(Unit unit, int oldTeamId, int newTeamId) {
 		msg(unit.getDef().getName());
+		if (teamId!=newTeamId){
+			aGU.destroyed(unit, null);
+			return 0;
+		}
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
@@ -353,7 +375,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyEnterLOS(Unit enemy) {
-		msg("");
 		aGM.addAttacker(enemy.getPos());
 		return 0; 
 	}
@@ -367,7 +388,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyLeaveLOS(Unit enemy) {
-		msg("");
 		return 0; 
 	}
 
@@ -380,7 +400,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyEnterRadar(Unit enemy) { //never call enemy.getDef().getName()!!
-		msg("");
 		aGM.addAttacker(enemy.getPos());
 		return 0; 
 	}
@@ -394,7 +413,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyLeaveRadar(Unit enemy) { //never call enemy.getDef().getName()!!
-		msg("");
 		return 0; 
 	}
 
@@ -688,33 +706,59 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		}
 		System.out.println(str);
 	}
+	private ElementType getElementType(UnitDef unit){
+		if (unit.isAbleToFly())
+			return ElementType.unitFly;
+		if (unit.isAbleToHover())
+			return ElementType.unitAmphibian;
+		if (unit.isLevelGround())
+			return ElementType.unitLand;
+		if (unit.getMinWaterDepth()>0)
+			if (unit.getWaterline()>0)
+				return ElementType.unitSub;
+			else
+				return ElementType.unitSwim;
+		msg("Unknown Unittype: "+unit.getName());
+		return ElementType.unitAny;
+	}
+	public boolean UnitInType(UnitDef unit, ElementType type){
+		ElementType type1=this.getElementType(unit);
+		if (type==ElementType.unitAny)
+			return true;
+		return type==type1;
+	}
 
 	/**
-	 * Builds a best fitting unit and assigns task
+	 * Builds a best fitting unit and assigns task.
 	 *
 	 * @param task the task
 	 * @param list the list
 	 * @param tasktoassign the tasktoassign
+	 * @param type the type (Air, Water, ...)
 	 */
-	public void buildUnit(AGTask task, List <AGBuildTreeUnit> list, AGTask tasktoassign){
+	public void buildUnit(AGTask task, List <AGBuildTreeUnit> list, AGTask tasktoassign, ElementType type){
 		UnitDef unit=null;
 		for(int i=0; i<list.size(); i++){ //searching for existing unit
-			unit=list.get(i).getUnit();
-			AGUnit u=getAGU().getIdle(unit);
-			if (u!=null){ //unit to scout exists, assign task!
-				msg("assigned task to existing idle unit");
-				u.setTask(tasktoassign);
-				task.setStatusFinished();
-				return;
+			if (UnitInType(list.get(i).getUnit(), type)){
+				unit=list.get(i).getUnit();
+				AGUnit u=getAGU().getIdle(unit);
+				if (u!=null){ //unit to scout exists, assign task!
+					msg("assigned task to existing idle unit");
+					u.setTask(tasktoassign);
+					task.setStatusFinished();
+					return;
+				}
 			}
 		}
 		for(int i=0; i<list.size(); i++){ //no unit found, try to build with exisiting factories
-			AGUnit builder=getAGU().getBuilder(unit);
-			if (builder!=null){
-				AGTask buildtask=new AGTaskBuildUnit(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
-				getAGT().addTask(buildtask);
-				task.setStatusFinished();
-				return;
+			if (UnitInType(list.get(i).getUnit(), type)){
+				AGUnit builder=getAGU().getBuilder(unit);
+				if (builder!=null){
+					AGTask buildtask=new AGTaskBuildUnit(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
+					getAGT().addTask(buildtask);
+					task.setStatusFinished();
+					return;
+				}
 			}
 		}
 		//no unit found, build cheapest one
@@ -723,5 +767,14 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			getAGT().addTask(buildtask);
 			task.setStatusFinished();
 		}
+	}
+
+	public float getWeaponDamage(UnitDef unit){
+		List <WeaponMount> w=unit.getWeaponMounts();
+		float ret=0;
+		for (int i=0; i<w.size(); i++){
+			ret=ret+w.get(i).getWeaponDef().getDamage().getImpulseBoost();
+		}
+		return ret;
 	}
 }

@@ -80,6 +80,10 @@ public class AGMap {
 	/** The avg los. */
 	private float avgLos; //average line of sight of all units
 	
+	public float getSectorSize() {
+		return avgLos;
+	}
+
 	/** The map. */
 	private AGSector map [][];
 	

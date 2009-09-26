@@ -100,7 +100,6 @@ class AGTaskBuildResource extends AGTask{
 	public int getResIdx(){
 		return res.getResourceId();
 	}
-
 }
 
 /**

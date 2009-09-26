@@ -19,7 +19,7 @@ package agai;
 
 import java.util.List;
 
-import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
 class UnitPropertyAttacker extends AGUnitProperty{
@@ -39,9 +39,9 @@ class UnitPropertyAttacker extends AGUnitProperty{
 			a=a+properties.get(i).getNormValue(u1);
 			b=b+properties.get(i).getNormValue(u2);
 		}
-		if (a<b)
-			return 1;
 		if (a>b)
+			return 1;
+		if (a<b)
 			return -1;
 		return 0;
 	}
@@ -49,7 +49,7 @@ class UnitPropertyAttacker extends AGUnitProperty{
 		AGBuildTreeUnit tree = ai.getAGB().searchNode(unit);
 		if ((tree!=null) && ((tree.getBacklink()==null) || (tree.getBacklink().size()==0))) //filter commander out
 			return false;
-		if  (((unit.getSpeed()>0) && (unit.getLosRadius()>0))){
+		if  (((unit.getSpeed()>0) && (unit.getLosRadius()>0) && (ai.getWeaponDamage(unit)>0))){
 			return true;
 		}
 		return false;
@@ -78,15 +78,23 @@ class AGTaskAttack extends AGTask{
 	public void unitCommandFinished(AGUnit unit){
 		ai.msg(""+unit);
 		AGSector sec=ai.getAGM().getNextEnemyTarget(unit.getPos(), 0);
-		if(sec!=null)//unit reached sec, cleaned!
-			sec.setAttacker(0);
+		if(sec!=null){//unit reached sec, cleaned?
+			List<Unit> list=ai.getClb().getEnemyUnitsIn(sec.getPos(), ai.getAGM().getSectorSize());
+			if (list.size()>0){
+				unit.attackUnit(list.get(0));
+				return;
+			}else
+				sec.setAttacker(0);
+		}
 		if (sec!=null){
 			unit.moveTo(sec.getPos());
 			ai.msg("attacking at "+sec.getPos().x + sec.getPos().z);
-			ai.drawPoint(sec.getPos(), "attacking");
 			this.sec=sec;
 			return;
 		}
+		ai.getAGT().addTask(new AGTaskBuildScout(ai));
+		setStatusFinished();
+		unit.setTask(null);
 		ai.msg("nothing to attack found!");
 	}
 	@Override
@@ -96,9 +104,15 @@ class AGTaskAttack extends AGTask{
 }
 
 class AGTaskBuildAttacker extends AGTask{
+	private AGAI.ElementType type;
 
-	AGTaskBuildAttacker(AGAI ai) {
+	public AGAI.ElementType getType() {
+		return type;
+	}
+
+	AGTaskBuildAttacker(AGAI ai, AGAI.ElementType type) {
 		super(ai);
+		this.type=type;
 	}
 
 	@Override
@@ -106,14 +120,13 @@ class AGTaskBuildAttacker extends AGTask{
 		ai.msg("");
 		ai.getAGT().get(AGTAttack.class).solve(this);
 	}
+	@Override
 	public void unitFinished(AGUnit unit){
 		ai.msg("");
 		this.setStatusFinished();
 	}
 }
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class AGTAttack.
  * 
@@ -136,19 +149,6 @@ public class AGTAttack extends AGTaskManager{
 	}
 	
 	/**
-	 * Sets the pos.
-	 * 
-	 * @param pos the new pos
-	 */
-	public void setPos(AIFloat3 pos){
-		//this.pos=pos;
-	}
-	
-	/* (non-Javadoc)
-	 * @see antigeorgeai.AGTask#solveTodo()
-	 */
-
-	/**
 	 * Dump.
 	 */
 	public void dump(){
@@ -160,6 +160,6 @@ public class AGTAttack extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
-		ai.buildUnit(task, list, new AGTaskAttack(ai));
+		ai.buildUnit(task, list, new AGTaskAttack(ai), ((AGTaskBuildAttacker)task).getType());
 	}
 }

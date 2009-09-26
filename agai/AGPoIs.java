@@ -156,6 +156,8 @@ public class AGPoIs {
 		if ((free)&&(ret==null)){ //all points visited.. start from beginning
 			ai.msg("no valid point found, clearing visited flag");
 			for(int i=0; i<poi.size(); i++){
+				if (!poi.get(i).isVisited()) //FIXME? we missed a point in search func, no recursive
+					return ret;
 				poi.get(i).setVisited(false);
 			}
 			return getNearestPoi(curpos, type, free, visited);

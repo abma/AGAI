@@ -23,7 +23,53 @@ import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.UnitDef;
 
 
-// TODO: Auto-generated Javadoc
+class AGTaskRealBuild extends AGTask{
+	private AGTask tasktoassign;
+	private AIFloat3 pos;
+	private UnitDef def;
+	AGTaskRealBuild(AGAI ai, UnitDef def, AIFloat3 pos, AGTask tasktoassign) {
+		super(ai);
+		this.tasktoassign=tasktoassign;
+		this.pos=pos;
+		this.def=def;
+	}
+
+	@Override
+	public void solve() {
+	}
+
+	@Override
+	public void unitMoveFailed(){
+		ai.msg("");
+	}
+	@Override
+	public void unitCommandFinished(AGUnit unit){
+		ai.msg("");
+		AGUnit u=unit.getLastUnitCreated();
+		if (u!=null){
+			ai.msg("assigning task to created unit "+tasktoassign);
+			u.setTask(tasktoassign);
+		}
+		setStatusFinished();
+		unit.setTask(null);
+	}
+
+	public void unitIdle(AGUnit unit){
+		ai.msg("");
+		unit.buildUnit(def, pos, AGAI.defaultFacing);
+	}
+	@Override
+	public void unitCreated(AGUnit builder, AGUnit unit){
+		ai.msg("Setting LastUnitCreated");
+		builder.setLastUnitCreated(unit);
+	}
+	@Override
+	public void assign(AGUnit unit){
+		ai.msg("");
+		unit.setIdle();
+	}
+}
+
 // Task with unit to build
 class AGTaskBuildUnit extends AGTask{
 	
@@ -108,19 +154,6 @@ class AGTaskBuildUnit extends AGTask{
 		ai.getAGT().get(AGTBuildUnit.class).solveFailed(this);
 	}
 	
-	//To avoid duplicate buildings
-	//FIXME?
-	@Override
-	public boolean equals(Object obj) {
-		if (obj==null)
-			return false;
-		if (obj.getClass()==this.getClass()){
-			AGTaskBuildUnit tmp=(AGTaskBuildUnit)obj;
-			return tmp.getUnitDef().equals(getUnitDef()); //FIXME: more checks : pos, radius (?)
-		}
-		return false;
-	}
-
 	@Override
 	public String toString() {
 		return "AGTaskBuildUnit " + unitdef.getName() + " "+ unitdef.getHumanName();
@@ -146,24 +179,6 @@ class AGTaskBuildUnit extends AGTask{
 		return this.mindistance;
 	}
 
-	@Override
-	public void unitMoveFailed(){
-		ai.msg("");
-	}
-	@Override
-	public void unitCommandFinished(AGUnit unit){
-		ai.msg("");
-		setStatusFinished();
-		unit.setTask(null);
-		AGUnit u=unit.getLastUnitCreated();
-		if (u!=null){
-			u.setTask(this.tasktoassign);
-		}
-	}
-	@Override
-	public void unitCreated(AGUnit builder, AGUnit unit){
-		builder.setLastUnitCreated(unit);
-	}
 }
 
 /**
@@ -205,9 +220,9 @@ public class AGTBuildUnit extends AGTaskManager{
 				pos=unit.getPos();
 		}
 		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnitDef().getName()+pos);
-		unit.setTask(task);
+		unit.setTask(new AGTaskRealBuild(ai, task.getUnitDef(),task.getPos(), task.getTasktoassign()));
 		int res=unit.buildUnit(task.getUnitDef(), pos, 0);
-		task.setStatusWorking();
+		task.setStatusFinished();
 		return res;
 	}
 	

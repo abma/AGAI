@@ -92,7 +92,6 @@ abstract class AGUnitPropertyEvaluator{
 	 * @return the average
 	 */
 	public float getAverageComp(UnitDef unit) {
-		ai.msg("Unit "+unit.getName()+" "+this.getValue(unit)+" "+average);
 		return this.getValue(unit)-average;
 	}
 

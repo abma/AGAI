@@ -162,6 +162,6 @@ public class AGTScout extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
-		ai.buildUnit(task, list, new AGTaskScout(ai));
+		ai.buildUnit(task, list, new AGTaskScout(ai), AGAI.ElementType.unitAny);
 	}
 }
