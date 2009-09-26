@@ -45,24 +45,14 @@ class AGUnit{
 	private AGTask task=null;
 
 	/** The last unit created. */
-	private AGUnit lastUnitCreated=null;
+	private AGUnit builder=null;
 	
-	/**
-	 * Gets the last unit created.
-	 *
-	 * @return the last unit created
-	 */
-	public AGUnit getLastUnitCreated() {
-		return lastUnitCreated;
+	public AGUnit getBuilder() {
+		return builder;
 	}
 
-	/**
-	 * Sets the last unit created.
-	 *
-	 * @param lastUnitCreated the new last unit created
-	 */
-	public void setLastUnitCreated(AGUnit lastUnitCreated) {
-		this.lastUnitCreated = lastUnitCreated;
+	public void setBuilder(AGUnit builder) {
+		this.builder = builder;
 	}
 
 	/** The ai. */

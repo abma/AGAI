@@ -121,7 +121,7 @@ class AGTaskBuildAttacker extends AGTask{
 		ai.getAGT().get(AGTAttack.class).solve(this);
 	}
 	@Override
-	public void unitFinished(AGUnit unit){
+	public void unitFinished(AGUnit builder, AGUnit unit){
 		ai.msg("");
 		this.setStatusFinished();
 	}

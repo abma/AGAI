@@ -225,15 +225,16 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			AGUnit b=aGU.getUnit(builder);
 			if (b!=null){
 				AGTask t=b.getTask();
-				if (t!=null)
+				if (t!=null){
 					t.unitCreated(b, u);
+				}
 			}
 		}
 		return 0;
 	}
 
 	/**
-	 * Unit finished.
+	 * Unit built is complete
 	 * 
 	 * @param unit the unit
 	 * 
@@ -243,9 +244,13 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	public int unitFinished(Unit unit) {
 		msg(unit.getDef().getName());
 		AGUnit u=aGU.getUnit(unit);
-		AGTask t=u.getTask();
-		if ((u!=null) && (t!=null))
-			t.unitFinished(u);
+		AGUnit b=u.getBuilder();
+		if (b!=null){ //unitfinished event for the new unit is useless, call the builder!
+			AGTask t=b.getTask();
+			if (t!=null){
+				t.unitFinished(b, u);
+			}
+		}
 		return 0; 
 	}
 

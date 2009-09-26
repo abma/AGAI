@@ -24,14 +24,10 @@ import com.springrts.ai.oo.UnitDef;
 
 
 class AGTaskRealBuild extends AGTask{
-	private AGTask tasktoassign;
-	private AIFloat3 pos;
-	private UnitDef def;
-	AGTaskRealBuild(AGAI ai, UnitDef def, AIFloat3 pos, AGTask tasktoassign) {
+	AGTaskBuildUnit buildtask;
+	AGTaskRealBuild(AGAI ai, AGTaskBuildUnit buildtask) {
 		super(ai);
-		this.tasktoassign=tasktoassign;
-		this.pos=pos;
-		this.def=def;
+		this.buildtask=buildtask;
 	}
 
 	@Override
@@ -42,26 +38,20 @@ class AGTaskRealBuild extends AGTask{
 	public void unitMoveFailed(){
 		ai.msg("");
 	}
+
 	@Override
-	public void unitCommandFinished(AGUnit unit){
-		ai.msg("");
-		AGUnit u=unit.getLastUnitCreated();
-		if (u!=null){
-			ai.msg("assigning task to created unit "+tasktoassign);
-			u.setTask(tasktoassign);
-		}
+	public void unitFinished(AGUnit builder, AGUnit unit){
+		ai.msg(unit.getDef().getName());
+		unit.setTask(buildtask.getTasktoassign());
 		setStatusFinished();
-		unit.setTask(null);
+		buildtask.setStatusFinished();
+		builder.setTask(null); //mark unit as idle, because unit was built
 	}
 
-	public void unitIdle(AGUnit unit){
-		ai.msg("");
-		unit.buildUnit(def, pos, AGAI.defaultFacing);
-	}
 	@Override
 	public void unitCreated(AGUnit builder, AGUnit unit){
 		ai.msg("Setting LastUnitCreated");
-		builder.setLastUnitCreated(unit);
+		unit.setBuilder(builder);
 	}
 	@Override
 	public void assign(AGUnit unit){
@@ -220,9 +210,9 @@ public class AGTBuildUnit extends AGTaskManager{
 				pos=unit.getPos();
 		}
 		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnitDef().getName()+pos);
-		unit.setTask(new AGTaskRealBuild(ai, task.getUnitDef(),task.getPos(), task.getTasktoassign()));
+		task.setStatusWorking();
+		unit.setTask(new AGTaskRealBuild(ai, task));
 		int res=unit.buildUnit(task.getUnitDef(), pos, 0);
-		task.setStatusFinished();
 		return res;
 	}
 	

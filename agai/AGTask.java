@@ -187,7 +187,7 @@ abstract class AGTask{
 	public void unitEnemyDestroyed(){
 		ai.msg(this.getClass().getName());
 	}
-	public void unitFinished(AGUnit unit){
+	public void unitFinished(AGUnit builder, AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
 	public void unitGiven() {
