@@ -51,7 +51,10 @@ class AGTaskRealBuild extends AGTask{
 	@Override
 	public void unitFinished(AGUnit builder, AGUnit unit){
 		ai.msg(unit.getDef().getName());
-		unit.setTask(buildtask.getTasktoassign());
+		AGTask tmp=buildtask.getTasktoassign();
+		unit.setTask(tmp);
+		if (tmp!=null)
+			tmp.unitFinished(builder, unit); //call unitfinished event
 		setStatusFinished();
 		buildtask.setStatusFinished();
 		builder.setTask(null); //mark unit as idle, because unit was built

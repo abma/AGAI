@@ -96,7 +96,7 @@ class AGTaskScout extends AGTask{
 	}
 
 	@Override
-	public void unitDestroyed(){
+	public void unitDestroyed(AGUnit unit){
 		ai.msg("");
 		ai.getAGT().addTask(new AGTaskBuildScout(ai));
 		this.setStatusFinished();

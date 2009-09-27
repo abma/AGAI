@@ -77,6 +77,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	
 	/** The energy. */
 	private Resource energy = null;
+
+	private AGGroup aGG;
 	
 	/** The default minimal distance between buildings. */
 	public static final int minDistance=4;
@@ -125,6 +127,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		this.aGF = new AGFilter(this);
 		this.aGT = new AGTaskManagers(this);
 		this.aGM = new AGMap(this);
+		this.aGG = new AGGroup(this);
 
 		List <Unit> list=clb.getTeamUnits();
 		for(int i=0; i<list.size(); i++){
@@ -192,11 +195,22 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				aGT.addTask(new AGTaskBuildAttacker(this, AGAI.ElementType.unitLand));
 			}else if (argv[0].equalsIgnoreCase("clear")){
 				clear();
+			}else if (argv[0].equalsIgnoreCase("group")){
+				group();
 			}else if (argv[0].equalsIgnoreCase("dumpgraph")){
 				aGB.dumpGraph();
 			}
 		}
 		return 0; 
+	}
+
+	private void group() {
+		AGTaskGroup group=new AGTaskGroup(this, new AGTaskAttack(this), 10);
+		for (int i=0; i<10; i++){
+			AGTask tmp= new AGTaskBuildUnit(this, aGU.getUnitDef("armflea"), null, 0, 0, group);
+			aGT.addTask(tmp);
+		}
+		aGG.addGroup(group);
 	}
 
 	private void clear() {
@@ -326,7 +340,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
-			t.unitDestroyed();
+			t.unitDestroyed(u);
 		else
 			msg(unit.getDef().getName());
 		aGU.destroyed(unit,attacker);
