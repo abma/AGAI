@@ -56,6 +56,43 @@ class UnitPropertyAttacker extends AGUnitProperty{
 	}
 }
 
+class AGTaskAttackMove extends AGTask{
+	private AGTask taskWhenReached;
+	private AGSector destination;
+	private List <AGSector> path;
+	AGTaskAttackMove(AGAI ai, AGTask taskWhenReached, AGSector destination) {
+		super(ai);
+		this.taskWhenReached=taskWhenReached;
+		this.destination=destination;
+	}
+
+	@Override
+	public void solve() {
+	}
+	@Override
+	public void unitCommandFinished(AGUnit unit){
+		if (ai.getAGM().isPosInSec(unit.getPos(),destination)){
+			ai.msg("Destination reached, back to the old task!");
+			setStatusFinished();
+			unit.setTask(taskWhenReached);
+		}else{ //when moving, try to avoid danger sectors
+			ai.msg("Sneak moving");
+			if (path==null){
+				AGSector cursec=ai.getAGM().getSector(unit.getPos());
+				path=ai.getAGM().getSecurePath(cursec, destination);
+			}
+			if (path.size()>0)
+				unit.moveTo(path.remove(0).getPos());
+			else
+				unit.moveTo(destination.getPos());
+		}
+	}
+	@Override
+	public void assign(AGUnit unit){
+		unit.setIdle();
+	}
+}
+
 // TODO: Auto-generated Javadoc
 class AGTaskAttack extends AGTask{
 	AGSector currentsec;
@@ -88,7 +125,7 @@ class AGTaskAttack extends AGTask{
 		}
 		AGSector sec=ai.getAGM().getNextEnemyTarget(unit.getPos(), 0);
 		if (sec!=null){
-			unit.moveTo(sec.getPos());
+			unit.setTask(new AGTaskAttackMove(ai,this, sec));
 			ai.msg("attacking at "+sec.getPos().x +" "+ sec.getPos().y+" "+ sec.getPos().z);
 			this.currentsec=sec;
 			return;

@@ -16,6 +16,7 @@
  */
 package agai;
 
+
 import java.util.LinkedList;
 
 import com.springrts.ai.AIFloat3;
@@ -28,6 +29,32 @@ class AGSector{
 	private int damageReceived;
 	private int enemyUnits;
 	private int unitsDied;
+	private int mark;
+	private int markgrey;
+	public int getMarkgrey() {
+		return markgrey;
+	}
+
+	public void setMarkgrey(int markgrey) {
+		this.markgrey = markgrey;
+	}
+	private AGSector parent;
+	public AGSector getParent() {
+		return parent;
+	}
+
+	public void setParent(AGSector parent) {
+		this.parent = parent;
+	}
+
+	public int getMark() {
+		return mark;
+	}
+
+	public void setMark(int mark) {
+		this.mark = mark;
+	}
+
 	public int getUnitsDied() {
 		return unitsDied;
 	}
@@ -96,7 +123,10 @@ class AGSector{
 		return ai.getDistance(this.pos, pos);
 	}
 	public int getDanger(){
-		return enemyBuildings + damageReceived + enemyUnits;
+		return enemyBuildings + damageReceived + enemyUnits + unitsDied;
+	}
+	public int getEnemy(){
+		return enemyBuildings + enemyUnits;
 	}
 	public void setClean(){
 		enemyBuildings=0;
@@ -104,6 +134,7 @@ class AGSector{
 		damageReceived=0;
 		unitsDied=0;
 	}
+
 }
 
 
@@ -130,7 +161,7 @@ public class AGMap {
 	
 	/** The ai. */
 	private AGAI ai;
-	
+	private int mark;
 	public static final int unitAttacked = 10;
 	public static final int enemyBuilding = 1;
 
@@ -141,6 +172,7 @@ public class AGMap {
 	 */
 	AGMap(AGAI ai){
 		this.ai=ai;
+		this.mark=1;
 		LinkedList<AGBuildTreeUnit> list=ai.getAGB().getUnitList();
 		float tmp=0;
 		for (int i=0; i<list.size(); i++){
@@ -222,18 +254,17 @@ public class AGMap {
 	/**
 	 * Gets the danger.
 	 *
-	 * @param pos the pos
+	 * @param sec the Sector
 	 * @param size the of the block to check danger
 	 *
 	 * @return the danger
 	 */
-	public int getDanger(AIFloat3 pos, int size){
-		AGSector tmp=getSector(pos);
-		int x=tmp.getX();
-		int y=tmp.getY();
+	public int getDanger(AGSector sec, int size){
+		int x=sec.getX();
+		int y=sec.getY();
 		int posx;
 		int posy;
-		int danger=tmp.getDanger();
+		int danger=sec.getDanger();
 		for (int i=0; i<=size*2; i++){
 			for (int j=0; j<=size*2; j++){
 				posx=x+i-size;
@@ -241,7 +272,7 @@ public class AGMap {
 				if ((posx>0) && (posx<secWidth)
 						&& (posy>0) && (posy<secHeight))
 				danger=danger + map[posx][posy].getDanger() /
-						(Math.abs(size-i) + Math.abs(size-j))+1; //greater distance, lower weight
+						(Math.abs(size-i) + Math.abs(size-j)+1); //greater distance, lower weight
 			}
 		}
 		return danger;
@@ -251,7 +282,7 @@ public class AGMap {
 		LinkedList <AGSector> secs=new LinkedList <AGSector>();
 		for(int i=0; i<map.length; i++){
 			for(int j=0; j<map[i].length; j++){
-				if (map[i][j].getDanger()>minDanger)
+				if (map[i][j].getEnemy()>minDanger)
 					secs.add(map[i][j]);
 			}
 		}
@@ -265,6 +296,79 @@ public class AGMap {
 		}
 		if (secs.size()>0)
 			return secs.get(p);
+		return null;
+	}
+
+	public void unitDamaged(Unit unit, Unit attacker, float damage) {
+		addDanger(attacker);
+		AGSector sec=getSector(unit.getPos());
+		sec.setDamageReceived(sec.getDamageReceived()+Math.round(damage));
+	}
+
+	public boolean isPosInSec(AIFloat3 pos, AGSector destination) {
+		return (getSector(pos)==destination);
+	}
+	public AGSector get(int x, int y){
+		if ((x>=0) && (y>=0) &&
+			(x<secWidth) && (y<secHeight))
+			return map[x][y];
+		return null;
+	}
+
+	private int extractMin(LinkedList <AGSector> queue){
+		int min=Integer.MAX_VALUE;
+		int pos=0;
+		for (int i=0; i<queue.size();i++){
+			int tmp=getDanger(queue.get(i),1);
+			if (tmp==0)
+				return i;
+			if (tmp<min){
+				pos=i;
+			}
+		}
+		return pos;
+	}
+
+	/**
+	 * Gets the secure path, cur.getParent().getParent()... contains the path
+	 *
+	 * @param from the from
+	 * @param to the to
+	 *
+	 * @return the secure path
+	 */
+	public LinkedList <AGSector> getSecurePath(AGSector from, AGSector to){
+		LinkedList <AGSector> queue=new LinkedList  <AGSector>();
+		mark++;
+		queue.clear();
+		queue.add(from);
+		from.setParent(null);
+		while(queue.size()>0){
+			AGSector cur=queue.remove(extractMin(queue));
+			if (cur==to){ //target reached
+				ai.msg("found path!");
+				LinkedList <AGSector> path=new LinkedList<AGSector>();
+				while (cur!=null){
+					path.addFirst(cur);
+					ai.drawPoint(cur.getPos(), ""+path.size());
+					cur=cur.getParent();
+				}
+				return path;
+			}
+			cur.setMark(mark);
+			for (int i=0; i<3; i++){
+				for (int j=0; j<3; j++){
+					if (!((i==1) && (j==1))){ //do not add curpos to queue
+						AGSector sec=get(cur.getX()+(1-i), cur.getY()+(1-j));
+						if ((sec!=null) && (sec.getMark()!=mark)){
+							sec.setMark(mark);
+							queue.add(sec);
+							sec.setParent(cur);
+						}
+					}
+				}
+			}
+		}
 		return null;
 	}
 

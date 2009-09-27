@@ -309,6 +309,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			t.unitDamaged();
 		else
 			msg(unit.getDef().getName());
+		aGM.unitDamaged(unit,attacker,damage);
 		return 0; 
 	}
 
