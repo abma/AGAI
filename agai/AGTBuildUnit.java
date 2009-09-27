@@ -29,13 +29,22 @@ class AGTaskRealBuild extends AGTask{
 		super(ai);
 		this.buildtask=buildtask;
 	}
-
+	private void build(AGUnit unit){
+		if (buildtask!=null){
+			ai.msg(buildtask.toString());
+			AIFloat3 pos=buildtask.getPos();
+			if (pos==null)
+				pos=new AIFloat3(unit.getPos());
+			unit.buildUnit(buildtask.getUnitDef(), pos, AGAI.defaultFacing);
+		}
+	}
 	@Override
 	public void solve() {
+		ai.msg("");
 	}
 
 	@Override
-	public void unitMoveFailed(){
+	public void unitMoveFailed(AGUnit unit){
 		ai.msg("");
 	}
 
@@ -57,6 +66,13 @@ class AGTaskRealBuild extends AGTask{
 	public void assign(AGUnit unit){
 		ai.msg("");
 		unit.setIdle();
+	}
+
+	@Override
+	public void unitCommandFinished(AGUnit unit){
+		if (getStatus()!=AGTask.statusFinished){
+			build(unit);
+		}
 	}
 }
 
@@ -169,6 +185,10 @@ class AGTaskBuildUnit extends AGTask{
 		return this.mindistance;
 	}
 
+	public void setPos(AIFloat3 pos) {
+		this.pos=pos;
+	}
+
 }
 
 /**
@@ -212,8 +232,8 @@ public class AGTBuildUnit extends AGTaskManager{
 		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnitDef().getName()+pos);
 		task.setStatusWorking();
 		unit.setTask(new AGTaskRealBuild(ai, task));
-		int res=unit.buildUnit(task.getUnitDef(), pos, 0);
-		return res;
+		unit.buildUnit(task.getUnitDef(), pos, AGAI.defaultFacing);
+		return 0;
 	}
 	
 	
@@ -239,7 +259,6 @@ public class AGTBuildUnit extends AGTaskManager{
 			}
 		}else
 			ai.msg("couldn't solve");
-		
 	}
 	
 	/* (non-Javadoc)

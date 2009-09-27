@@ -19,10 +19,46 @@ package agai;
 import java.util.LinkedList;
 
 import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.Unit;
+import com.springrts.ai.oo.UnitDef;
 
 // TODO: Auto-generated Javadoc
 class AGSector{
-	private int danger; //enemy attackers seen
+	private int enemyBuildings; //enemy attackers seen
+	private int damageReceived;
+	private int enemyUnits;
+	private int unitsDied;
+	public int getUnitsDied() {
+		return unitsDied;
+	}
+
+	public void setUnitsDied(int unitsDied) {
+		this.unitsDied = unitsDied;
+	}
+
+	public int getEnemyBuildings() {
+		return enemyBuildings;
+	}
+
+	public void setEnemyBuildings(int enemyBuildings) {
+		this.enemyBuildings = enemyBuildings;
+	}
+
+	public int getDamageReceived() {
+		return damageReceived;
+	}
+
+	public void setDamageReceived(int damageReceived) {
+		this.damageReceived = damageReceived;
+	}
+
+	public int getEnemyUnits() {
+		return enemyUnits;
+	}
+
+	public void setEnemyUnits(int enemyUnits) {
+		this.enemyUnits = enemyUnits;
+	}
 	private int lastvisit; //frame
 	private int x;
 	private int z;
@@ -38,18 +74,8 @@ class AGSector{
 		this.pos=pos;
 	}
 
-	public void incDanger(int danger){
-		this.danger=this.danger+danger;
-	}
 	public String toString(){
-		return ""+danger;
-	}
-	public int getDanger() {
-		return danger;
-	}
-
-	public void setAttacker(int danger) {
-		this.danger = danger;
+		return ""+enemyBuildings+" "+enemyUnits +" " +damageReceived;
 	}
 
 	public int getX() {
@@ -68,6 +94,15 @@ class AGSector{
 	}
 	public double getDistance(AIFloat3 pos){
 		return ai.getDistance(this.pos, pos);
+	}
+	public int getDanger(){
+		return enemyBuildings + damageReceived + enemyUnits;
+	}
+	public void setClean(){
+		enemyBuildings=0;
+		enemyUnits=0;
+		damageReceived=0;
+		unitsDied=0;
 	}
 }
 
@@ -123,6 +158,13 @@ public class AGMap {
 				map[i][j]=new AGSector(ai, i,j, new AIFloat3((avgLos*i), 0, (avgLos*j)));
 			}
 		}
+
+		for(int i=0;i<secWidth; i++){ //setting evelation
+			for(int j=0;j<secHeight; j++){
+				AIFloat3 pos=map[i][j].getPos();
+				pos.y=ai.getClb().getMap().getElevationAt(pos.x, pos.z);
+			}
+		}
 		ai.msg("real map size"+ai.getClb().getMap().getWidth()*8 +"x"+ai.getClb().getMap().getHeight()*8);
 	}
 	
@@ -146,11 +188,20 @@ public class AGMap {
 	/**
 	 * Adds the attacker.
 	 * 
-	 * @param pos the pos
+	 * @param unit the unit
 	 */
-	public void addAttacker(AIFloat3 pos){
-		AGSector tmp=getSector(pos);
-		tmp.incDanger(unitAttacked);
+	public void addDanger(Unit unit){
+		AGSector tmp=getSector(unit.getPos());
+		UnitDef def=unit.getDef();
+		if ((def!=null) && (def.isAbleToMove()))
+			tmp.setEnemyUnits(tmp.getEnemyUnits()+1);
+		else
+			tmp.setEnemyBuildings(tmp.getEnemyBuildings()+1);
+	}
+	
+	public void unitDestroyed(Unit unit){
+		AGSector tmp=getSector(unit.getPos());
+		tmp.setUnitsDied(tmp.getUnitsDied()+1);
 	}
 	
 	/**
@@ -161,11 +212,11 @@ public class AGMap {
 			String line="";
 			for(int j=0;j<map[i].length; j++){
 				line = line + map[i][j].toString();
+				if (map[i][j].getDanger()>0)
+					ai.drawPoint(map[i][j].getPos(),""+map[i][j].getDanger());
 			}
 			ai.msg(line);
 		}
-		for (int i=1; i<10; i++)
-			ai.drawPoint(map[map.length-i][map[0].length-i].getPos(),""+ i);
 	}
 
 	/**
@@ -194,11 +245,6 @@ public class AGMap {
 			}
 		}
 		return danger;
-	}
-
-	public void setDanger(AIFloat3 pos, int danger){
-		AGSector tmp=getSector(pos);
-		tmp.setAttacker(danger);
 	}
 
 	public AGSector getNextEnemyTarget(AIFloat3 pos,int minDanger){

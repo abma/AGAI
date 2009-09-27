@@ -58,7 +58,7 @@ class UnitPropertyAttacker extends AGUnitProperty{
 
 // TODO: Auto-generated Javadoc
 class AGTaskAttack extends AGTask{
-	AGSector sec;
+	AGSector currentsec;
 	AGTaskAttack(AGAI ai) {
 		super(ai);
 		// TODO Auto-generated constructor stub
@@ -77,29 +77,26 @@ class AGTaskAttack extends AGTask{
 	@Override
 	public void unitCommandFinished(AGUnit unit){
 		ai.msg(""+unit);
-		AGSector sec=ai.getAGM().getNextEnemyTarget(unit.getPos(), 0);
-		if(sec!=null){//unit reached sec, cleaned?
-			List<Unit> list=ai.getClb().getEnemyUnitsIn(sec.getPos(), ai.getAGM().getSectorSize());
+		if(currentsec!=null){//unit reached sec, cleaned?
+			List<Unit> list=ai.getClb().getEnemyUnitsIn(currentsec.getPos(), ai.getAGM().getSectorSize());
 			if (list.size()>0){
 				unit.attackUnit(list.get(0));
 				return;
-			}else
-				sec.setAttacker(0);
+			}else{
+				currentsec.setClean(); //sector is clean
+			}
 		}
+		AGSector sec=ai.getAGM().getNextEnemyTarget(unit.getPos(), 0);
 		if (sec!=null){
 			unit.moveTo(sec.getPos());
-			ai.msg("attacking at "+sec.getPos().x + sec.getPos().z);
-			this.sec=sec;
+			ai.msg("attacking at "+sec.getPos().x +" "+ sec.getPos().y+" "+ sec.getPos().z);
+			this.currentsec=sec;
 			return;
 		}
 		ai.getAGT().addTask(new AGTaskBuildScout(ai));
 		setStatusFinished();
 		unit.setTask(null);
 		ai.msg("nothing to attack found!");
-	}
-	@Override
-	public void unitIdle(AGUnit unit){
-		ai.msg("");
 	}
 }
 

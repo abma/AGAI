@@ -166,7 +166,7 @@ abstract class AGTask{
 	public void unitIdle(AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
-	public void unitMoveFailed(){
+	public void unitMoveFailed(AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
 	public void unitDamaged(){

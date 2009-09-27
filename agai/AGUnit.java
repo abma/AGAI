@@ -245,7 +245,7 @@ class AGUnit{
 	 * Sets Unit to Idle (Stop current command)
 	 */
 	public void setIdle() {
-		AICommand command = new StopUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 0);
+		AICommand command = new StopUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 1000);
 		ai.handleEngineCommand(command);
 	}
 

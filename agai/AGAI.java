@@ -245,11 +245,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		msg(unit.getDef().getName());
 		AGUnit u=aGU.getUnit(unit);
 		AGUnit b=u.getBuilder();
-		if (b!=null){ //unitfinished event for the new unit is useless, call the builder!
+		if (b!=null){
 			AGTask t=b.getTask();
-			if (t!=null){
+			if (t!=null) //call unitFinished for the builder
 				t.unitFinished(b, u);
-			}
 		}
 		return 0; 
 	}
@@ -263,11 +262,12 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitIdle(Unit unit) {
-		msg("");
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
 			t.unitIdle(u);
+		else
+			msg("");
 		return 0; 
 	}
 
@@ -280,11 +280,12 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitMoveFailed(Unit unit) {
-		msg(unit.getDef().getName());
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
-			t.unitMoveFailed();
+			t.unitMoveFailed(u);
+		else
+			msg(unit.getDef().getName());
 		return 0; 
 	}
 
@@ -302,11 +303,12 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitDamaged(Unit unit, Unit attacker, float damage, AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
-		msg(unit.getDef().getName());
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
 			t.unitDamaged();
+		else
+			msg(unit.getDef().getName());
 		return 0; 
 	}
 
@@ -320,12 +322,14 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitDestroyed(Unit unit, Unit attacker) {
-		msg(unit.getDef().getName());
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
 			t.unitDestroyed();
+		else
+			msg(unit.getDef().getName());
 		aGU.destroyed(unit,attacker);
+		aGM.unitDestroyed(unit);
 		return 0; 
 	}
 
@@ -345,6 +349,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
 			t.unitGiven();
+		else
+			msg(unit.getDef().getName());
 		return 0; 
 	}
 
@@ -380,7 +386,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyEnterLOS(Unit enemy) {
-		aGM.addAttacker(enemy.getPos());
+		aGM.addDanger(enemy);
 		return 0; 
 	}
 
@@ -405,7 +411,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyEnterRadar(Unit enemy) { //never call enemy.getDef().getName()!!
-		aGM.addAttacker(enemy.getPos());
+		aGM.addDanger(enemy);
 		return 0; 
 	}
 
