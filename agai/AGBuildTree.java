@@ -36,7 +36,16 @@ class AGBuildTreeUnit{
 	private int mark; //for search path
 	private AGBuildTreeUnit parent; //for search path
 	private int unitcount;
+	private int plannedunits;
 	
+	public int getPlannedunits() {
+		return plannedunits;
+	}
+
+	public void setPlannedunits(int plannedunits) {
+		this.plannedunits = plannedunits;
+	}
+
 	public AGBuildTreeUnit getParent() {
 		return parent;
 	}
@@ -78,6 +87,7 @@ class AGBuildTreeUnit{
 		return nodes;
 	}
 	public void incUnitcount(){
+		plannedunits--;
 		unitcount++;
 	}
 	public void decUnitCount(){

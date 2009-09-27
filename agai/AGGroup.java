@@ -81,6 +81,11 @@ class AGUnitGroup extends AGUnit{
 	@Override
 	public void setTask(AGTask task){
 		ai.msg(""+task);
+		if (task==null){ //task deleted, delete group
+			for(int i=0; i<units.size(); i++){
+				units.get(i).setTask(null);
+			}
+		}
 		taskGroup.setTask(task);
 	}
 }
@@ -91,7 +96,7 @@ class AGTaskGroup extends AGTask{
 	private AGTask task;
 	private int size;
 	private boolean go;
-	
+	private int lastFrame;
 	AGTaskGroup(AGAI ai, AGTask task, int size) {
 		super(ai);
 		this.size=size;
@@ -130,7 +135,11 @@ class AGTaskGroup extends AGTask{
 		group.getPos();
 		if (!go)
 			return;
-		task.unitCommandFinished(group);
+		if (lastFrame+3>ai.getFrame()) //FIXME: there should be a better solution?: avoid mass-unit finished events
+			return;
+		lastFrame=ai.getFrame();
+		if (task!=null)
+			task.unitCommandFinished(group);
 	}
 	
 	@Override

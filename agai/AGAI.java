@@ -79,7 +79,13 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	private Resource energy = null;
 
 	private AGGroup aGG;
+
+	private int frame;
 	
+	public int getFrame() {
+		return frame;
+	}
+
 	/** The default minimal distance between buildings. */
 	public static final int minDistance=4;
 
@@ -153,6 +159,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		if (frame%30==0){
 			aGT.DoSomething();
 		}
+		this.frame=frame;
 		return 0; 
 	}
 

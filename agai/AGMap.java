@@ -354,7 +354,6 @@ public class AGMap {
 				LinkedList <AGSector> path=new LinkedList<AGSector>();
 				while (cur!=null){
 					path.addFirst(cur);
-					ai.drawPoint(cur.getPos(), ""+path.size());
 					cur=cur.getParent();
 				}
 				return path;

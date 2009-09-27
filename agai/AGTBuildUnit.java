@@ -59,7 +59,11 @@ class AGTaskRealBuild extends AGTask{
 		buildtask.setStatusFinished();
 		builder.setTask(null); //mark unit as idle, because unit was built
 	}
-
+	public void unitIdle(AGUnit unit){
+		if (getStatus()!=AGTask.statusFinished){
+			build(unit);
+		}
+	}
 	@Override
 	public void unitCreated(AGUnit builder, AGUnit unit){
 		ai.msg("Setting LastUnitCreated");
@@ -69,13 +73,6 @@ class AGTaskRealBuild extends AGTask{
 	public void assign(AGUnit unit){
 		ai.msg("");
 		unit.setIdle();
-	}
-
-	@Override
-	public void unitCommandFinished(AGUnit unit){
-		if (getStatus()!=AGTask.statusFinished){
-			build(unit);
-		}
 	}
 }
 
@@ -256,8 +253,10 @@ public class AGTBuildUnit extends AGTaskManager{
 				AGTaskBuildUnit cur=new AGTaskBuildUnit(ai, tmp.getUnit(),null, AGAI.searchDistance, AGAI.minDistance, null);
 				cur.setSolved();
 				if (!unit.equals(cur.getUnitDef())) //don't add the unit to build, because it's already in the task list
-					if (tmp.getUnitcount()<=0) //don't build builders that are already present (see FIXME also)
+					if (tmp.getUnitcount()+tmp.getPlannedunits()<=0){ //don't build builders that are already present (see FIXME also)
 						ai.getAGT().addTask(cur);
+						tmp.setPlannedunits(tmp.getPlannedunits()+1);
+					}
 				tmp=tmp.getParent();
 			}
 		}else
