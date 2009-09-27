@@ -19,8 +19,10 @@ package agai;
 
 import java.util.List;
 
+import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
+import com.springrts.ai.oo.WeaponDef;
 
 class UnitPropertyAttacker extends AGUnitProperty{
 
@@ -65,7 +67,6 @@ class AGTaskAttackMove extends AGTask{
 		this.taskWhenReached=taskWhenReached;
 		this.destination=destination;
 	}
-
 	@Override
 	public void solve() {
 	}
@@ -89,6 +90,21 @@ class AGTaskAttackMove extends AGTask{
 	}
 	@Override
 	public void assign(AGUnit unit){
+		ai.msg("");
+		unit.setIdle();
+	}
+	@Override
+	public void unitEnemyDamaged(AGUnit unit, Unit enemy){
+		ai.msg("");
+		setStatusFinished();
+		unit.setTask(taskWhenReached);
+		unit.setIdle();
+	}
+	@Override
+	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer){
+		ai.msg("");
+		setStatusFinished();
+		unit.setTask(taskWhenReached);
 		unit.setIdle();
 	}
 }

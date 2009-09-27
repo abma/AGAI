@@ -17,6 +17,10 @@
 
 package agai;
 
+import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.Unit;
+import com.springrts.ai.oo.WeaponDef;
+
 
 // TODO: Auto-generated Javadoc
 /**
@@ -169,7 +173,7 @@ abstract class AGTask{
 	public void unitMoveFailed(AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
-	public void unitDamaged(){
+	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer){
 		ai.msg(this.getClass().getName());
 	}
 	public void unitCaptured(){
@@ -181,7 +185,7 @@ abstract class AGTask{
 	public void unitWeaponFired(){
 		ai.msg(this.getClass().getName());
 	}
-	public void unitEnemyDamaged(){
+	public void unitEnemyDamaged(AGUnit u, Unit enemy){
 		ai.msg(this.getClass().getName());
 	}
 	public void unitEnemyDestroyed(){

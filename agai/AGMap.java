@@ -225,6 +225,10 @@ public class AGMap {
 	public void addDanger(Unit unit){
 		AGSector tmp=getSector(unit.getPos());
 		UnitDef def=unit.getDef();
+		if (tmp==null){
+			ai.msg("couldn't find sector!");
+			return;
+		}
 		if ((def!=null) && (def.isAbleToMove()))
 			tmp.setEnemyUnits(tmp.getEnemyUnits()+1);
 		else

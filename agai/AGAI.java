@@ -306,7 +306,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		AGUnit u=aGU.getUnit(unit);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
-			t.unitDamaged();
+			t.unitDamaged(u, damage, dir, weaponDef, paralyzer);
 		else
 			msg(unit.getDef().getName());
 		aGM.unitDamaged(unit,attacker,damage);
@@ -449,7 +449,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		AGUnit u=aGU.getUnit(attacker);
 		AGTask t=u.getTask();
 		if ((u!=null) && (t!=null))
-			t.unitEnemyDamaged();
+			t.unitEnemyDamaged(u, enemy);
 		return 0; 
 	}
 
