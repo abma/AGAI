@@ -55,14 +55,12 @@ class AGTaskRealBuild extends AGTask{
 		unit.setTask(tmp);
 		if (tmp!=null)
 			tmp.unitFinished(builder, unit); //call unitfinished event
-		setStatusFinished();
-		buildtask.setStatusFinished();
+		setRepeat(0);
+		buildtask.setRepeat(0);
 		builder.setTask(null); //mark unit as idle, because unit was built
 	}
 	public void unitIdle(AGUnit unit){
-		if (getStatus()!=AGTask.statusFinished){
-			build(unit);
-		}
+		build(unit);
 	}
 	@Override
 	public void unitCreated(AGUnit builder, AGUnit unit){
@@ -152,14 +150,6 @@ class AGTaskBuildUnit extends AGTask{
 		ai.getAGT().get(AGTBuildUnit.class).solve(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see agai.AGTask#solveFailed()
-	 */
-	@Override
-	public void solveFailed(){
-		ai.getAGT().get(AGTBuildUnit.class).solveFailed(this);
-	}
-	
 	@Override
 	public String toString() {
 		return "AGTaskBuildUnit " + unitdef.getName() + " "+ unitdef.getHumanName();
@@ -221,7 +211,7 @@ public class AGTBuildUnit extends AGTaskManager{
 			pos=unit.canBuildAt(pos, task.getUnitDef(), task.getRadius(), task.getMinDistance());
 			if (pos==null){
 				ai.msg("Can't build at pos");
-				task.setFailed();
+				task.setRepeat(0);
 				return -1;
 			}
 		}else{ //builder can't move, build at builder pos
@@ -230,7 +220,7 @@ public class AGTBuildUnit extends AGTaskManager{
 				pos=unit.getPos();
 		}
 		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnitDef().getName()+pos);
-		task.setStatusWorking();
+		task.setRepeat(0);
 		unit.setTask(new AGTaskRealBuild(ai, task));
 		unit.buildUnit(task.getUnitDef(), pos, AGAI.defaultFacing);
 		return 0;
@@ -277,7 +267,7 @@ public class AGTBuildUnit extends AGTaskManager{
 					int res=realBuild(builder.get(j),t);
 					if (res!=0){
 						ai.msg("Error in building... "+res);
-						task.solveFailed();
+						task.setRepeat(AGTask.defaultRepeatTime);
 					}
 					break;
 				}
@@ -287,16 +277,7 @@ public class AGTBuildUnit extends AGTaskManager{
 				BuildUnit(t.getUnitDef());
 				t.setSolved();
 			}
+			task.setRepeat(AGTask.defaultRepeatTime);
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see agai.AGTaskManager#solveFailed(agai.AGTask)
-	 */
-	@Override
-	public boolean solveFailed(AGTask task){
-		ai.msg(task.toString());
-		task.setStatusIdle(); //retry
-		return false;
 	}
 }

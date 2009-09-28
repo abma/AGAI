@@ -78,16 +78,6 @@ class AGTaskBuildResource extends AGTask{
 		ai.getAGT().get(AGTBuildResource.class).solve(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see agai.AGTask#solveFailed()
-	 */
-	@Override
-	public void solveFailed(){
-		//FIXME building failed, try to build other building or so..
-		ai.msg("retrying");
-		setStatusIdle();
-	}
-	
 	@Override
 	public String toString(){
 		return "AGTaskBuildResource ";
@@ -168,7 +158,6 @@ public class AGTBuildResource extends AGTaskManager {
 		AIFloat3 pos=null; 
 		AGTaskBuildResource t=(AGTaskBuildResource) task;
 		int min=AGAI.minDistance;
-
 		List <AGBuildTreeUnit> tmp=list.get(t.getResIdx());
 		int radius=100; //default radius to search for buildings
 		for(int i=0; i<tmp.size(); i++){ //search from units that fits best to the worst.. skip when unit can be built and enough resources found
@@ -215,7 +204,8 @@ public class AGTBuildResource extends AGTaskManager {
 			}
 			ai.msg("Sending command to build unit");
 			AGTask buildtask=new AGTaskBuildUnit(ai, unit, pos, radius, 2, null);
-			task.setStatusFinished();//task is done, we are building a resource producing unit
+			task.setRepeat(0);
+//task is done, we are building a resource producing unit
 			buildtask.setPoi(poi);
 			ai.getAGT().addTask(buildtask);
 		}else{
@@ -223,7 +213,6 @@ public class AGTBuildResource extends AGTaskManager {
 				ai.msg("No builder found ");
 			if (unit==null)
 				ai.msg("No resource producing unit found");
-			task.setStatusIdle(); //retry, because we need resources
 		}
 	}
 }

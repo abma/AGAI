@@ -78,10 +78,17 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	/** The energy. */
 	private Resource energy = null;
 
+	/** The a gg. */
 	private AGGroup aGG;
 
+	/** The frame. */
 	private int frame;
 	
+	/**
+	 * Gets the current frame (game time) of the game
+	 *
+	 * @return the frame
+	 */
 	public int getFrame() {
 		return frame;
 	}
@@ -89,22 +96,52 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	/** The default minimal distance between buildings. */
 	public static final int minDistance=4;
 
-	/** The default distance to search for building poisitions */
+	/** The default distance to search for building poisitions. */
 	public static final int searchDistance=100;
 
+	/** The Constant defaultFacing. */
 	public static final int defaultFacing=0;
 
+	/**
+	 * The Enum ElementType.
+	 */
 	public static enum ElementType{
+
+		/** The any unit. */
 		unitAny(0),
+
+		/** The unit can fly. */
 		unitFly(1),
+
+		/** The unit can swim. */
 		unitSwim(2),
+
+		/** The unit is sub. */
 		unitSub(4),
+
+		/** The unit is at land. */
 		unitLand(8),
+
+		/** The unit is amphibian. */
 		unitAmphibian(16);
+
+		/** The type. */
 		private int type;
+
+		/**
+		 * Gets the type.
+		 *
+		 * @return the type
+		 */
 		public int getType() {
 			return type;
 		}
+
+		/**
+		 * Instantiates a new element type.
+		 *
+		 * @param type the type
+		 */
 		ElementType(int type){
 			this.type=type;
 		}
@@ -143,6 +180,11 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		return 0;
 	}
 
+	/**
+	 * Gets the aGM.
+	 *
+	 * @return the aGM
+	 */
 	public AGMap getAGM() {
 		return aGM;
 	}
@@ -157,7 +199,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	@Override
 	public int update(int frame) {
 		if (frame%30==0){
-			aGT.DoSomething();
+			aGT.DoSomething(frame);
 		}
 		this.frame=frame;
 		return 0; 
@@ -189,7 +231,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			}else if (argv[0].equalsIgnoreCase("buildmetal")){
 				aGT.addTask(new AGTaskBuildResource(this,getMetal()));
 			}else if (argv[0].equalsIgnoreCase("scout")){
-				aGT.addTask(new AGTaskBuildScout(this));
+				aGT.addTask(new AGTaskScout(this));
 			}else if (argv[0].equalsIgnoreCase("dumpunits")){
 				aGU.dump();
 			}else if (argv[0].equalsIgnoreCase("dumpunitdefs")){
@@ -199,7 +241,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			}else if (argv[0].equalsIgnoreCase("dumpmap")){
 				aGM.dump();
 			}else if (argv[0].equalsIgnoreCase("attack")){
-				aGT.addTask(new AGTaskBuildAttacker(this, AGAI.ElementType.unitLand));
+				aGT.addTask(new AGTaskAttack(this, AGAI.ElementType.unitLand));
 			}else if (argv[0].equalsIgnoreCase("clear")){
 				clear();
 			}else if (argv[0].equalsIgnoreCase("group")){
@@ -211,8 +253,11 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		return 0; 
 	}
 
+	/**
+	 * Group.
+	 */
 	private void group() {
-		AGTaskGroup group=new AGTaskGroup(this, new AGTaskAttack(this), 10);
+		AGTaskGroup group=new AGTaskGroup(this, new AGTaskAttack(this, ElementType.unitLand), 10);
 		for (int i=0; i<10; i++){
 			AGTask tmp= new AGTaskBuildUnit(this, aGU.getUnitDef("armflea"), null, 0, 0, group);
 			aGT.addTask(tmp);
@@ -220,6 +265,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		aGG.addGroup(group);
 	}
 
+	/**
+	 * Clear.
+	 */
 	private void clear() {
 		List <Point>l=clb.getMap().getPoints(true);
 		for(int i=0; i<l.size(); i++){
@@ -255,7 +303,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	}
 
 	/**
-	 * Unit built is complete
+	 * Unit built is complete.
 	 * 
 	 * @param unit the unit
 	 * 
@@ -739,6 +787,14 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		}
 		System.out.println(str);
 	}
+
+	/**
+	 * Gets the element type.
+	 *
+	 * @param unit the unit
+	 *
+	 * @return the element type
+	 */
 	private ElementType getElementType(UnitDef unit){
 		if (unit.isAbleToFly())
 			return ElementType.unitFly;
@@ -754,10 +810,19 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		msg("Unknown Unittype: "+unit.getName());
 		return ElementType.unitAny;
 	}
+
+	/**
+	 * Unit in type.
+	 *
+	 * @param unit the unit
+	 * @param type the type
+	 *
+	 * @return true, if successful
+	 */
 	public boolean UnitInType(UnitDef unit, ElementType type){
-		ElementType type1=this.getElementType(unit);
 		if (type==ElementType.unitAny)
 			return true;
+		ElementType type1=getElementType(unit);
 		return type==type1;
 	}
 
@@ -771,6 +836,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	public void buildUnit(AGTask task, List <AGBuildTreeUnit> list, AGTask tasktoassign, ElementType type){
 		UnitDef unit=null;
+		task.setRepeat(AGTask.defaultRepeatTime);
 		for(int i=0; i<list.size(); i++){ //searching for existing unit
 			if (UnitInType(list.get(i).getUnit(), type)){
 				unit=list.get(i).getUnit();
@@ -778,7 +844,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				if (u!=null){ //unit to scout exists, assign task!
 					msg("assigned task to existing idle unit");
 					u.setTask(tasktoassign);
-					task.setStatusFinished();
+					task.setRepeat(0);
 					return;
 				}
 			}
@@ -789,7 +855,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				if (builder!=null){
 					AGTask buildtask=new AGTaskBuildUnit(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
 					getAGT().addTask(buildtask);
-					task.setStatusFinished();
+					task.setRepeat(0);
 					return;
 				}
 			}
@@ -798,10 +864,19 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		if (unit!=null){
 			AGTask buildtask=new AGTaskBuildUnit(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
 			getAGT().addTask(buildtask);
-			task.setStatusFinished();
+			task.setRepeat(0);
+		}else{
+			msg("No unit found to build "+type);
 		}
 	}
 
+	/**
+	 * Gets the weapon damage.
+	 *
+	 * @param unit the unit
+	 *
+	 * @return the weapon damage
+	 */
 	public float getWeaponDamage(UnitDef unit){
 		List <WeaponMount> w=unit.getWeaponMounts();
 		float ret=0;

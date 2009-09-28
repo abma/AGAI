@@ -60,16 +60,22 @@ class UnitPropertyAttacker extends AGUnitProperty{
 
 // TODO: Auto-generated Javadoc
 class AGTaskAttack extends AGTask{
+	private AGAI.ElementType type;
+
+	public AGAI.ElementType getType() {
+		return type;
+	}
+
 	AGSector currentsec;
-	AGTaskAttack(AGAI ai) {
+	AGTaskAttack(AGAI ai, AGAI.ElementType type) {
 		super(ai);
-		// TODO Auto-generated constructor stub
+		this.type=type;
 	}
 
 	@Override
 	public void solve() {
 		ai.msg("attacking");
-		
+		ai.getAGT().get(AGTAttack.class).solve(this);
 	}
 	@Override
 	public void assign(AGUnit unit){
@@ -95,34 +101,10 @@ class AGTaskAttack extends AGTask{
 			this.currentsec=sec;
 			return;
 		}
-		ai.getAGT().addTask(new AGTaskBuildScout(ai));
-		setStatusFinished();
+		ai.getAGT().addTask(new AGTaskScout(ai));
+		setRepeat(0);
 		unit.setTask(null);
 		ai.msg("nothing to attack found!");
-	}
-}
-
-class AGTaskBuildAttacker extends AGTask{
-	private AGAI.ElementType type;
-
-	public AGAI.ElementType getType() {
-		return type;
-	}
-
-	AGTaskBuildAttacker(AGAI ai, AGAI.ElementType type) {
-		super(ai);
-		this.type=type;
-	}
-
-	@Override
-	public void solve() {
-		ai.msg("");
-		ai.getAGT().get(AGTAttack.class).solve(this);
-	}
-	@Override
-	public void unitFinished(AGUnit builder, AGUnit unit){
-		ai.msg("");
-		this.setStatusFinished();
 	}
 }
 
@@ -159,6 +141,7 @@ public class AGTAttack extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
-		ai.buildUnit(task, list, new AGTaskAttack(ai), ((AGTaskBuildAttacker)task).getType());
+		AGTaskAttack a=((AGTaskAttack)task);
+		ai.buildUnit(task, list, a, a.getType());
 	}
 }

@@ -48,28 +48,11 @@ class UnitPropertyScout extends AGUnitProperty{
 		if ((tree!=null) && ((tree.getBacklink()==null) || (tree.getBacklink().size()==0))) //filter commander out
 			return false;
 		if  ((unit.getSpeed()>0) && (unit.getLosRadius()>0) &&
-				(properties.get(1).getAverageComp(unit)>0) &&  //faster than average
-				(properties.get(2).getAverageComp(unit)>0)){ //cheaper than average
+				(properties.get(1).getAverageComp(unit)>0) /*&&  //faster than average
+				(properties.get(2).getAverageComp(unit)>0)*/){ //cheaper than average
 			return true;
 		}
 		return false;
-	}
-}
-
-class AGTaskBuildScout extends AGTask{
-
-	AGTaskBuildScout(AGAI ai) {
-		super(ai);
-	}
-
-	@Override
-	public void solve() {
-		ai.msg("");
-		ai.getAGT().get(AGTScout.class).solve(this);
-	}
-	public void unitFinished(AGUnit unit){
-		ai.msg("");
-		this.setStatusFinished();
 	}
 }
 
@@ -81,6 +64,7 @@ class AGTaskScout extends AGTask{
 	@Override
 	public void solve() {
 		ai.msg("");
+		ai.getAGT().get(AGTScout.class).solve(this);
 	}
 
 	@Override
@@ -98,8 +82,8 @@ class AGTaskScout extends AGTask{
 	@Override
 	public void unitDestroyed(AGUnit unit){
 		ai.msg("");
-		ai.getAGT().addTask(new AGTaskBuildScout(ai));
-		this.setStatusFinished();
+		ai.getAGT().addTask(new AGTaskScout(ai));
+		setRepeat(0);
 	}
 	public String toString(){
 		return "";
@@ -162,6 +146,6 @@ public class AGTScout extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
-		ai.buildUnit(task, list, new AGTaskScout(ai), AGAI.ElementType.unitAny);
+		ai.buildUnit(task, list, task, AGAI.ElementType.unitAny);
 	}
 }

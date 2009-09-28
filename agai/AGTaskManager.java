@@ -45,18 +45,4 @@ abstract class AGTaskManager{
 	 * @param task the task
 	 */
 	public abstract void solve(AGTask task);
-	
-	/**
-	 * Solve failed, readd task.
-	 * 
-	 * @param task the task
-	 * 
-	 * @return true, if successful
-	 */
-	public boolean solveFailed(AGTask task){
-		task.setStatusFinished(); //FIXME: forget a task is very bad
-		return true;
-	}
-
-	
 }

@@ -304,7 +304,8 @@ public class AGMap {
 	}
 
 	public void unitDamaged(Unit unit, Unit attacker, float damage) {
-		addDanger(attacker);
+		if (attacker!=null)
+			addDanger(attacker);
 		AGSector sec=getSector(unit.getPos());
 		sec.setDamageReceived(sec.getDamageReceived()+Math.round(damage));
 	}

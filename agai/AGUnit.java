@@ -107,7 +107,7 @@ class AGUnit{
 	 */
 	public void destroyed(){
 		if (task!=null){ //if unit had task, redo the task
-			task.setStatusIdle(); //mark as not in progress
+			task.setRepeat(AGTask.defaultRepeatTime);
 		}
 	}
 	

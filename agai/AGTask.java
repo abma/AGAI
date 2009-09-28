@@ -27,24 +27,23 @@ import com.springrts.ai.oo.WeaponDef;
  * The Class AGTask.
  */
 abstract class AGTask{
+	public static int defaultRepeatTime = 100;
+	/** The time in frames the task is repeated, <=0 means no repeat */
+	private int repeat;
 	
-	/** The status. */
-	protected int status;
+	public int getRepeat() {
+		return repeat;
+	}
+
+	public void setRepeat(int repeat) {
+		this.repeat = repeat;
+	}
+
+	/** The frame the task was last run */
+	protected int lastrun;
 	
 	/** The priority. */
 	private int priority=0;
-	
-	/** The Constant statusIdle. */
-	final static int statusIdle = 0;
-	
-	/** The Constant statusWorking. */
-	final static int statusWorking = 1;
-	
-	/** The Constant statusFinished. */
-	final static int statusFinished = 2;
-	
-	/** The Constant statusFailed. */
-	final static int statusFailed = 3;
 	
 	/** The ai. */
 	protected AGAI ai;
@@ -59,32 +58,18 @@ abstract class AGTask{
 	 */
 	AGTask(AGAI ai){
 		this.ai=ai;
-		this.status=statusIdle;
+		this.repeat=defaultRepeatTime;
 	}
 	
 	/**
-	 * Gets the status of the Task.
+	 * Gets the lastrun.
 	 * 
-	 * @return the status
+	 * @return the lastrun
 	 */
-	public int getStatus(){
-		return status;
+	public int getLastrun() {
+		return lastrun;
 	}
-	
-	/**
-	 * Sets the status to idle (when a task is for ex. aborted)
-	 */
-	public void setStatusIdle(){
-		status=AGTask.statusIdle;
-	}
-	
-	/**
-	 * Sets the status to finished.
-	 */
-	public void setStatusFinished(){
-		status=AGTask.statusFinished;
-	}
-	
+
 	/**
 	 * Inc priority of this task.
 	 */
@@ -109,13 +94,6 @@ abstract class AGTask{
 	}
 	
 	/**
-	 * Sets the status of this task to be under process.
-	 */
-	public void setStatusWorking(){
-		status=statusWorking;
-	}
-	
-	/**
 	 * Try to solve the Task.
 	 */
 	public abstract void solve();
@@ -126,24 +104,9 @@ abstract class AGTask{
 	 * @return the string
 	 */
 	public String toString(){
-		return this.getClass().getName()+" "+this.priority+" "+this.status+" toString not implemented!";
+		return this.getClass().getName()+" "+this.priority+" "+this.lastrun+" toString not implemented!";
 	}
 	
-	/**
-	 * Sets the task to failed.
-	 */
-	public void setFailed(){
-		status=statusFailed;
-	}
-
-	/**
-	 * Try to solve a failed task. (buildpos blocked, ...)
-	 */
-	public void solveFailed() {
-		ai.msg(this.getClass().getName()+ " solveFailed() not implemented, marking as finished");
-		setStatusFinished();
-	}
-
 	/**
 	 * Gets the poi.
 	 * 
@@ -161,45 +124,128 @@ abstract class AGTask{
 	public void setPoi(AGPoI poi) {
 		this.poi = poi;
 	}
+
+	/**
+	 * Unit command finished.
+	 *
+	 * @param unit the unit
+	 */
 	public void unitCommandFinished(AGUnit unit){
 		ai.msg(unit.getDef().getName());
 	}
+
+	/**
+	 * Unit destroyed.
+	 *
+	 * @param unit the unit
+	 */
 	public void unitDestroyed(AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit idle.
+	 *
+	 * @param unit the unit
+	 */
 	public void unitIdle(AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit move failed.
+	 *
+	 * @param unit the unit
+	 */
 	public void unitMoveFailed(AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit damaged.
+	 *
+	 * @param unit the unit
+	 * @param damage the damage
+	 * @param direction the direction
+	 * @param weaponDef the weapon def
+	 * @param paralyzer the paralyzer
+	 */
 	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit captured.
+	 */
 	public void unitCaptured(){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit created.
+	 *
+	 * @param builder the builder
+	 * @param unit the unit
+	 */
 	public void unitCreated(AGUnit builder, AGUnit unit){
 		ai.msg(this.getClass().getName()+" "+builder.getDef().getName()+" "+unit.getDef().getName());
 	}
+
+	/**
+	 * Unit weapon fired.
+	 */
 	public void unitWeaponFired(){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit enemy damaged.
+	 *
+	 * @param u the u
+	 * @param enemy the enemy
+	 */
 	public void unitEnemyDamaged(AGUnit u, Unit enemy){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit enemy destroyed.
+	 */
 	public void unitEnemyDestroyed(){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit finished.
+	 *
+	 * @param builder the builder
+	 * @param unit the unit
+	 */
 	public void unitFinished(AGUnit builder, AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Unit given.
+	 */
 	public void unitGiven() {
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Task is assigned
+	 *
+	 * @param unit the unit
+	 */
 	public void assign(AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}
+
+	/**
+	 * Task is Unassigned.
+	 *
+	 * @param unit the unit
+	 */
 	public void unassign(AGUnit unit){
 		ai.msg(this.getClass().getName());
 	}

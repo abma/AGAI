@@ -22,7 +22,7 @@ class AGTaskSecureMove extends AGTask{
 	public void unitCommandFinished(AGUnit unit){
 		if (ai.getAGM().isPosInSec(unit.getPos(),destination)){
 			ai.msg("Destination reached, back to the old task!");
-			setStatusFinished();
+			setRepeat(0);
 			unit.setTask(taskWhenReached);
 		}else{ //when moving, try to avoid danger sectors
 			ai.msg("Sneak moving");
@@ -44,14 +44,14 @@ class AGTaskSecureMove extends AGTask{
 	@Override
 	public void unitEnemyDamaged(AGUnit unit, Unit enemy){
 		ai.msg("");
-		setStatusFinished();
+		setRepeat(0);
 		unit.setTask(taskWhenReached);
 		unit.setIdle();
 	}
 	@Override
 	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer){
 		ai.msg("");
-		setStatusFinished();
+		setRepeat(0);
 		unit.setTask(taskWhenReached);
 		unit.setIdle();
 	}

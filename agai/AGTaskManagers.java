@@ -142,25 +142,17 @@ public class AGTaskManagers {
 	
 	/**
 	 * Walk through the Task list und try to solve the "problems".
+	 *
+	 * @param frame the frame
 	 */
-	public void DoSomething(){
+	public void DoSomething(int frame){
 		sort();
 		for(int i=tasks.size()-1; i>=0; i--){
-			int status=tasks.get(i).getStatus();
-			switch(status){
-				case AGTask.statusFinished:
-					ai.msg("statusFinished "+i+" "+tasks.get(i).toString());
+			if (tasks.get(i).getLastrun()+tasks.get(i).getRepeat()<=frame){
+				tasks.get(i).solve();
+				tasks.get(i).lastrun=frame;
+				if (tasks.get(i).getRepeat()==0)
 					tasks.remove(i);
-					break;
-				case AGTask.statusIdle:
-					ai.msg("statusIdle "+i+" "+tasks.get(i).toString());
-					tasks.get(i).solve();
-					break;
-				case AGTask.statusFailed:
-					ai.msg("statusFailed "+i+" "+tasks.get(i).toString());
-					tasks.get(i).solveFailed();
-					break;
-					
 			}
 		}
 	}
@@ -187,6 +179,7 @@ public class AGTaskManagers {
 	 * @param task the task
 	 */
 	public void addTask(AGTask task) {
+		ai.msg("");
 		tasks.add(task);
 	}
 	
