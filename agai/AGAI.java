@@ -81,6 +81,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	/** The a gg. */
 	private AGGroup aGG;
 
+	public AGGroup getAGG() {
+		return aGG;
+	}
+
 	/** The frame. */
 	private int frame;
 	
@@ -246,11 +250,26 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				clear();
 			}else if (argv[0].equalsIgnoreCase("group")){
 				group();
+			}else if (argv[0].equalsIgnoreCase("start")){
+				start();
+			}else if (argv[0].equalsIgnoreCase("stop")){
+				stop();
 			}else if (argv[0].equalsIgnoreCase("dumpgraph")){
 				aGB.dumpGraph();
 			}
 		}
 		return 0; 
+	}
+
+	private void stop() {
+		aGT.clear();
+	}
+
+	private void start() {
+		aGT.addTask(new AGTaskBuildResource(this,getMetal()));
+		aGT.addTask(new AGTaskBuildResource(this,getEnergy()));
+		aGT.addTask(new AGTaskScout(this));
+		aGT.addTask(new AGTaskAttack(this, ElementType.unitLand));
 	}
 
 	/**

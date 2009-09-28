@@ -216,4 +216,7 @@ public class AGTaskManagers {
 		}
 	}
 
+	public void clear() {
+		tasks.clear();
+	}
 }

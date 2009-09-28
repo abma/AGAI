@@ -19,6 +19,8 @@ package agai;
 
 import java.util.List;
 
+import agai.AGAI.ElementType;
+
 import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
@@ -55,8 +57,6 @@ class UnitPropertyAttacker extends AGUnitProperty{
 		return false;
 	}
 }
-
-
 
 // TODO: Auto-generated Javadoc
 class AGTaskAttack extends AGTask{
@@ -141,7 +141,14 @@ public class AGTAttack extends AGTaskManager{
 	 */
 	@Override
 	public void solve(AGTask task) {
-		AGTaskAttack a=((AGTaskAttack)task);
-		ai.buildUnit(task, list, a, a.getType());
+		int groupsize=10;
+		if (ai.getAGG().getGroups(AGTaskAttack.class)<3){
+			AGTaskAttack a=((AGTaskAttack)task);
+			AGTaskGroup group=new AGTaskGroup(ai, new AGTaskAttack(ai, ElementType.unitLand), groupsize);
+			for (int i=0; i<groupsize; i++){
+				ai.buildUnit(group, list, a, a.getType());
+			}
+			ai.getAGG().addGroup(group);
+		}
 	}
 }

@@ -94,6 +94,10 @@ class AGUnitGroup extends AGUnit{
 class AGTaskGroup extends AGTask{
 	private AGUnitGroup group;
 	private AGTask task;
+	public AGTask getTask() {
+		return task;
+	}
+
 	private int size;
 	private boolean go;
 	private int lastFrame;
@@ -148,6 +152,8 @@ class AGTaskGroup extends AGTask{
 		if (!go)
 			return;
 		group.remove(unit);
+		if (group.size()==0)
+			ai.getAGG().remove(this);
 	}
 }
 
@@ -170,6 +176,12 @@ public class AGGroup extends AGTaskManager{
 	}
 
 
+	public void remove(AGTaskGroup taskGroup) {
+		ai.msg("group died!");
+		list.remove(taskGroup);
+	}
+
+
 	/* (non-Javadoc)
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
@@ -179,11 +191,27 @@ public class AGGroup extends AGTaskManager{
 	
 	/**
 	 * Adds the group.
-	 * 
+	 *
 	 * @param group the group
 	 */
 	public void addGroup(AGTaskGroup group){
 		list.add(group);
+	}
+
+	/**
+	 * Gets the count of type group
+	 *
+	 * @param cn the cn
+	 *
+	 * @return the groups
+	 */
+	public int getGroups(Class <?>cn){
+		int count=0;
+		for (int i=0; i<list.size(); i++){
+			if (cn==list.get(i).getTask().getClass())
+				count++;
+		}
+		return count;
 	}
 	
 }

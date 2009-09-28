@@ -204,8 +204,6 @@ public class AGTBuildResource extends AGTaskManager {
 			}
 			ai.msg("Sending command to build unit");
 			AGTask buildtask=new AGTaskBuildUnit(ai, unit, pos, radius, 2, null);
-			task.setRepeat(0);
-//task is done, we are building a resource producing unit
 			buildtask.setPoi(poi);
 			ai.getAGT().addTask(buildtask);
 		}else{
