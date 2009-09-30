@@ -104,6 +104,22 @@ Pseudocode für den Algorithmus
 		Suche Liste mit Einheiten nach Eigenschaft 1 aus und füge dies in die Liste hinzu (+sortiere)
 	Nimm nächste Eigenschaft und wiederhole
 
+
+
+wishlist:
+
+einheit
+resource (?)
+gebäude
+verteidigung
+einheit
+
+struktur:
+	notwendige resourcen
+	(position?)
+	dringlichkeit
+	was bringt das wenn der wunsch erfüllt wird? (gegnerische einheit tot? schutz? mehr resourcen?)
+
 */
 
 /**
