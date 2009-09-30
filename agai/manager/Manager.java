@@ -18,7 +18,7 @@
 package agai.manager;
 
 import agai.AGAI;
-import agai.unit.AGTask;
+import agai.task.Task;
 
 
 
@@ -26,7 +26,7 @@ import agai.unit.AGTask;
 /**
  * The Class AGTaskManager.
  */
-public abstract class TaskManager{
+public abstract class Manager{
 	
 	/** The ai. */
 	protected AGAI ai;
@@ -37,7 +37,7 @@ public abstract class TaskManager{
 	 * 
 	 * @param ai the ai
 	 */
-	protected TaskManager(AGAI ai){
+	protected Manager(AGAI ai){
 		ai.msg("Initialized AGTaskManager "+this.getClass()+" "+ai);
 		this.ai=ai;
 	}
@@ -47,5 +47,5 @@ public abstract class TaskManager{
 	 * 
 	 * @param task the task
 	 */
-	public abstract void solve(AGTask task);
+	public abstract void solve(Task task);
 }

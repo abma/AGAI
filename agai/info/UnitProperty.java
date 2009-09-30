@@ -9,7 +9,7 @@ import com.springrts.ai.oo.UnitDef;
 
 //TODO: Auto-generated Javadoc
 //Use this Class to search for a Unit
-public abstract class UnitProperty implements Comparator<BuildTreeUnit>{
+abstract class UnitProperty implements Comparator<BuildTreeUnit>{
 	protected AGAI ai;
 	protected LinkedList <UnitPropertyEvaluator> properties;
 
@@ -42,7 +42,7 @@ public abstract class UnitProperty implements Comparator<BuildTreeUnit>{
 	 * 
 	 * @return true, if successful
 	 */
-	public boolean sort(){
+	protected boolean sort(){
 		return true;
 	}
 }

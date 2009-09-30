@@ -14,18 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package agai.unit;
+package agai.task;
 
 import agai.AGAI;
-import agai.manager.BuildManager;
+import agai.manager.ManagerBuild;
+import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.UnitDef;
 import com.springrts.ai.oo.WeaponDef;
 
 // Task with unit to build
-public class BuildTask extends AGTask{
-	BuildTask buildtask;
+public class TaskBuild extends Task{
+	TaskBuild buildtask;
 	private void build(AGUnit unit){
 		if (buildtask!=null){
 			ai.msg(buildtask.toString());
@@ -44,7 +45,7 @@ public class BuildTask extends AGTask{
 	@Override
 	public void unitFinished(AGUnit builder, AGUnit unit){
 		ai.msg(unit.getDef().getName());
-		AGTask tmp=buildtask.getTasktoassign();
+		Task tmp=buildtask.getTasktoassign();
 		unit.setTask(tmp);
 		if (tmp!=null)
 			tmp.unitFinished(builder, unit); //call unitfinished event
@@ -84,13 +85,13 @@ public class BuildTask extends AGTask{
 	private int radius;
 	private boolean solved;
 	private int mindistance;
-	private AGTask tasktoassign;
+	private Task tasktoassign;
 
-	public AGTask getTasktoassign() {
+	public Task getTasktoassign() {
 		return tasktoassign;
 	}
 
-	public void setTasktoassign(AGTask tasktoassign) {
+	public void setTasktoassign(Task tasktoassign) {
 		this.tasktoassign = tasktoassign;
 	}
 
@@ -104,7 +105,7 @@ public class BuildTask extends AGTask{
 	 * @param mindistance the mindistance
 	 * @param tasktoassign the tasktoassign
 	 */
-	public BuildTask(AGAI ai, UnitDef unitdef, AIFloat3 pos, int radius, int mindistance, AGTask tasktoassign) {
+	public TaskBuild(AGAI ai, UnitDef unitdef, AIFloat3 pos, int radius, int mindistance, Task tasktoassign) {
 		super(ai);
 		this.pos=pos;
 		this.unitdef=unitdef;
@@ -146,7 +147,7 @@ public class BuildTask extends AGTask{
 	 */
 	@Override
 	public void solve() {
-		ai.getAGT().get(BuildManager.class).solve(this);
+		ai.getAGT().get(ManagerBuild.class).solve(this);
 	}
 	
 	@Override

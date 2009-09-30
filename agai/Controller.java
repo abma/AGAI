@@ -1,10 +1,26 @@
+/*
+ * Copyright (C) 2009 Matthias Ableitner (http://abma.de/)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package agai;
 
 import agai.AGAI.ElementType;
-import agai.manager.ResourceManagerTask;
-import agai.unit.AttackTask;
-import agai.unit.ScoutTask;
+import agai.task.TaskAttack;
+import agai.task.TaskScout;
 
+// TODO: Auto-generated Javadoc
 /*
 
 Pseudocode für den Algorithmus
@@ -90,22 +106,46 @@ Pseudocode für den Algorithmus
 
 */
 
+/**
+ * The Controller, the big boss :-)
+ * verteilt die resourcen an die mananger, die verfügbar sind und passt diese bei änderungen an (mehr oder weniger)
+ * sagt dem angriffsmanager wann er angreifen soll
+ * gibt dem resourcenmanager resourcen um gebäude zu bauen
+ */
 public class Controller{
+	
+	/** The ai. */
 	private AGAI ai;
 
+	/**
+	 * Instantiates a new controller.
+	 * 
+	 * @param ai the ai
+	 */
 	Controller(AGAI ai) {
 		this.ai=ai;
 	}
+	
+	/**
+	 * Stop.
+	 */
 	public void stop() {
 		ai.getAGT().clear();
 	}
 
+	/**
+	 * Start.
+	 */
 	public void start() {
-		ai.getAGT().addTask(new ResourceManagerTask(ai));
-		ai.getAGT().addTask(new ScoutTask(ai));
-		ai.getAGT().addTask(new AttackTask(ai, ElementType.unitLand));
+		ai.getAGT().addTask(new TaskScout(ai));
+		ai.getAGT().addTask(new TaskAttack(ai, ElementType.unitLand));
 	}
 	
+	/**
+	 * Update.
+	 * 
+	 * @param frame the frame
+	 */
 	public void update(int frame){
 		ai.getAGT().DoSomething(frame);
 	}

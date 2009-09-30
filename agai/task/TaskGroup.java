@@ -1,19 +1,21 @@
-package agai.unit;
+package agai.task;
 
 import agai.AGAI;
+import agai.unit.AGUnit;
+import agai.unit.UnitGroup;
 
 //A group of Units to give them all the same task
-public class GroupTask extends AGTask{
+public class TaskGroup extends Task{
 	private UnitGroup group;
-	private AGTask task;
-	public AGTask getTask() {
+	private Task task;
+	public Task getTask() {
 		return task;
 	}
 
 	private int size;
 	private boolean go;
 	private int lastFrame;
-	public GroupTask(AGAI ai, AGTask task, int size) {
+	public TaskGroup(AGAI ai, Task task, int size) {
 		super(ai);
 		this.size=size;
 		this.task=task;
@@ -21,7 +23,7 @@ public class GroupTask extends AGTask{
 		group=new UnitGroup(ai, this);
 	}
 	
-	public void setTask(AGTask task) {
+	public void setTask(Task task) {
 		this.task=task;
 	}
 

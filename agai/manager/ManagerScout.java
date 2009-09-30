@@ -20,63 +20,57 @@ package agai.manager;
 import java.util.List;
 
 import agai.AGAI;
-import agai.AGAI.ElementType;
 import agai.info.BuildTreeUnit;
-import agai.info.SearchAttacker;
-import agai.unit.AGTask;
-import agai.unit.AttackTask;
-import agai.unit.GroupTask;
-
+import agai.info.SearchScout;
+import agai.task.Task;
 
 /**
- * The Class AGTAttack.
- * 
- * @author matze
+ * The Class AGTScout.
  */
-public class AttackManager extends TaskManager{
-	private int groupsize=0;
-	public int getGroups() {
-		return groups;
-	}
-
-	public void setGroups(int groups) {
-		this.groups = groups;
-	}
-
-	private int groups=0;
-	protected List <BuildTreeUnit> list;
+public class ManagerScout extends Manager{
+	
+	/** The count of all scouts */
+	private int scouts = 0;
+	
 	/**
-	 * Instantiates a new aG task attack.
+	 * Dec scouts.
+	 */
+	public void decScouts() {
+		scouts--;
+		ai.msg(""+scouts);
+	}
+
+	/**
+	 * Inc scouts.
+	 */
+	public void incScouts() {
+		scouts++;
+		ai.msg(""+scouts);
+	}
+
+	/** The list. */
+	protected List <BuildTreeUnit> list;
+	
+	/**
+	 * Instantiates a new aG task scout.
 	 * 
 	 * @param ai the ai
 	 */
-	public AttackManager(AGAI ai) {
+	public ManagerScout(AGAI ai) {
 		super(ai);
-		list=ai.getAGI().getAGF().Filter(new SearchAttacker(ai));
+		list=ai.getAGI().getAGF().Filter(new SearchScout(ai));
 		for (int i=0; i<list.size(); i++){
 			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getAGU().getTotalPrice(list.get(i).getUnit()) );
 		}
 	}
 	
-	/**
-	 * Dump.
-	 */
-	public void dump(){
-		ai.msg("Task Attack");
-	}
-
 	/* (non-Javadoc)
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
-	public void solve(AGTask task) {
-		if (ai.getAGG().getGroups(AttackTask.class)<groups){
-			AttackTask a=((AttackTask)task);
-			GroupTask group=new GroupTask(ai, new AttackTask(ai, ElementType.unitLand), groupsize);
-			for (int i=0; i<groupsize; i++){
-				ai.buildUnit(group, list, a, a.getType());
-			}
-			ai.getAGG().addGroup(group);
+	public void solve(Task task) {
+		if (scouts<10){
+			ai.buildUnit(task, list, task, AGAI.ElementType.unitAny);
 		}
 	}
 }

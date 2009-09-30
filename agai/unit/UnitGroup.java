@@ -3,14 +3,16 @@ package agai.unit;
 import java.util.LinkedList;
 
 import agai.AGAI;
+import agai.task.Task;
+import agai.task.TaskGroup;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.UnitDef;
 
 public class UnitGroup extends AGUnit{
 	private LinkedList <AGUnit> units;
-	private GroupTask taskGroup;
-	public UnitGroup(AGAI ai, GroupTask taskGroup) {
+	private TaskGroup taskGroup;
+	public UnitGroup(AGAI ai, TaskGroup taskGroup) {
 		super(ai, null);
 		units=new LinkedList<AGUnit>();
 		this.taskGroup=taskGroup;
@@ -65,7 +67,7 @@ public class UnitGroup extends AGUnit{
 		}
 	}
 	@Override
-	public void setTask(AGTask task){
+	public void setTask(Task task){
 		ai.msg(""+task);
 		if (task==null){ //task deleted, delete group
 			for(int i=0; i<units.size(); i++){

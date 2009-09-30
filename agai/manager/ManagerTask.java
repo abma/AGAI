@@ -23,38 +23,38 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 import agai.AGAI;
-import agai.unit.AGTask;
+import agai.task.Task;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class AGTasks.
  */
 
-public class TaskManagers {
+public class ManagerTask {
 	
 	/** The ai. */
 	AGAI ai;
 	
 	/** The list with all Task managers. */
-	LinkedList <TaskManager> list;
+	LinkedList <Manager> list;
 	
 	/** The tasks. */
-	LinkedList<AGTask> tasks;
+	LinkedList<Task> tasks;
 	
 	/**
 	 * Instantiates a new aG tasks.
 	 * 
 	 * @param ai the ai
 	 */
-	public TaskManagers(AGAI ai){
+	public ManagerTask(AGAI ai){
 		this.ai=ai;
-		tasks=new LinkedList<AGTask>();
-		list=new LinkedList<TaskManager>();
+		tasks=new LinkedList<Task>();
+		list=new LinkedList<Manager>();
 
-		list.add(new ResourceManager(ai));
-		list.add(new ScoutManager(ai));
-		list.add(new AttackManager(ai));
-		list.add(new BuildManager(ai));
+		list.add(new ManagerResource(ai));
+		list.add(new ManagerScout(ai));
+		list.add(new ManagerAttack(ai));
+		list.add(new ManagerBuild(ai));
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class TaskManagers {
 	 * 
 	 * @return the list
 	 */
-	public TaskManager get(Class <?> classname){
+	public Manager get(Class <?> classname){
 		for(int i=0; i<list.size();i++){
 			if (list.get(i).getClass()==classname)
 				return list.get(i);
@@ -95,7 +95,7 @@ public class TaskManagers {
 	 * 
 	 * @param task the task
 	 */
-	public void addTask(AGTask task) {
+	public void addTask(Task task) {
 		ai.msg("");
 		tasks.add(task);
 	}
@@ -103,12 +103,12 @@ public class TaskManagers {
 	/**
 	 * The Class AGTaskcompare.
 	 */
-	private class AGTaskcompare implements Comparator<AGTask>{
+	private class AGTaskcompare implements Comparator<Task>{
 		
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
-		public int compare(AGTask o1, AGTask o2) {
+		public int compare(Task o1, Task o2) {
 			if (o1.getPriority()>o2.getPriority())
 				return 1;
 			return 0;

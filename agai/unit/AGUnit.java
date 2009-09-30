@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 
 import agai.AGAI;
+import agai.task.Task;
 
 import com.springrts.ai.AICommand;
 import com.springrts.ai.AIFloat3;
@@ -45,7 +46,7 @@ public class AGUnit{
 	protected Unit unit=null;
 	
 	/** The task. */
-	private AGTask task=null;
+	private Task task=null;
 
 	/** The last unit created. */
 	private AGUnit builder=null;
@@ -87,7 +88,7 @@ public class AGUnit{
 	 * 
 	 * @return the task
 	 */
-	public AGTask getTask() {
+	public Task getTask() {
 		return task;
 	}
 	
@@ -96,7 +97,7 @@ public class AGUnit{
 	 * 
 	 * @param task the new task
 	 */
-	public void setTask(AGTask task) {
+	public void setTask(Task task) {
 		if (this.task!=null){
 			this.task.unassign(this);
 		}
@@ -110,7 +111,7 @@ public class AGUnit{
 	 */
 	public void destroyed(){
 		if (task!=null){ //if unit had task, redo the task
-			task.setRepeat(AGTask.defaultRepeatTime);
+			task.setRepeat(Task.defaultRepeatTime);
 		}
 	}
 	

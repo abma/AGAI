@@ -21,9 +21,9 @@ import java.util.List;
 
 import agai.AGAI;
 import agai.info.BuildTreeUnit;
-import agai.unit.AGTask;
+import agai.task.Task;
+import agai.task.TaskBuild;
 import agai.unit.AGUnit;
-import agai.unit.BuildTask;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.UnitDef;
@@ -31,14 +31,14 @@ import com.springrts.ai.oo.UnitDef;
 /**
  * The Class AGTaskBuildUnit, handles build commands.
  */
-public class BuildManager extends TaskManager{
+public class ManagerBuild extends Manager{
 	
 	/**
 	 * Instantiates a new aG task build unit.
 	 * 
 	 * @param ai the ai
 	 */
-	public BuildManager(AGAI ai) {
+	public ManagerBuild(AGAI ai) {
 		super(ai);
 	}
 
@@ -51,7 +51,7 @@ public class BuildManager extends TaskManager{
 	 * 
 	 * @return the int
 	 */
-	private int realBuild(AGUnit unit, BuildTask task){
+	private int realBuild(AGUnit unit, TaskBuild task){
 		AIFloat3 pos=task.getPos();
 		if (unit.getDef().getSpeed()>0){ //Unit who builds can move
 			ai.msg("Mobile builder ");
@@ -68,7 +68,7 @@ public class BuildManager extends TaskManager{
 		}
 		ai.msg("Sending build command to "+unit.getDef().getName()+ " build " + task.getUnitDef().getName()+pos);
 		task.setRepeat(0);
-		unit.setTask(new BuildTask(ai, null, pos, 0, 0, task));
+		unit.setTask(new TaskBuild(ai, null, pos, 0, 0, task));
 		unit.buildUnit(task.getUnitDef(), pos, AGAI.defaultFacing);
 		return 0;
 	}
@@ -87,7 +87,7 @@ public class BuildManager extends TaskManager{
 		BuildTreeUnit tmp=ai.getAGI().getAGB().searchNode(builder.getUnit().getDef(),unit);
 		if (tmp!=null){
 			while(tmp.getUnit()!=builder.getUnit().getDef()){
-				BuildTask cur=new BuildTask(ai, tmp.getUnit(),null, AGAI.searchDistance, AGAI.minDistance, null);
+				TaskBuild cur=new TaskBuild(ai, tmp.getUnit(),null, AGAI.searchDistance, AGAI.minDistance, null);
 				cur.setSolved();
 				if (!unit.equals(cur.getUnitDef())) //don't add the unit to build, because it's already in the task list
 					if (tmp.getUnitcount()+tmp.getPlannedunits()<=0){ //don't build builders that are already present (see FIXME also)
@@ -104,9 +104,9 @@ public class BuildManager extends TaskManager{
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
-	public void solve(AGTask task) {
+	public void solve(Task task) {
 		ai.msg(""+task);
-		BuildTask t=(BuildTask)task;
+		TaskBuild t=(TaskBuild)task;
 		List <AGUnit> builder=ai.getAGI().getAGB().getBuilder(t.getUnitDef());
 		if (builder.size()>0){ //found unit who can build.. try it
 			for (int j=0; j<builder.size(); j++){
@@ -114,7 +114,7 @@ public class BuildManager extends TaskManager{
 					int res=realBuild(builder.get(j),t);
 					if (res!=0){
 						ai.msg("Error in building... "+res);
-						task.setRepeat(AGTask.defaultRepeatTime);
+						task.setRepeat(Task.defaultRepeatTime);
 					}
 					break;
 				}
@@ -124,7 +124,7 @@ public class BuildManager extends TaskManager{
 				BuildUnit(t.getUnitDef());
 				t.setSolved();
 			}
-			task.setRepeat(AGTask.defaultRepeatTime);
+			task.setRepeat(Task.defaultRepeatTime);
 		}
 	}
 }

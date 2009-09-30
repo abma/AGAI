@@ -4,7 +4,7 @@ import agai.AGAI;
 
 import com.springrts.ai.oo.UnitDef;
 
-public class UnitPropertyEvaluatorPrice extends UnitPropertyEvaluator{
+class UnitPropertyEvaluatorPrice extends UnitPropertyEvaluator{
 	public UnitPropertyEvaluatorPrice(AGAI ai, float weighting, UnitProperty prop) {
 		super(ai, weighting, prop);
 	}

@@ -20,57 +20,63 @@ package agai.manager;
 import java.util.List;
 
 import agai.AGAI;
+import agai.AGAI.ElementType;
 import agai.info.BuildTreeUnit;
-import agai.info.SearchScout;
-import agai.unit.AGTask;
+import agai.info.SearchAttacker;
+import agai.task.Task;
+import agai.task.TaskAttack;
+import agai.task.TaskGroup;
+
 
 /**
- * The Class AGTScout.
+ * The Class AGTAttack.
+ * 
+ * @author matze
  */
-public class ScoutManager extends TaskManager{
-	
-	/** The count of all scouts */
-	private int scouts = 0;
-	
-	/**
-	 * Dec scouts.
-	 */
-	public void decScouts() {
-		scouts--;
-		ai.msg(""+scouts);
+public class ManagerAttack extends Manager{
+	private int groupsize=0;
+	public int getGroups() {
+		return groups;
 	}
 
-	/**
-	 * Inc scouts.
-	 */
-	public void incScouts() {
-		scouts++;
-		ai.msg(""+scouts);
+	public void setGroups(int groups) {
+		this.groups = groups;
 	}
 
-	/** The list. */
+	private int groups=0;
 	protected List <BuildTreeUnit> list;
-	
 	/**
-	 * Instantiates a new aG task scout.
+	 * Instantiates a new aG task attack.
 	 * 
 	 * @param ai the ai
 	 */
-	public ScoutManager(AGAI ai) {
+	public ManagerAttack(AGAI ai) {
 		super(ai);
-		list=ai.getAGI().getAGF().Filter(new SearchScout(ai));
+		list=ai.getAGI().getAGF().Filter(new SearchAttacker(ai));
 		for (int i=0; i<list.size(); i++){
 			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getAGU().getTotalPrice(list.get(i).getUnit()) );
 		}
 	}
 	
+	/**
+	 * Dump.
+	 */
+	public void dump(){
+		ai.msg("Task Attack");
+	}
+
 	/* (non-Javadoc)
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
-	public void solve(AGTask task) {
-		if (scouts<10){
-			ai.buildUnit(task, list, task, AGAI.ElementType.unitAny);
+	public void solve(Task task) {
+		if (ai.getAGG().getGroups(TaskAttack.class)<groups){
+			TaskAttack a=((TaskAttack)task);
+			TaskGroup group=new TaskGroup(ai, new TaskAttack(ai, ElementType.unitLand), groupsize);
+			for (int i=0; i<groupsize; i++){
+				ai.buildUnit(group, list, a, a.getType());
+			}
+			ai.getAGG().addGroup(group);
 		}
 	}
 }

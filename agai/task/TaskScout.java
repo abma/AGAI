@@ -1,19 +1,20 @@
-package agai.unit;
+package agai.task;
 
 import agai.AGAI;
 import agai.info.PoIMap;
 import agai.info.PoIsMap;
-import agai.manager.ScoutManager;
+import agai.manager.ManagerScout;
+import agai.unit.AGUnit;
 
-public class ScoutTask extends AGTask{
-	public ScoutTask(AGAI ai) {
+public class TaskScout extends Task{
+	public TaskScout(AGAI ai) {
 		super(ai);
 	}
 
 	@Override
 	public void solve() {
 		ai.msg("");
-		ai.getAGT().get(ScoutManager.class).solve(this);
+		ai.getAGT().get(ManagerScout.class).solve(this);
 	}
 
 	@Override
@@ -31,7 +32,7 @@ public class ScoutTask extends AGTask{
 	@Override
 	public void unitDestroyed(AGUnit unit){
 		ai.msg("");
-		ai.getAGT().addTask(new ScoutTask(ai));
+		ai.getAGT().addTask(new TaskScout(ai));
 		setRepeat(0);
 	}
 	public String toString(){
@@ -40,11 +41,11 @@ public class ScoutTask extends AGTask{
 	@Override
 	public void assign(AGUnit unit){
 		unit.setIdle();
-		((ScoutManager) ai.getAGT().get(ScoutManager.class)).incScouts();
+		((ManagerScout) ai.getAGT().get(ManagerScout.class)).incScouts();
 	}
 
 	@Override
 	public void unassign(AGUnit unit){
-		((ScoutManager) ai.getAGT().get(ScoutManager.class)).decScouts();
+		((ManagerScout) ai.getAGT().get(ManagerScout.class)).decScouts();
 	}
 }

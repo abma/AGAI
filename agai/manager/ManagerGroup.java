@@ -19,29 +19,29 @@ package agai.manager;
 import java.util.LinkedList;
 
 import agai.AGAI;
-import agai.unit.AGTask;
-import agai.unit.GroupTask;
+import agai.task.Task;
+import agai.task.TaskGroup;
 
 /**
  * The Class AGTGroupManager.
  */
-public class GroupManager extends TaskManager{
+public class ManagerGroup extends Manager{
 	
 	/** The list. */
-	private LinkedList<GroupTask> list;
+	private LinkedList<TaskGroup> list;
 	
 	/**
 	 * Instantiates a new aGT group manager.
 	 * 
 	 * @param ai the ai
 	 */
-	public GroupManager(AGAI ai) {
+	public ManagerGroup(AGAI ai) {
 		super(ai);
-		list=new LinkedList<GroupTask>();
+		list=new LinkedList<TaskGroup>();
 	}
 
 
-	public void remove(GroupTask taskGroup) {
+	public void remove(TaskGroup taskGroup) {
 		ai.msg("group died!");
 		list.remove(taskGroup);
 	}
@@ -51,7 +51,7 @@ public class GroupManager extends TaskManager{
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
-	public void solve(AGTask task) {
+	public void solve(Task task) {
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class GroupManager extends TaskManager{
 	 *
 	 * @param group the group
 	 */
-	public void addGroup(GroupTask group){
+	public void addGroup(TaskGroup group){
 		list.add(group);
 	}
 

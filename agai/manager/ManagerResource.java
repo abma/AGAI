@@ -24,9 +24,9 @@ import agai.AGAI;
 import agai.info.BuildTreeUnit;
 import agai.info.SearchResource;
 import agai.info.PoIMap;
-import agai.unit.AGTask;
+import agai.task.Task;
+import agai.task.TaskBuild;
 import agai.unit.AGUnit;
-import agai.unit.BuildTask;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Feature;
@@ -40,7 +40,7 @@ import com.springrts.ai.oo.UnitDef;
 /**
  * The Class AGTBuildResource.
  */
-public class ResourceManager extends TaskManager {
+public class ManagerResource extends Manager {
 	
 	/** The list with units to build resource, the first id is the resid, the secound for the units sorted by priority to built (best units first) */
 	protected List <List <BuildTreeUnit>> list;
@@ -50,7 +50,7 @@ public class ResourceManager extends TaskManager {
 	 * 
 	 * @param ai the ai
 	 */
-	public ResourceManager(AGAI ai) {
+	public ManagerResource(AGAI ai) {
 		super(ai);
 		this.map=ai.getClb().getMap();
 		List <Resource> res=ai.getClb().getResources();
@@ -143,7 +143,7 @@ public class ResourceManager extends TaskManager {
 				poi.setBuilt(true);
 			}
 			ai.msg("Sending command to build unit");
-			AGTask buildtask=new BuildTask(ai, unit, pos, radius, 2, null);
+			Task buildtask=new TaskBuild(ai, unit, pos, radius, 2, null);
 			buildtask.setPoi(poi);
 			ai.getAGT().addTask(buildtask);
 		}else{
@@ -155,7 +155,7 @@ public class ResourceManager extends TaskManager {
 	}
 
 	@Override
-	public void solve(AGTask task) {
+	public void solve(Task task) {
 		// TODO Auto-generated method stub
 		
 	}

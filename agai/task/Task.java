@@ -15,10 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package agai.unit;
+package agai.task;
 
 import agai.AGAI;
 import agai.info.PoIMap;
+import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Unit;
@@ -29,7 +30,7 @@ import com.springrts.ai.oo.WeaponDef;
 /**
  * The Class AGTask.
  */
-public abstract class AGTask{
+public abstract class Task{
 	public static int defaultRepeatTime = 100;
 	/** The time in frames the task is repeated, <=0 means no repeat */
 	private int repeat;
@@ -59,7 +60,7 @@ public abstract class AGTask{
 	 * 
 	 * @param ai the ai
 	 */
-	protected AGTask(AGAI ai){
+	protected Task(AGAI ai){
 		this.ai=ai;
 		this.repeat=defaultRepeatTime;
 	}

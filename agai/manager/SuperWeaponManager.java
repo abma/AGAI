@@ -18,13 +18,13 @@
 package agai.manager;
 
 import agai.AGAI;
-import agai.unit.AGTask;
+import agai.task.Task;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class AGTBuildSuperWeapon.
  */
-public class SuperWeaponTask extends TaskManager{
+public class SuperWeaponManager extends Manager{
 	/*
 	 	Algorithm:
 	 	get all units with attack-damage
@@ -37,7 +37,7 @@ public class SuperWeaponTask extends TaskManager{
 	 * 
 	 * @param ai the ai
 	 */
-	SuperWeaponTask(AGAI ai) {
+	SuperWeaponManager(AGAI ai) {
 		super(ai);
 		// TODO Auto-generated constructor stub
 	}
@@ -46,7 +46,7 @@ public class SuperWeaponTask extends TaskManager{
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
-	public void solve(AGTask task) {
+	public void solve(Task task) {
 		// TODO Auto-generated method stub
 		
 	}

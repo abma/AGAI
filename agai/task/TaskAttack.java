@@ -1,14 +1,15 @@
-package agai.unit;
+package agai.task;
 
 import java.util.List;
 
 import agai.AGAI;
 import agai.info.SectorMap;
+import agai.unit.AGUnit;
 
 import com.springrts.ai.oo.Unit;
 
 //TODO: Auto-generated Javadoc
-public class AttackTask extends AGTask{
+public class TaskAttack extends Task{
 	private AGAI.ElementType type;
 
 	public AGAI.ElementType getType() {
@@ -16,7 +17,7 @@ public class AttackTask extends AGTask{
 	}
 
 	SectorMap currentsec;
-	public AttackTask(AGAI ai, AGAI.ElementType type) {
+	public TaskAttack(AGAI ai, AGAI.ElementType type) {
 		super(ai);
 		this.type=type;
 	}
@@ -24,7 +25,7 @@ public class AttackTask extends AGTask{
 	@Override
 	public void solve() {
 		ai.msg("attacking");
-		ai.getAGT().get(agai.manager.AttackManager.class).solve(this);
+		ai.getAGT().get(agai.manager.ManagerAttack.class).solve(this);
 	}
 	@Override
 	public void assign(AGUnit unit){
@@ -45,12 +46,12 @@ public class AttackTask extends AGTask{
 		}
 		SectorMap sec=ai.getAGI().getAGM().getNextEnemyTarget(unit.getPos(), 0);
 		if (sec!=null){
-			unit.setTask(new SecureMoveTask(ai,this, sec));
+			unit.setTask(new TaskSecureMove(ai,this, sec));
 			ai.msg("attacking at "+sec.getPos().x +" "+ sec.getPos().y+" "+ sec.getPos().z);
 			this.currentsec=sec;
 			return;
 		}
-		ai.getAGT().addTask(new ScoutTask(ai));
+		ai.getAGT().addTask(new TaskScout(ai));
 		setRepeat(0);
 		unit.setTask(null);
 		ai.msg("nothing to attack found!");

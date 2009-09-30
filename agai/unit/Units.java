@@ -31,7 +31,7 @@ import com.springrts.ai.oo.*;
 /**
  * Class with list of all Units (and its tasks/status).
  */
-public class AGUnits {
+public class Units {
 	
 	/** The units. */
 	private List <AGUnit> units=null;
@@ -44,7 +44,7 @@ public class AGUnits {
 	 * 
 	 * @param ai the ai
 	 */
-	public AGUnits(AGAI ai){
+	public Units(AGAI ai){
 		units=new ArrayList <AGUnit>();
 		unitDefs=ai.getClb().getUnitDefs();
 		this.ai=ai;

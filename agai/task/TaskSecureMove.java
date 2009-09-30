@@ -1,4 +1,4 @@
-package agai.unit;
+package agai.task;
 
 import java.util.List;
 
@@ -8,12 +8,13 @@ import com.springrts.ai.oo.WeaponDef;
 
 import agai.AGAI;
 import agai.info.SectorMap;
+import agai.unit.AGUnit;
 
-public class SecureMoveTask extends AGTask{
-	private AGTask taskWhenReached;
+public class TaskSecureMove extends Task{
+	private Task taskWhenReached;
 	private SectorMap destination;
 	private List <SectorMap> path;
-	public SecureMoveTask(AGAI ai, AGTask taskWhenReached, SectorMap destination) {
+	public TaskSecureMove(AGAI ai, Task taskWhenReached, SectorMap destination) {
 		super(ai);
 		this.taskWhenReached=taskWhenReached;
 		this.destination=destination;

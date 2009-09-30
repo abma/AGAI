@@ -16,7 +16,7 @@ die werte normalisieren:
 
  */
 
-public abstract class UnitPropertyEvaluator{
+abstract class UnitPropertyEvaluator{
 	
 	/**
 	 * Returns the value, bigger means better, lower is bad (if it is different, add a *-1)
@@ -40,7 +40,7 @@ public abstract class UnitPropertyEvaluator{
 	 *
 	 * @return the average
 	 */
-	public float getAverageComp(UnitDef unit) {
+	float getAverageComp(UnitDef unit) {
 		return this.getValue(unit)-average;
 	}
 
@@ -86,7 +86,7 @@ public abstract class UnitPropertyEvaluator{
 	/**
 	 * Update values.
 	 */
-	public void update(){
+	void update(){
 		updateMinMax();
 		updateAverageValue();
 	}
@@ -98,7 +98,7 @@ public abstract class UnitPropertyEvaluator{
 	 * 
 	 * @return the float
 	 */
-	public float getNormValue(UnitDef unit){
+	float getNormValue(UnitDef unit){
 		return (((getValue(unit) - min) / (max - min)) * (float)(NORMMAX - NORMMIN)) + NORMMIN;   
 	}
 	
