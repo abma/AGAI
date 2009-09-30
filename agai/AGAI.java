@@ -18,16 +18,38 @@
 package agai;
 
 
+import java.util.List;
+
+import agai.info.BuildTree;
+import agai.info.BuildTreeUnit;
+import agai.info.PoIsMap;
+import agai.info.Search;
+import agai.info.TreatMap;
 import agai.loader.IAGAI;
+import agai.manager.TaskManagers;
+import agai.manager.GroupManager;
+import agai.manager.ResourceManagerTask;
+import agai.unit.AGTask;
+import agai.unit.AGUnit;
+import agai.unit.AGUnits;
+import agai.unit.AttackTask;
+import agai.unit.BuildTask;
+import agai.unit.GroupTask;
+import agai.unit.ScoutTask;
 
 import com.springrts.ai.AICommand;
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.command.AddPointDrawAICommand;
 import com.springrts.ai.command.RemovePointDrawAICommand;
 import com.springrts.ai.command.SendTextMessageAICommand;
-import com.springrts.ai.oo.*;
-
-import java.util.List;
+import com.springrts.ai.oo.AbstractOOAI;
+import com.springrts.ai.oo.OOAICallback;
+import com.springrts.ai.oo.Point;
+import com.springrts.ai.oo.Resource;
+import com.springrts.ai.oo.Unit;
+import com.springrts.ai.oo.UnitDef;
+import com.springrts.ai.oo.WeaponDef;
+import com.springrts.ai.oo.WeaponMount;
 
 
 
@@ -58,19 +80,19 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	private AGUnits aGU = null;
 	
 	/** The a gt. */
-	private AGTaskManagers aGT = null;
+	private TaskManagers aGT = null;
 	
 	/** The a gp. */
-	private AGPoIs aGP = null;
+	private PoIsMap aGP = null;
 	
 	/** The a gb. */
-	private AGBuildTree aGB = null;
+	private BuildTree aGB = null;
 	
 	/** The a gf. */
-	private AGFilter aGF = null;
+	private Search aGF = null;
 	
 	/** The a gm. */
-	private AGMap aGM = null;
+	private TreatMap aGM = null;
 
 	/** The metal. */
 	private Resource metal = null;
@@ -79,9 +101,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	private Resource energy = null;
 
 	/** The a gg. */
-	private AGGroup aGG;
+	private GroupManager aGG;
 
-	public AGGroup getAGG() {
+	public GroupManager getAGG() {
 		return aGG;
 	}
 
@@ -168,13 +190,14 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		energy=res.get(1);
 
 		this.aGU = new AGUnits(this);
-		this.aGB = new AGBuildTree(this);
+		this.aGB = new BuildTree(this);
 
-		this.aGP = new AGPoIs(this);
-		this.aGF = new AGFilter(this);
-		this.aGT = new AGTaskManagers(this);
-		this.aGM = new AGMap(this);
-		this.aGG = new AGGroup(this);
+		this.aGP = new PoIsMap(this);
+		this.aGF = new Search(this);
+		this.aGT = new TaskManagers(this);
+		this.aGM = new TreatMap(this);
+		this.aGG = new GroupManager(this);
+//		this.aGC = new AGController(this);
 
 		List <Unit> list=clb.getTeamUnits();
 		for(int i=0; i<list.size(); i++){
@@ -189,7 +212,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 *
 	 * @return the aGM
 	 */
-	public AGMap getAGM() {
+	public TreatMap getAGM() {
 		return aGM;
 	}
 
@@ -225,17 +248,13 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				if (argv.length==2){
 					UnitDef u=aGU.getUnitDef(argv[1]);
 					if (u!=null){
-						aGT.addTask(new AGTaskBuildUnit(this, u, null, 100, 2, null));
+						aGT.addTask(new BuildTask(this, u, null, 100, 2, null));
 					}
 				}
 			}else if (argv[0].equalsIgnoreCase("dump")){
 				aGT.dump();
-			}else if (argv[0].equalsIgnoreCase("buildenergy")){
-				aGT.addTask(new AGTaskBuildResource(this,getEnergy()));
-			}else if (argv[0].equalsIgnoreCase("buildmetal")){
-				aGT.addTask(new AGTaskBuildResource(this,getMetal()));
 			}else if (argv[0].equalsIgnoreCase("scout")){
-				aGT.addTask(new AGTaskScout(this));
+				aGT.addTask(new ScoutTask(this));
 			}else if (argv[0].equalsIgnoreCase("dumpunits")){
 				aGU.dump();
 			}else if (argv[0].equalsIgnoreCase("dumpunitdefs")){
@@ -245,7 +264,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			}else if (argv[0].equalsIgnoreCase("dumpmap")){
 				aGM.dump();
 			}else if (argv[0].equalsIgnoreCase("attack")){
-				aGT.addTask(new AGTaskAttack(this, AGAI.ElementType.unitLand));
+				aGT.addTask(new AttackTask(this, AGAI.ElementType.unitLand));
 			}else if (argv[0].equalsIgnoreCase("clear")){
 				clear();
 			}else if (argv[0].equalsIgnoreCase("group")){
@@ -266,19 +285,18 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	}
 
 	private void start() {
-		aGT.addTask(new AGTaskBuildResource(this,getMetal()));
-		aGT.addTask(new AGTaskBuildResource(this,getEnergy()));
-		aGT.addTask(new AGTaskScout(this));
-		aGT.addTask(new AGTaskAttack(this, ElementType.unitLand));
+		aGT.addTask(new ResourceManagerTask(this));
+		aGT.addTask(new ScoutTask(this));
+		aGT.addTask(new AttackTask(this, ElementType.unitLand));
 	}
 
 	/**
 	 * Group.
 	 */
 	private void group() {
-		AGTaskGroup group=new AGTaskGroup(this, new AGTaskAttack(this, ElementType.unitLand), 10);
+		GroupTask group=new GroupTask(this, new AttackTask(this, ElementType.unitLand), 10);
 		for (int i=0; i<10; i++){
-			AGTask tmp= new AGTaskBuildUnit(this, aGU.getUnitDef("armflea"), null, 0, 0, group);
+			AGTask tmp= new BuildTask(this, aGU.getUnitDef("armflea"), null, 0, 0, group);
 			aGT.addTask(tmp);
 		}
 		aGG.addGroup(group);
@@ -643,7 +661,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * 
 	 * @return the aGD
 	 */
-	public AGTaskManagers getAGT() {
+	public TaskManagers getAGT() {
 		return aGT;
 	}
 
@@ -681,7 +699,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * 
 	 * @return the aGP
 	 */
-	public AGPoIs getAGP() {
+	public PoIsMap getAGP() {
 		return aGP;
 	}
 
@@ -690,7 +708,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * 
 	 * @return the aGB
 	 */
-	public AGBuildTree getAGB() {
+	public BuildTree getAGB() {
 		return aGB;
 	}
 
@@ -744,7 +762,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * 
 	 * @return the aGF
 	 */
-	public AGFilter getAGF() {
+	public Search getAGF() {
 		return aGF;
 	}
 
@@ -853,7 +871,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * @param tasktoassign the tasktoassign
 	 * @param type the type (Air, Water, ...)
 	 */
-	public void buildUnit(AGTask task, List <AGBuildTreeUnit> list, AGTask tasktoassign, ElementType type){
+	public void buildUnit(AGTask task, List <BuildTreeUnit> list, AGTask tasktoassign, ElementType type){
 		UnitDef unit=null;
 		task.setRepeat(AGTask.defaultRepeatTime);
 		for(int i=0; i<list.size(); i++){ //searching for existing unit
@@ -872,7 +890,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			if (UnitInType(list.get(i).getUnit(), type)){
 				AGUnit builder=getAGU().getBuilder(unit);
 				if (builder!=null){
-					AGTask buildtask=new AGTaskBuildUnit(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
+					AGTask buildtask=new BuildTask(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
 					getAGT().addTask(buildtask);
 					task.setRepeat(0);
 					return;
@@ -881,7 +899,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		}
 		//no unit found, build cheapest one
 		if (unit!=null){
-			AGTask buildtask=new AGTaskBuildUnit(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
+			AGTask buildtask=new BuildTask(this, unit, null, AGAI.searchDistance, AGAI.minDistance, tasktoassign);
 			getAGT().addTask(buildtask);
 			task.setRepeat(0);
 		}else{
