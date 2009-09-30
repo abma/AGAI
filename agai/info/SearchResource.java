@@ -18,7 +18,7 @@ public class SearchResource extends UnitProperty{
 	 */
 	@Override
 	public boolean isInlist(UnitDef unit) {
-		BuildTreeUnit tree = ai.getAGB().searchNode(unit);
+		BuildTreeUnit tree = ai.getAGI().getAGB().searchNode(unit);
 		if ((tree!=null) && ((tree.getBacklink()==null) || (tree.getBacklink().size()==0))) //unit can't be build! (filter commander out)
 			return false;
 		if (ai.getAGU().getProduction(unit, res)>0){

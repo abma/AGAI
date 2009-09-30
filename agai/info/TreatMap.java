@@ -60,7 +60,7 @@ public class TreatMap {
 	public TreatMap(AGAI ai){
 		this.ai=ai;
 		this.mark=1;
-		LinkedList<BuildTreeUnit> list=ai.getAGB().getUnitList();
+		LinkedList<BuildTreeUnit> list=ai.getAGI().getAGB().getUnitList();
 		float tmp=0;
 		for (int i=0; i<list.size(); i++){
 			tmp=tmp+list.get(i).getUnit().getLosRadius();

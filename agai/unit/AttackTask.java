@@ -35,7 +35,7 @@ public class AttackTask extends AGTask{
 	public void unitCommandFinished(AGUnit unit){
 		ai.msg(""+unit);
 		if(currentsec!=null){//unit reached sec, cleaned?
-			List<Unit> list=ai.getClb().getEnemyUnitsIn(currentsec.getPos(), ai.getAGM().getSectorSize());
+			List<Unit> list=ai.getClb().getEnemyUnitsIn(currentsec.getPos(), ai.getAGI().getAGM().getSectorSize());
 			if (list.size()>0){
 				unit.attackUnit(list.get(0));
 				return;
@@ -43,7 +43,7 @@ public class AttackTask extends AGTask{
 				currentsec.setClean(); //sector is clean
 			}
 		}
-		SectorMap sec=ai.getAGM().getNextEnemyTarget(unit.getPos(), 0);
+		SectorMap sec=ai.getAGI().getAGM().getNextEnemyTarget(unit.getPos(), 0);
 		if (sec!=null){
 			unit.setTask(new SecureMoveTask(ai,this, sec));
 			ai.msg("attacking at "+sec.getPos().x +" "+ sec.getPos().y+" "+ sec.getPos().z);

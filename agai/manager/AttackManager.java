@@ -52,7 +52,7 @@ public class AttackManager extends TaskManager{
 	 */
 	public AttackManager(AGAI ai) {
 		super(ai);
-		list=ai.getAGF().Filter(new SearchAttacker(ai));
+		list=ai.getAGI().getAGF().Filter(new SearchAttacker(ai));
 		for (int i=0; i<list.size(); i++){
 			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getAGU().getTotalPrice(list.get(i).getUnit()) );
 		}

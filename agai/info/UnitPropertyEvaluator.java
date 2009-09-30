@@ -59,7 +59,7 @@ public abstract class UnitPropertyEvaluator{
 	}
 
 	private void updateAverageValue(){
-		List <BuildTreeUnit> list=ai.getAGB().getUnitList();
+		List <BuildTreeUnit> list=ai.getAGI().getAGB().getUnitList();
 		float tmp=0;
 		for (int i=0; i<list.size(); i++){
 			tmp=tmp + getValue(list.get(i).getUnit());
@@ -73,7 +73,7 @@ public abstract class UnitPropertyEvaluator{
 	 * @param unit the unit
 	 */
 	private void updateMinMax(){
-		List <BuildTreeUnit> list=ai.getAGB().getUnitList();
+		List <BuildTreeUnit> list=ai.getAGI().getAGB().getUnitList();
 		for(int i=0; i<list.size(); i++){
 			float tmp=getValue(list.get(i).getUnit());
 			if (tmp>max)

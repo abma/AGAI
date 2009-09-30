@@ -84,7 +84,7 @@ public class BuildManager extends TaskManager{
 		AGUnit builder=ai.getAGU().getUnit(ai.getAGU().getUnitDef("armcom")); //FIXME search for commander (should search the "next" unit in tree to build)
 		if (builder==null) //no commander found, search builder
 			ai.msg("Commander is dead, here is missing some code...");
-		BuildTreeUnit tmp=ai.getAGB().searchNode(builder.getUnit().getDef(),unit);
+		BuildTreeUnit tmp=ai.getAGI().getAGB().searchNode(builder.getUnit().getDef(),unit);
 		if (tmp!=null){
 			while(tmp.getUnit()!=builder.getUnit().getDef()){
 				BuildTask cur=new BuildTask(ai, tmp.getUnit(),null, AGAI.searchDistance, AGAI.minDistance, null);
@@ -107,7 +107,7 @@ public class BuildManager extends TaskManager{
 	public void solve(AGTask task) {
 		ai.msg(""+task);
 		BuildTask t=(BuildTask)task;
-		List <AGUnit> builder=ai.getAGB().getBuilder(t.getUnitDef());
+		List <AGUnit> builder=ai.getAGI().getAGB().getBuilder(t.getUnitDef());
 		if (builder.size()>0){ //found unit who can build.. try it
 			for (int j=0; j<builder.size(); j++){
 				if (builder.get(j).isIdle()){

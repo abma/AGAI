@@ -63,7 +63,7 @@ public class AGUnits {
 			return null;
 		}
         units.add(new AGUnit(ai, unit));
-        ai.getAGB().searchNode(unit.getDef()).incUnitcount();
+        ai.getAGI().getAGB().searchNode(unit.getDef()).incUnitcount();
         return units.get(units.size()-1);
 	}
 	
@@ -153,7 +153,7 @@ public class AGUnits {
 	 * @param attacker the attacker
 	 */
 	public void destroyed(Unit unit, Unit attacker){
-		ai.getAGB().searchNode(unit.getDef()).decUnitCount();
+		ai.getAGI().getAGB().searchNode(unit.getDef()).decUnitCount();
 		for(int i=units.size()-1; i>=0;i--)
 			if (units.get(i).getUnit().equals(unit)){
 				units.get(i).destroyed();
@@ -292,7 +292,7 @@ public class AGUnits {
 	}
 
 	public void dumpUnitDefs(){
-		List <BuildTreeUnit> list= ai.getAGB().getUnitList();
+		List <BuildTreeUnit> list= ai.getAGI().getAGB().getUnitList();
 		for (int i=0; i<list.size(); i++){
 			UnitDef u=list.get(i).getUnit();
 			System.out.print(u.getName());

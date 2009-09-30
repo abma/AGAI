@@ -18,7 +18,7 @@ public class ScoutTask extends AGTask{
 
 	@Override
 	public void unitCommandFinished(AGUnit unit){
-		PoIMap p=ai.getAGP().getNearestPoi(unit.getPos(), PoIsMap.PoIAny, true, true);
+		PoIMap p=ai.getAGI().getAGP().getNearestPoi(unit.getPos(), PoIsMap.PoIAny, true, true);
 		if (p!=null){
 			ai.msg("moving to "+p.getPos().x +" " +p.getPos().z);
 			unit.moveTo(p.getPos());

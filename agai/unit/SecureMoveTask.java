@@ -23,15 +23,15 @@ public class SecureMoveTask extends AGTask{
 	}
 	@Override
 	public void unitCommandFinished(AGUnit unit){
-		if (ai.getAGM().isPosInSec(unit.getPos(),destination)){
+		if (ai.getAGI().getAGM().isPosInSec(unit.getPos(),destination)){
 			ai.msg("Destination reached, back to the old task!");
 			setRepeat(0);
 			unit.setTask(taskWhenReached);
 		}else{ //when moving, try to avoid danger sectors
 			ai.msg("Sneak moving");
 			if (path==null){
-				SectorMap cursec=ai.getAGM().getSector(unit.getPos());
-				path=ai.getAGM().getSecurePath(cursec, destination);
+				SectorMap cursec=ai.getAGI().getAGM().getSector(unit.getPos());
+				path=ai.getAGI().getAGM().getSecurePath(cursec, destination);
 			}
 			if (path.size()>0)
 				unit.moveTo(path.remove(0).getPos());

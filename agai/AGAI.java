@@ -20,11 +20,7 @@ package agai;
 
 import java.util.List;
 
-import agai.info.BuildTree;
 import agai.info.BuildTreeUnit;
-import agai.info.PoIsMap;
-import agai.info.Search;
-import agai.info.TreatMap;
 import agai.loader.IAGAI;
 import agai.manager.TaskManagers;
 import agai.manager.GroupManager;
@@ -82,18 +78,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	/** The a gt. */
 	private TaskManagers aGT = null;
 	
-	/** The a gp. */
-	private PoIsMap aGP = null;
-	
-	/** The a gb. */
-	private BuildTree aGB = null;
-	
-	/** The a gf. */
-	private Search aGF = null;
-	
-	/** The a gm. */
-	private TreatMap aGM = null;
-
 	/** The metal. */
 	private Resource metal = null;
 	
@@ -109,7 +93,19 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 
 	/** The frame. */
 	private int frame;
+
+	private Info aGI;
+
+	public Info getAGI() {
+		return aGI;
+	}
+
+	private Controller aGC;
 	
+	public Controller getAGC() {
+		return aGC;
+	}
+
 	/**
 	 * Gets the current frame (game time) of the game
 	 *
@@ -190,14 +186,11 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		energy=res.get(1);
 
 		this.aGU = new AGUnits(this);
-		this.aGB = new BuildTree(this);
 
-		this.aGP = new PoIsMap(this);
-		this.aGF = new Search(this);
 		this.aGT = new TaskManagers(this);
-		this.aGM = new TreatMap(this);
 		this.aGG = new GroupManager(this);
-//		this.aGC = new AGController(this);
+		this.aGI = new Info(this);
+		this.aGC = new Controller(this);
 
 		List <Unit> list=clb.getTeamUnits();
 		for(int i=0; i<list.size(); i++){
@@ -205,15 +198,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		}
 		msg("");
 		return 0;
-	}
-
-	/**
-	 * Gets the aGM.
-	 *
-	 * @return the aGM
-	 */
-	public TreatMap getAGM() {
-		return aGM;
 	}
 
 	/**
@@ -260,9 +244,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			}else if (argv[0].equalsIgnoreCase("dumpunitdefs")){
 				aGU.dumpUnitDefs();
 			}else if (argv[0].equalsIgnoreCase("dumpbuildtree")){
-				aGB.dumpUnits();
+				aGI.getAGB().dumpUnits();
 			}else if (argv[0].equalsIgnoreCase("dumpmap")){
-				aGM.dump();
+				aGI.getAGM().dump();
 			}else if (argv[0].equalsIgnoreCase("attack")){
 				aGT.addTask(new AttackTask(this, AGAI.ElementType.unitLand));
 			}else if (argv[0].equalsIgnoreCase("clear")){
@@ -274,7 +258,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			}else if (argv[0].equalsIgnoreCase("stop")){
 				stop();
 			}else if (argv[0].equalsIgnoreCase("dumpgraph")){
-				aGB.dumpGraph();
+				aGI.getAGB().dumpGraph();
 			}
 		}
 		return 0; 
@@ -415,7 +399,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			t.unitDamaged(u, damage, dir, weaponDef, paralyzer);
 		else
 			msg(unit.getDef().getName());
-		aGM.unitDamaged(unit,attacker,damage);
+		aGI.getAGM().unitDamaged(unit,attacker,damage);
 		return 0; 
 	}
 
@@ -436,7 +420,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		else
 			msg(unit.getDef().getName());
 		aGU.destroyed(unit,attacker);
-		aGM.unitDestroyed(unit);
+		getAGI().getAGM().unitDestroyed(unit);
 		return 0; 
 	}
 
@@ -493,7 +477,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyEnterLOS(Unit enemy) {
-		aGM.addDanger(enemy);
+		getAGI().getAGM().addDanger(enemy);
 		return 0; 
 	}
 
@@ -518,7 +502,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyEnterRadar(Unit enemy) { //never call enemy.getDef().getName()!!
-		aGM.addDanger(enemy);
+		getAGI().getAGM().addDanger(enemy);
 		return 0; 
 	}
 
@@ -694,24 +678,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		return clb.getEngine().handleCommand(com.springrts.ai.AICommandWrapper.COMMAND_TO_ID_ENGINE,-1, command);
 	}
 
-	/**
-	 * Gets the aGP.
-	 * 
-	 * @return the aGP
-	 */
-	public PoIsMap getAGP() {
-		return aGP;
-	}
-
-	/**
-	 * Gets the aGB.
-	 * 
-	 * @return the aGB
-	 */
-	public BuildTree getAGB() {
-		return aGB;
-	}
-
 	/** The Constant DEFAULT_ZONE. */
 	private static final int DEFAULT_ZONE = 0;
 	
@@ -755,15 +721,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	public double getDistance(AIFloat3 pos1, AIFloat3 pos2){
 		return Math.sqrt((Math.pow(pos1.x-pos2.x,2) + Math.pow(pos1.z-pos2.z,2 )));
-	}
-
-	/**
-	 * Gets the aGF.
-	 * 
-	 * @return the aGF
-	 */
-	public Search getAGF() {
-		return aGF;
 	}
 
 	/**

@@ -41,7 +41,7 @@ public class Search{
 	 * @param ai the ai
 	 */
 	public Search(AGAI ai){
-		list=ai.getAGB().getUnitList();
+		list=ai.getAGI().getAGB().getUnitList();
 	}
 	
 	/**

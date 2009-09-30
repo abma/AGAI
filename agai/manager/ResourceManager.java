@@ -57,12 +57,12 @@ public class ResourceManager extends TaskManager {
 		list=new ArrayList  <List <BuildTreeUnit>>();
 		for (int i=0; i<res.size(); i++){
 			initializeSpots(res.get(i));
-			list.add(i,ai.getAGF().Filter(new SearchResource(ai, res.get(i))));
+			list.add(i,ai.getAGI().getAGF().Filter(new SearchResource(ai, res.get(i))));
 		}
 		List<Feature> f=ai.getClb().getFeatures();
 		for (int i=0; i<f.size(); i++){ //FIXME: Engine issue, adds geothermal spots to PoI
 			if (f.get(i).getDef().isGeoThermal()){
-				ai.getAGP().add(f.get(i).getPosition(), ai.getEnergy().getResourceId());
+				ai.getAGI().getAGP().add(f.get(i).getPosition(), ai.getEnergy().getResourceId());
 //				ai.drawPoint(f.get(i).getPosition(),"Pos " + i + ai.getEnergy().getName());
 			}
 		}
@@ -88,7 +88,7 @@ public class ResourceManager extends TaskManager {
 		for(int i=0; i<spots.size(); i++ ){
 			spots.get(i).y=map.getElevationAt(spots.get(i).x, spots.get(i).z); //FIXME this is a engine-bug workaround
 //			ai.drawPoint(spots.get(i),"Pos " + i + res.getName());
-			ai.getAGP().add(spots.get(i), res.getResourceId());
+			ai.getAGI().getAGP().add(spots.get(i), res.getResourceId());
 		}
 	}
 
@@ -103,7 +103,7 @@ public class ResourceManager extends TaskManager {
 		for(int i=0; i<tmp.size(); i++){ //search from units that fits best to the worst.. skip when unit can be built and enough resources found
 			builder=ai.getAGU().getBuilder(tmp.get(i).getUnit());
 			if (builder!=null){ //unit can be built! :-)
-				poi=ai.getAGP().getNearestFreePoi(builder.getPos(), resource.getResourceId());
+				poi=ai.getAGI().getAGP().getNearestFreePoi(builder.getPos(), resource.getResourceId());
 				unit=tmp.get(i).getUnit();
 				if ((unit.getExtractsResource(resource)>0) || unit.isNeedGeo()){ //unit needs spot to be built
 					if (poi==null) //no point found to build, next building

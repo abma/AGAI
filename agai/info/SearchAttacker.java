@@ -28,7 +28,7 @@ public class SearchAttacker extends UnitProperty{
 		return 0;
 	}
 	public boolean isInlist(UnitDef unit){
-		BuildTreeUnit tree = ai.getAGB().searchNode(unit);
+		BuildTreeUnit tree = ai.getAGI().getAGB().searchNode(unit);
 		if ((tree!=null) && ((tree.getBacklink()==null) || (tree.getBacklink().size()==0))) //filter commander out
 			return false;
 		if  (((unit.getSpeed()>0) && (unit.getLosRadius()>0) && (ai.getWeaponDamage(unit)>0))){

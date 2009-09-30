@@ -58,7 +58,7 @@ public class ScoutManager extends TaskManager{
 	 */
 	public ScoutManager(AGAI ai) {
 		super(ai);
-		list=ai.getAGF().Filter(new SearchScout(ai));
+		list=ai.getAGI().getAGF().Filter(new SearchScout(ai));
 		for (int i=0; i<list.size(); i++){
 			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getAGU().getTotalPrice(list.get(i).getUnit()) );
 		}

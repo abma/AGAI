@@ -15,7 +15,7 @@ local infos = {
 	},
 	{
 		key    = 'name',
-		value  = 'high-level Java stub Skirmish AI',
+		value  = 'AGAI by abma',
 		desc   = 'human readable name.',
 	},
 	{
