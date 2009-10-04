@@ -18,59 +18,56 @@
 package agai.info;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import agai.AGAI;
-
-
-
-
 
 /**
  * The Class ISearch to find Units.
  */
-public class ISearchUnit{
-	
+public class ISearchUnit {
+
 	/** The list. */
-	private LinkedList <IBuildTreeUnit> list;
-	
+	private LinkedList<IBuildTreeUnit> list;
+
 	/**
 	 * Instantiates a new aG filter.
 	 * 
-	 * @param ai the ai
+	 * @param ai
+	 *            the ai
 	 */
-	public ISearchUnit(AGAI ai){
-		list=ai.getInfos().getAGB().getUnitList();
+	public ISearchUnit(AGAI ai) {
+		list = ai.getInfos().getAGB().getUnitList();
 	}
-	
+
 	/**
-	 * Search for a unit with UnitPropertys, the first props is used to sort the list.
+	 * Search for a unit with UnitPropertys, the first props is used to sort the
+	 * list.
 	 * 
-	 * @param props the props
+	 * @param props
+	 *            the props
 	 * 
 	 * @return the list< ag build tree unit>
 	 */
-	public List <IBuildTreeUnit> Filter(IUnitProperty props){
-		if (props==null)
+	public List<IBuildTreeUnit> Filter(IUnitProperty props) {
+		if (props == null)
 			return list;
-		LinkedList<IBuildTreeUnit> res=new LinkedList<IBuildTreeUnit>();
-		for(int i=0; i<list.size();i++){
-			if (props.isInlist(list.get(i).getUnit())){
+		LinkedList<IBuildTreeUnit> res = new LinkedList<IBuildTreeUnit>();
+		for (int i = 0; i < list.size(); i++) {
+			if (props.isInlist(list.get(i).getUnit())) {
 				res.add(list.get(i));
 			}
 		}
 		props.update();
 
-		if (res.size()>0){
-			if (props.sort()){
-				Collections.sort(res,props);
+		if (res.size() > 0) {
+			if (props.sort()) {
+				Collections.sort(res, props);
 				return res;
 			}
 		}
 		return res;
 	}
 
-
-	
 }

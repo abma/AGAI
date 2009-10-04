@@ -23,39 +23,44 @@ import agai.manager.MScout;
 import agai.manager.Manager;
 import agai.unit.AGUnit;
 
-public class TScout extends Task{
+public class TScout extends Task {
 	public TScout(AGAI ai, Manager manager) {
 		super(ai, manager);
 	}
-	@Override
-	public void unitCommandFinished(AGUnit unit){
-		IPoI p=ai.getInfos().getAGP().getNearestPoi(unit.getPos(), IPoIs.PoIAny, true, true);
-		if (p!=null){
-			ai.msg("moving to "+p.getPos().x +" " +p.getPos().z);
-			unit.moveTo(p.getPos());
-			p.setVisited(true);
-		}else{
-			ai.msg("No point to scout found!");
-		}
-	}
 
 	@Override
-	public void unitDestroyed(AGUnit unit){
-		ai.msg("");
-		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MScout.class)));
-		setRepeat(0);
-	}
-	public String toString(){
-		return "";
-	}
-	@Override
-	public void assign(AGUnit unit){
+	public void assign(AGUnit unit) {
 		unit.setIdle();
 		((MScout) ai.getManagers().get(MScout.class)).incScouts();
 	}
 
 	@Override
-	public void unassign(AGUnit unit){
+	public String toString() {
+		return "";
+	}
+
+	@Override
+	public void unassign(AGUnit unit) {
 		((MScout) ai.getManagers().get(MScout.class)).decScouts();
+	}
+
+	@Override
+	public void unitCommandFinished(AGUnit unit) {
+		IPoI p = ai.getInfos().getAGP().getNearestPoi(unit.getPos(),
+				IPoIs.PoIAny, true, true);
+		if (p != null) {
+			ai.msg("moving to " + p.getPos().x + " " + p.getPos().z);
+			unit.moveTo(p.getPos());
+			p.setVisited(true);
+		} else {
+			ai.msg("No point to scout found!");
+		}
+	}
+
+	@Override
+	public void unitDestroyed(AGUnit unit) {
+		ai.msg("");
+		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MScout.class)));
+		setRepeat(0);
 	}
 }

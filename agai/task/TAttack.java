@@ -19,6 +19,7 @@ package agai.task;
 import java.util.List;
 
 import agai.AGAI;
+import agai.AGUnits;
 import agai.info.ISector;
 import agai.manager.MAttack;
 import agai.manager.MScout;
@@ -32,64 +33,75 @@ import com.springrts.ai.oo.Unit;
 /**
  * The Class TaskAttack.
  */
-public class TAttack extends Task{
-
-	/** The type. */
-	private AGAI.ElementType type;
-
-	/**
-	 * Gets the type.
-	 *
-	 * @return the type
-	 */
-	public AGAI.ElementType getType() {
-		return type;
-	}
+public class TAttack extends Task {
 
 	/** The currentsec. */
 	ISector currentsec;
 
+	/** The type. */
+	private AGUnits.ElementType type;
+
 	/**
 	 * Instantiates a new task attack.
 	 * 
-	 * @param ai the ai
-	 * @param type the type
-	 * @param manager the manager
+	 * @param ai
+	 *            the ai
+	 * @param type
+	 *            the type
+	 * @param manager
+	 *            the manager
 	 */
-	public TAttack(AGAI ai, Manager manager, AGAI.ElementType type) {
+	public TAttack(AGAI ai, Manager manager, AGUnits.ElementType type) {
 		super(ai, manager);
-		this.type=type;
+		this.type = type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see agai.task.Task#assign(agai.unit.AGUnit)
 	 */
 	@Override
-	public void assign(AGUnit unit){
+	public void assign(AGUnit unit) {
 		ai.msg("unit assigned");
 		unit.setIdle();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Gets the type.
+	 * 
+	 * @return the type
+	 */
+	public AGUnits.ElementType getType() {
+		return type;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see agai.task.Task#unitCommandFinished(agai.unit.AGUnit)
 	 */
 	@Override
-	public void unitCommandFinished(AGUnit unit){
-		ai.msg(""+unit);
-		if(currentsec!=null){//unit reached sec, cleaned?
-			List<Unit> list=ai.getClb().getEnemyUnitsIn(currentsec.getPos(), ai.getInfos().getAGM().getSectorSize());
-			if (list.size()>0){
+	public void unitCommandFinished(AGUnit unit) {
+		ai.msg("" + unit);
+		if (currentsec != null) {// unit reached sec, cleaned?
+			List<Unit> list = ai.getClb().getEnemyUnitsIn(currentsec.getPos(),
+					ai.getInfos().getAGM().getSectorSize());
+			if (list.size() > 0) {
 				unit.attackUnit(list.get(0));
 				return;
-			}else{
-				currentsec.setClean(); //sector is clean
+			} else {
+				currentsec.setClean(); // sector is clean
 			}
 		}
-		ISector sec=ai.getInfos().getAGM().getNextEnemyTarget(unit.getPos(), 0);
-		if (sec!=null){
-			unit.setTask(new TSecureMove(ai,ai.getManagers().get(MAttack.class),this, sec));
-			ai.msg("attacking at "+sec.getPos().x +" "+ sec.getPos().y+" "+ sec.getPos().z);
-			this.currentsec=sec;
+		ISector sec = ai.getInfos().getAGM().getNextEnemyTarget(unit.getPos(),
+				0);
+		if (sec != null) {
+			unit.setTask(new TSecureMove(ai, ai.getManagers()
+					.get(MAttack.class), this, sec));
+			ai.msg("attacking at " + sec.getPos().x + " " + sec.getPos().y
+					+ " " + sec.getPos().z);
+			this.currentsec = sec;
 			return;
 		}
 		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MScout.class)));

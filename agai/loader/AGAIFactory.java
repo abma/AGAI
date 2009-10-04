@@ -19,15 +19,15 @@ package agai.loader;
 
 //import com.springrts.ai.oo.*;
 
-import com.springrts.ai.oo.*;
-
+import com.springrts.ai.oo.OOAI;
+import com.springrts.ai.oo.OOAICallback;
+import com.springrts.ai.oo.OOAIFactory;
 
 // TODO: Auto-generated Javadoc
 /**
  * A factory for creating AGAI objects.
  */
 public class AGAIFactory extends OOAIFactory {
-	
 
 	/**
 	 * Checks if is debugging.
@@ -38,12 +38,14 @@ public class AGAIFactory extends OOAIFactory {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.OOAIFactory#createAI(int, com.springrts.ai.oo.OOAICallback)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.springrts.ai.oo.OOAIFactory#createAI(int,
+	 * com.springrts.ai.oo.OOAICallback)
 	 */
 	@Override
 	public OOAI createAI(int teamId, OOAICallback callback) {
 		return new AGLoader();
 	}
 }
-

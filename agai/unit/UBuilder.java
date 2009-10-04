@@ -17,6 +17,7 @@
 package agai.unit;
 
 import agai.AGAI;
+
 import com.springrts.ai.oo.Unit;
 
 // TODO: Auto-generated Javadoc
@@ -27,9 +28,11 @@ public class UBuilder extends AGUnit {
 
 	/**
 	 * Instantiates a new unit builder.
-	 *
-	 * @param ai the ai
-	 * @param unit the unit
+	 * 
+	 * @param ai
+	 *            the ai
+	 * @param unit
+	 *            the unit
 	 */
 	public UBuilder(AGAI ai, Unit unit) {
 		super(ai, unit);

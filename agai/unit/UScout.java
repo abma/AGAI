@@ -20,13 +20,15 @@ import agai.AGAI;
 
 import com.springrts.ai.oo.Unit;
 
-public class UScout extends AGUnit{
+public class UScout extends AGUnit {
 
 	/**
 	 * Instantiates a new unit scout.
-	 *
-	 * @param ai the ai
-	 * @param unit the unit
+	 * 
+	 * @param ai
+	 *            the ai
+	 * @param unit
+	 *            the unit
 	 */
 	public UScout(AGAI ai, Unit unit) {
 		super(ai, unit);

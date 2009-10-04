@@ -24,31 +24,32 @@ import agai.task.Task;
 /**
  * The Class AGTBuildSuperWeapon.
  */
-public class MSuperWeapon extends Manager{
+public class MSuperWeapon extends Manager {
 	/*
-	 	Algorithm:
-	 	get all units with attack-damage
-	 	calculate sum/n
-	 	get the biggest values and try to build this units
+	 * Algorithm: get all units with attack-damage calculate sum/n get the
+	 * biggest values and try to build this units
 	 */
 
 	/**
 	 * Instantiates a new aGT build super weapon.
 	 * 
-	 * @param ai the ai
+	 * @param ai
+	 *            the ai
 	 */
 	MSuperWeapon(AGAI ai) {
 		super(ai);
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
 	public void solve(Task task) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -18,33 +18,38 @@ package agai.unit;
 
 import java.util.ArrayList;
 
+import agai.AGAI;
+
 import com.springrts.ai.AICommand;
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.command.BuildUnitAICommand;
 import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
-import agai.AGAI;
-
-public class UBuilding extends AGUnit{
+public class UBuilding extends AGUnit {
 
 	protected UBuilding(AGAI ai, Unit unit) {
 		super(ai, unit);
 	}
-	@Override
-	public int moveTo(AIFloat3 pos){
-		ai.msg("a building can't move!");
-		return 0;
-	}
 
-	/* (non-Javadoc)
-	 * @see agai.unit.AGUnit#buildUnit(com.springrts.ai.oo.UnitDef, com.springrts.ai.AIFloat3, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see agai.unit.AGUnit#buildUnit(com.springrts.ai.oo.UnitDef,
+	 * com.springrts.ai.AIFloat3, int)
 	 */
 	@Override
-	public int buildUnit(UnitDef type,AIFloat3 pos, int facing){
-		pos=unit.getPos();
-		AICommand command = new BuildUnitAICommand(unit, -1,new ArrayList<AICommand.Option>(), 10000, type, pos, facing);
+	public int buildUnit(UnitDef type, AIFloat3 pos, int facing) {
+		pos = unit.getPos();
+		AICommand command = new BuildUnitAICommand(unit, -1,
+				new ArrayList<AICommand.Option>(), 10000, type, pos, facing);
 		return ai.handleEngineCommand(command);
+	}
+
+	@Override
+	public int moveTo(AIFloat3 pos) {
+		ai.msg("a building can't move!");
+		return 0;
 	}
 
 }

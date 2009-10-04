@@ -22,119 +22,66 @@ import com.springrts.ai.oo.UnitDef;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class BuildTreeUnit is an node in the Buildtree 
+ * The Class BuildTreeUnit is an node in the Buildtree
  */
-public class IBuildTreeUnit{
-	
-	/** The nodes. */
-	private LinkedList <IBuildTreeUnit> nodes; //links to other nodes
-	
+public class IBuildTreeUnit {
+
 	/** The backlink. */
-	private LinkedList <IBuildTreeUnit> backlink; //backlinks to Nodes linking to this node
-	
-	/** The unit. */
-	private UnitDef unit;
-	
+	private LinkedList<IBuildTreeUnit> backlink; // backlinks to Nodes linking
+													// to this node
+
 	/** The mark. */
-	private int mark; //for search path
-	
+	private int mark; // for search path
+
+	/** The nodes. */
+	private LinkedList<IBuildTreeUnit> nodes; // links to other nodes
+
 	/** The parent. */
-	private IBuildTreeUnit parent; //for search path
-	
-	/** The unitcount. */
-	private int unitcount;
-	
+	private IBuildTreeUnit parent; // for search path
+
 	/** The plannedunits. */
 	private int plannedunits;
-	
-	/**
-	 * Gets the plannedunits.
-	 * 
-	 * @return the plannedunits
-	 */
-	public int getPlannedunits() {
-		return plannedunits;
-	}
 
-	/**
-	 * Sets the plannedunits.
-	 * 
-	 * @param plannedunits the new plannedunits
-	 */
-	public void setPlannedunits(int plannedunits) {
-		this.plannedunits = plannedunits;
-	}
+	/** The unit. */
+	private UnitDef unit;
 
-	/**
-	 * Gets the parent.
-	 * 
-	 * @return the parent
-	 */
-	public IBuildTreeUnit getParent() {
-		return parent;
-	}
+	/** The unitcount. */
+	private int unitcount;
 
 	/**
 	 * Instantiates a new builds the tree unit.
 	 * 
-	 * @param unit the unit
+	 * @param unit
+	 *            the unit
 	 */
-	IBuildTreeUnit(UnitDef unit){
+	IBuildTreeUnit(UnitDef unit) {
 		nodes = new LinkedList<IBuildTreeUnit>();
 		backlink = new LinkedList<IBuildTreeUnit>();
-		this.unit=unit;
-		this.mark=0;
-		this.parent=null;
-		this.unitcount=0;
-	}
-	
-	/**
-	 * Gets the unit.
-	 * 
-	 * @return the unit
-	 */
-	public UnitDef getUnit(){
-		return this.unit;
-	}
-	
-	/**
-	 * Adds the node.
-	 * 
-	 * @param parent the parent
-	 * 
-	 * @return the builds the tree unit
-	 */
-	public IBuildTreeUnit addNode(IBuildTreeUnit parent){
-		nodes.add(parent);
-		parent.backlink.add(this);
-		return parent; 
+		this.unit = unit;
+		this.mark = 0;
+		this.parent = null;
+		this.unitcount = 0;
 	}
 
 	/**
-	 * Gets the mark.
+	 * Adds the node.
 	 * 
-	 * @return the mark
+	 * @param parent
+	 *            the parent
+	 * 
+	 * @return the builds the tree unit
 	 */
-	public int getMark() {
-		return mark;
+	public IBuildTreeUnit addNode(IBuildTreeUnit parent) {
+		nodes.add(parent);
+		parent.backlink.add(this);
+		return parent;
 	}
-	
+
 	/**
-	 * Sets the mark.
-	 * 
-	 * @param mark the new mark
+	 * Dec unit count.
 	 */
-	public void setMark(int mark) {
-		this.mark = mark;
-	}
-	
-	/**
-	 * Sets the parent.
-	 * 
-	 * @param parent the new parent
-	 */
-	public void setParent(IBuildTreeUnit parent){
-		this.parent=parent;
+	public void decUnitCount() {
+		unitcount--;
 	}
 
 	/**
@@ -147,6 +94,15 @@ public class IBuildTreeUnit{
 	}
 
 	/**
+	 * Gets the mark.
+	 * 
+	 * @return the mark
+	 */
+	public int getMark() {
+		return mark;
+	}
+
+	/**
 	 * Gets the nodes.
 	 * 
 	 * @return the nodes
@@ -154,28 +110,78 @@ public class IBuildTreeUnit{
 	public LinkedList<IBuildTreeUnit> getNodes() {
 		return nodes;
 	}
-	
+
 	/**
-	 * Inc unitcount.
+	 * Gets the parent.
+	 * 
+	 * @return the parent
 	 */
-	public void incUnitcount(){
-		plannedunits--;
-		unitcount++;
+	public IBuildTreeUnit getParent() {
+		return parent;
 	}
-	
+
 	/**
-	 * Dec unit count.
+	 * Gets the plannedunits.
+	 * 
+	 * @return the plannedunits
 	 */
-	public void decUnitCount(){
-		unitcount--;
+	public int getPlannedunits() {
+		return plannedunits;
 	}
-	
+
+	/**
+	 * Gets the unit.
+	 * 
+	 * @return the unit
+	 */
+	public UnitDef getUnit() {
+		return this.unit;
+	}
+
 	/**
 	 * Gets the unitcount.
 	 * 
 	 * @return the unitcount
 	 */
-	public int getUnitcount(){
+	public int getUnitcount() {
 		return unitcount;
+	}
+
+	/**
+	 * Inc unitcount.
+	 */
+	public void incUnitcount() {
+		plannedunits--;
+		unitcount++;
+	}
+
+	/**
+	 * Sets the mark.
+	 * 
+	 * @param mark
+	 *            the new mark
+	 */
+	public void setMark(int mark) {
+		this.mark = mark;
+	}
+
+	/**
+	 * Sets the parent.
+	 * 
+	 * @param parent
+	 *            the new parent
+	 */
+	public void setParent(IBuildTreeUnit parent) {
+		this.parent = parent;
+	}
+
+	/**
+	 * Sets the plannedunits.
+	 * 
+	 * @param plannedunits
+	 *            the new plannedunits
+	 */
+	public void setPlannedunits(int plannedunits) {
+		this.plannedunits = plannedunits;
 	}
 }

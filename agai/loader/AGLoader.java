@@ -26,101 +26,190 @@ import com.springrts.ai.oo.OOAICallback;
 import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.WeaponDef;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class AGLoader.
  */
-public class AGLoader extends AbstractOOAI implements OOAI{
+public class AGLoader extends AbstractOOAI implements OOAI {
+
+	/** The clb. */
+	private OOAICallback clb;
 
 	/** The sub ai. */
 	private IAGAI subAI;
-	
-	/** The clb. */
-	private OOAICallback clb;
-	
+
 	/** The team id. */
 	private int teamId;
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#commandFinished(com.springrts.ai.oo.
+	 * Unit, int, int)
+	 */
+	@Override
+	public int commandFinished(Unit unit, int commandId, int commandTopicId) {
+		try {
+			subAI.commandFinished(unit, commandId, commandTopicId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * Do reload.
+	 * 
+	 * @param teamId
+	 *            the team id
+	 * @param clb
+	 *            the clb
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	public void doReload(int teamId, OOAICallback clb) throws Exception {
+		subAI = null;
+		System.runFinalization();
+		System.gc();
+		System.gc();
+		this.subAI = reloadTheClass();
+		subAI.init(teamId, clb);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#enemyDamaged(com.springrts.ai.oo.Unit,
+	 * com.springrts.ai.oo.Unit, float, com.springrts.ai.AIFloat3,
+	 * com.springrts.ai.oo.WeaponDef, boolean)
+	 */
+	@Override
+	public int enemyDamaged(Unit enemy, Unit attacker, float damage,
+			AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
+		try {
+			subAI.enemyDamaged(enemy, attacker, damage, dir, weaponDef,
+					paralyzer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#enemyDestroyed(com.springrts.ai.oo.Unit,
+	 * com.springrts.ai.oo.Unit)
+	 */
+	@Override
+	public int enemyDestroyed(Unit enemy, Unit attacker) {
+		try {
+			subAI.enemyDestroyed(enemy, attacker);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#enemyEnterLOS(com.springrts.ai.oo.Unit)
+	 */
+	@Override
+	public int enemyEnterLOS(Unit enemy) {
+		try {
+			subAI.enemyEnterLOS(enemy);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#enemyEnterRadar(com.springrts.ai.oo.
+	 * Unit)
+	 */
+	@Override
+	public int enemyEnterRadar(Unit enemy) { // never call
+												// enemy.getDef().getName()!!
+		try {
+			subAI.enemyEnterRadar(enemy);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#enemyLeaveLOS(com.springrts.ai.oo.Unit)
+	 */
+	@Override
+	public int enemyLeaveLOS(Unit enemy) {
+		try {
+			subAI.enemyLeaveLOS(enemy);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#enemyLeaveRadar(com.springrts.ai.oo.
+	 * Unit)
+	 */
+	@Override
+	public int enemyLeaveRadar(Unit enemy) { // never call
+												// enemy.getDef().getName()!!
+		try {
+			subAI.enemyLeaveRadar(enemy);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 	/**
 	 * Gets the uRL class loader.
 	 * 
-	 * @param jarURL the jar url
+	 * @param jarURL
+	 *            the jar url
 	 * 
 	 * @return the uRL class loader
 	 */
 	private URLClassLoader getURLClassLoader(URL jarURL) {
-		ClassLoader baseClassLoader=AGLoader.class.getClassLoader();
-		if (baseClassLoader==null)
+		ClassLoader baseClassLoader = AGLoader.class.getClassLoader();
+		if (baseClassLoader == null)
 			baseClassLoader = ClassLoader.getSystemClassLoader();
-		return new URLClassLoader(new URL[]{jarURL}, baseClassLoader);
+		return new URLClassLoader(new URL[] { jarURL }, baseClassLoader);
 	}
-	
-	/**
-	 * Reload the class.
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the iAGAI
-	 * 
-	 * @throws Exception the exception
-	 */
-	public IAGAI reloadTheClass() throws Exception {
-		subAI=null;
-		URLClassLoader urlLoader = getURLClassLoader(new URL("file", null, "/home/matze/Projects/agai/SkirmishAIReal.jar"));
-		Class <?>cl=urlLoader.loadClass("agai.AGAI");
-		if (!IAGAI.class.isAssignableFrom(cl)) {
-			throw new RuntimeException("Invalid class");
-		}
-		Object newInstance=cl.newInstance();
-		return (IAGAI)newInstance;
-	}
-	
-	/**
-	 * Do reload.
-	 * 
-	 * @param teamId the team id
-	 * @param clb the clb
-	 * 
-	 * @throws Exception the exception
-	 */
-	public void doReload(int teamId, OOAICallback clb) throws Exception {
-		subAI=null;
-		System.runFinalization();
-		System.gc();
-		System.gc();
-		this.subAI=reloadTheClass();
-		subAI.init(teamId, clb);
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#message(int, java.lang.String)
-	 */
-	@Override
-	public int message(int player, String message) {
-		if (message.equalsIgnoreCase("reload"))
-			try{
-				doReload(teamId, clb);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		else{
-			try{
-				subAI.message(player, message);
-			}catch (Exception e){
-				e.printStackTrace();
-			}
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#init(int, com.springrts.ai.oo.OOAICallback)
+	 * @see com.springrts.ai.oo.AbstractOOAI#init(int,
+	 * com.springrts.ai.oo.OOAICallback)
 	 */
 	@Override
 	public int init(int teamId, OOAICallback callback) {
-		this.clb=callback;
-		this.teamId=teamId;
-		try{
-			if (subAI==null)
+		this.clb = callback;
+		this.teamId = teamId;
+		try {
+			if (subAI == null)
 				doReload(teamId, callback);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -128,184 +217,162 @@ public class AGLoader extends AbstractOOAI implements OOAI{
 		}
 		return 0;
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#unitCreated(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.springrts.ai.oo.AbstractOOAI#message(int, java.lang.String)
+	 */
+	@Override
+	public int message(int player, String message) {
+		if (message.equalsIgnoreCase("reload"))
+			try {
+				doReload(teamId, clb);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		else {
+			try {
+				subAI.message(player, message);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Reload the class.
+	 * 
+	 * @return the iAGAI
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	public IAGAI reloadTheClass() throws Exception {
+		subAI = null;
+		URLClassLoader urlLoader = getURLClassLoader(new URL("file", null,
+				"/home/matze/Projects/agai/SkirmishAIReal.jar"));
+		Class<?> cl = urlLoader.loadClass("agai.AGAI");
+		if (!IAGAI.class.isAssignableFrom(cl)) {
+			throw new RuntimeException("Invalid class");
+		}
+		Object newInstance = cl.newInstance();
+		return (IAGAI) newInstance;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#unitCreated(com.springrts.ai.oo.Unit,
+	 * com.springrts.ai.oo.Unit)
 	 */
 	@Override
 	public int unitCreated(Unit unit, Unit builder) {
 		try {
 			subAI.unitCreated(unit, builder);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
-	} 
+	}
 
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#unitFinished(com.springrts.ai.oo.Unit)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#unitDamaged(com.springrts.ai.oo.Unit,
+	 * com.springrts.ai.oo.Unit, float, com.springrts.ai.AIFloat3,
+	 * com.springrts.ai.oo.WeaponDef, boolean)
+	 */
+	@Override
+	public int unitDamaged(Unit unit, Unit attacker, float damage,
+			AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
+		try {
+			subAI
+					.unitDamaged(unit, attacker, damage, dir, weaponDef,
+							paralyzer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#unitDestroyed(com.springrts.ai.oo.Unit,
+	 * com.springrts.ai.oo.Unit)
+	 */
+	@Override
+	public int unitDestroyed(Unit unit, Unit attacker) {
+		try {
+			subAI.unitDestroyed(unit, attacker);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#unitFinished(com.springrts.ai.oo.Unit)
 	 */
 	@Override
 	public int unitFinished(Unit unit) {
 		try {
 			subAI.unitFinished(unit);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.springrts.ai.oo.AbstractOOAI#unitIdle(com.springrts.ai.oo.Unit)
 	 */
 	@Override
 	public int unitIdle(Unit unit) {
 		try {
 			subAI.unitIdle(unit);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#unitMoveFailed(com.springrts.ai.oo.Unit)
-	 */
-	@Override
-	public int unitMoveFailed(Unit unit) {
-		try {
-			subAI.unitMoveFailed(unit);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#unitDamaged(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit, float, com.springrts.ai.AIFloat3, com.springrts.ai.oo.WeaponDef, boolean)
-	 */
-	@Override
-	public int unitDamaged(Unit unit, Unit attacker, float damage, AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
-		try {
-			subAI.unitDamaged(unit, attacker, damage, dir, weaponDef, paralyzer);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#unitDestroyed(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit)
-	 */
-	@Override
-	public int unitDestroyed(Unit unit, Unit attacker) {
-		try {
-			subAI.unitDestroyed(unit, attacker);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#enemyEnterLOS(com.springrts.ai.oo.Unit)
-	 */
-	@Override
-	public int enemyEnterLOS(Unit enemy) {
-		try {
-			subAI.enemyEnterLOS(enemy);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#enemyLeaveLOS(com.springrts.ai.oo.Unit)
-	 */
-	@Override
-	public int enemyLeaveLOS(Unit enemy) {
-		try {
-			subAI.enemyLeaveLOS(enemy);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#enemyEnterRadar(com.springrts.ai.oo.Unit)
-	 */
-	@Override
-	public int enemyEnterRadar(Unit enemy) { //never call enemy.getDef().getName()!!
-		try {
-			subAI.enemyEnterRadar(enemy);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#enemyLeaveRadar(com.springrts.ai.oo.Unit)
-	 */
-	@Override
-	public int enemyLeaveRadar(Unit enemy) { //never call enemy.getDef().getName()!!
-		try {
-			subAI.enemyLeaveRadar(enemy);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#enemyDamaged(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit, float, com.springrts.ai.AIFloat3, com.springrts.ai.oo.WeaponDef, boolean)
-	 */
-	@Override
-	public int enemyDamaged(Unit enemy, Unit attacker, float damage, AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
-		try {
-			subAI.enemyDamaged(enemy, attacker, damage, dir, weaponDef, paralyzer);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#enemyDestroyed(com.springrts.ai.oo.Unit, com.springrts.ai.oo.Unit)
-	 */
-	@Override
-	public int enemyDestroyed(Unit enemy, Unit attacker) {
-		try {
-			subAI.enemyDestroyed(enemy, attacker);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.springrts.ai.oo.AbstractOOAI#commandFinished(com.springrts.ai.oo.Unit, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.springrts.ai.oo.AbstractOOAI#unitMoveFailed(com.springrts.ai.oo.Unit)
 	 */
 	@Override
-	public int commandFinished(Unit unit, int commandId, int commandTopicId) {
+	public int unitMoveFailed(Unit unit) {
 		try {
-			subAI.commandFinished(unit, commandId, commandTopicId);
-		} catch (Exception e){
+			subAI.unitMoveFailed(unit);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.springrts.ai.oo.AbstractOOAI#update(int)
 	 */
 	@Override
 	public int update(int frame) {
 		try {
 			subAI.update(frame);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;

@@ -16,7 +16,6 @@
  */
 package agai;
 
-import agai.AGAI.ElementType;
 import agai.manager.MAttack;
 import agai.task.TAttack;
 import agai.task.TScout;
@@ -24,15 +23,15 @@ import agai.task.TScout;
 // TODO: Auto-generated Javadoc
 /*
 
-Pseudocode für den Algorithmus
+ Pseudocode für den Algorithmus
 
-1. Sortiere nach Priorität
-2. Versuche Alle Tasks zu lösen
-	Um Task zu lösen, füge notwendige zwischenschritte ein,
-	Sollte ein zwischenschritt ein zweites mal hinzugefügt werden,
-	wird wird die Priorität des ersten erhöht und der zwischenschritt nicht hinzugefügt
-3. Entferne gelöste Tasks
-4. Gehe zu 1
+ 1. Sortiere nach Priorität
+ 2. Versuche Alle Tasks zu lösen
+ Um Task zu lösen, füge notwendige zwischenschritte ein,
+ Sollte ein zwischenschritt ein zweites mal hinzugefügt werden,
+ wird wird die Priorität des ersten erhöht und der zwischenschritt nicht hinzugefügt
+ 3. Entferne gelöste Tasks
+ 4. Gehe zu 1
 
 
 
@@ -40,22 +39,22 @@ Pseudocode für den Algorithmus
 
  Baue Energie
  Hinzufügen: Ist ein Idle-Task schon vorhanden, wenn ja erhöhe Priorität, sonst:
-	Filtere nach möglichen Gebäude die mit dem vorhandenen Techlevel möglich sind
-	Filtere nach Gebäude nach wieviel Energie ist vorhanden
-	Filtere nach wieviel Metall ist vorhanden
-	Filtere nach möglichen Baupunkten
-	Füge Task hinzu
+ Filtere nach möglichen Gebäude die mit dem vorhandenen Techlevel möglich sind
+ Filtere nach Gebäude nach wieviel Energie ist vorhanden
+ Filtere nach wieviel Metall ist vorhanden
+ Filtere nach möglichen Baupunkten
+ Füge Task hinzu
 
  Baue Metall
  Siehe Baue Energie
 
  Scout
  Gibt es einen Scout der nichts zu tun hat?
-	Ja: Teile Karte in Raster mit der grösse des Scoutradius ein und fahre jedes Raster ab, markiere Raster mit dem letzten Besuch
-	Nein: Baue "beste" Scouteinheit:
-		Filtere nach möglichen Einheiten die gebaut werden können
-		Nimm die Schnellste + billigste + grösster Suchradius
-		Baue Einheit
+ Ja: Teile Karte in Raster mit der grösse des Scoutradius ein und fahre jedes Raster ab, markiere Raster mit dem letzten Besuch
+ Nein: Baue "beste" Scouteinheit:
+ Filtere nach möglichen Einheiten die gebaut werden können
+ Nimm die Schnellste + billigste + grösster Suchradius
+ Baue Einheit
 
  Einheit bauen
  Suche idle Einheit die die Einheit bauen kann
@@ -69,80 +68,91 @@ Pseudocode für den Algorithmus
 
  Metall bauen
  Suche leere Metallpunkte
-	ja:Suche Einheit die (besten) Metallabbauer bauen kann
-		ja: Baue Metallabbauer
-		nein: Baue Einheit die Metallabbauer bauen kann
-	nein:
-		ist genüg Energie vorhanden:
-			ja: Baue Energie->Metallwandler
-			nein: Baue Energie
+ ja:Suche Einheit die (besten) Metallabbauer bauen kann
+ ja: Baue Metallabbauer
+ nein: Baue Einheit die Metallabbauer bauen kann
+ nein:
+ ist genüg Energie vorhanden:
+ ja: Baue Energie->Metallwandler
+ nein: Baue Energie
 
  Energie bauen
-	Suche idle Einheit die Energieproduktion bauen kann
-		ja: Baue Energieproduktion in der Nähe
-		nein: baue Einheit die Energie bauen kann
+ Suche idle Einheit die Energieproduktion bauen kann
+ ja: Baue Energieproduktion in der Nähe
+ nein: baue Einheit die Energie bauen kann
 
  Angriff vorbereiten
-	Suche idle Angriffseinheit
-		Wenn vorhanden: füge Einheit in Angriffsformation hinzu
+ Suche idle Angriffseinheit
+ Wenn vorhanden: füge Einheit in Angriffsformation hinzu
 
  Angreifen:
-	Suche idle Angriffsformation:
-		ja: Suche lohnende Ziele und versuche dies über ungefährliche Positionen anzugreifen
-		nein: baue angriffseinheit
+ Suche idle Angriffsformation:
+ ja: Suche lohnende Ziele und versuche dies über ungefährliche Positionen anzugreifen
+ nein: baue angriffseinheit
 
  KartenMatrixen zur Entscheidungshilfe
-		Land-passierbar
-		Wasser-passierbar
-		Feind-sichtungen
-		Verlorene Einheiten
-		Feindliche Gebäudesichtungen
-		Feindliche Einheitensichtungen
+ Land-passierbar
+ Wasser-passierbar
+ Feind-sichtungen
+ Verlorene Einheiten
+ Feindliche Gebäudesichtungen
+ Feindliche Einheitensichtungen
 
  Einheitenfilter
-	Suche Einheiten mit Folgenden Eigenschafte:...
+ Suche Einheiten mit Folgenden Eigenschafte:...
 
-		Suche Liste mit Einheiten nach Eigenschaft 1 aus und füge dies in die Liste hinzu (+sortiere)
-	Nimm nächste Eigenschaft und wiederhole
+ Suche Liste mit Einheiten nach Eigenschaft 1 aus und füge dies in die Liste hinzu (+sortiere)
+ Nimm nächste Eigenschaft und wiederhole
 
 
 
-wishlist:
+ wishlist:
 
-einheit
-resource (?)
-gebäude
-verteidigung
-einheit
+ einheit
+ resource (?)
+ gebäude
+ verteidigung
+ einheit
 
-struktur:
-	notwendige resourcen
-	(position?)
-	dringlichkeit
-	was bringt das wenn der wunsch erfüllt wird? (gegnerische einheit tot? schutz? mehr resourcen?)
+ struktur:
+ notwendige resourcen
+ (position?)
+ dringlichkeit
+ was bringt das wenn der wunsch erfüllt wird? (gegnerische einheit tot? schutz? mehr resourcen?)
 
-*/
+ */
 
 /**
- * The Controller, the big boss :-)
- * verteilt die resourcen an die mananger, die verfügbar sind und passt diese bei änderungen an (mehr oder weniger)
- * sagt dem angriffsmanager wann er angreifen soll
- * gibt dem resourcenmanager resourcen um gebäude zu bauen
+ * The Controller, the big boss :-) verteilt die resourcen an die mananger, die
+ * verfügbar sind und passt diese bei änderungen an (mehr oder weniger) sagt dem
+ * angriffsmanager wann er angreifen soll gibt dem resourcenmanager resourcen um
+ * gebäude zu bauen.
  */
-public class AGController{
-	
+public class AGController {
+
 	/** The ai. */
 	private AGAI ai;
 
 	/**
 	 * Instantiates a new controller.
 	 * 
-	 * @param ai the ai
+	 * @param ai
+	 *            the ai
 	 */
 	AGController(AGAI ai) {
-		this.ai=ai;
+		this.ai = ai;
 	}
-	
+
+	/**
+	 * Start.
+	 */
+	public void start() {
+		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MAttack.class)));
+		ai.getTasks().add(
+				new TAttack(ai, ai.getManagers().get(MAttack.class),
+						AGUnits.ElementType.unitLand));
+	}
+
 	/**
 	 * Stop.
 	 */
@@ -151,19 +161,12 @@ public class AGController{
 	}
 
 	/**
-	 * Start.
-	 */
-	public void start() {
-		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MAttack.class)));
-		ai.getTasks().add(new TAttack(ai, ai.getManagers().get(MAttack.class), ElementType.unitLand));
-	}
-	
-	/**
 	 * Update.
 	 * 
-	 * @param frame the frame
+	 * @param frame
+	 *            the frame
 	 */
-	public void update(int frame){
+	public void update(int frame) {
 		ai.getUnits().employIdle();
 	}
 

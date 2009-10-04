@@ -24,14 +24,39 @@ import agai.info.IBuildTreeUnit;
 import agai.info.ISearchUnitAttacker;
 import agai.task.Task;
 
-
 /**
  * The Class AGTAttack.
  * 
  * @author matze
  */
-public class MAttack extends Manager{
-//	private int groupsize=0;
+public class MAttack extends Manager {
+	private int groups = 0;
+
+	protected List<IBuildTreeUnit> list;
+
+	/**
+	 * Instantiates a new aG task attack.
+	 * 
+	 * @param ai
+	 *            the ai
+	 */
+	public MAttack(AGAI ai) {
+		super(ai);
+		list = ai.getInfos().getAGF().Filter(new ISearchUnitAttacker(ai));
+		for (int i = 0; i < list.size(); i++) {
+			ai.msg(list.get(i).getUnit().getName() + "\t"
+					+ ai.getUnits().getTotalPrice(list.get(i).getUnit()));
+		}
+	}
+
+	/**
+	 * Dump.
+	 */
+	public void dump() {
+		ai.msg("Task Attack");
+	}
+
+	// private int groupsize=0;
 	public int getGroups() {
 		return groups;
 	}
@@ -40,40 +65,19 @@ public class MAttack extends Manager{
 		this.groups = groups;
 	}
 
-	private int groups=0;
-	protected List <IBuildTreeUnit> list;
-	/**
-	 * Instantiates a new aG task attack.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param ai the ai
-	 */
-	public MAttack(AGAI ai) {
-		super(ai);
-		list=ai.getInfos().getAGF().Filter(new ISearchUnitAttacker(ai));
-		for (int i=0; i<list.size(); i++){
-			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getUnits().getTotalPrice(list.get(i).getUnit()) );
-		}
-	}
-	
-	/**
-	 * Dump.
-	 */
-	public void dump(){
-		ai.msg("Task Attack");
-	}
-
-	/* (non-Javadoc)
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
 	public void solve(Task task) {
-/*		if (ai.getAGG().getGroups(TAttack.class)<groups){
-			TAttack a=((TAttack)task);
-			TGroup group=new TGroup(ai, new TAttack(ai, ElementType.unitLand), groupsize);
-			for (int i=0; i<groupsize; i++){
-				ai.buildUnit(group, list, a, a.getType());
-			}
-			ai.getAGG().addGroup(group);
-		}*/
+		/*
+		 * if (ai.getAGG().getGroups(TAttack.class)<groups){ TAttack
+		 * a=((TAttack)task); TGroup group=new TGroup(ai, new TAttack(ai,
+		 * ElementType.unitLand), groupsize); for (int i=0; i<groupsize; i++){
+		 * ai.buildUnit(group, list, a, a.getType()); }
+		 * ai.getAGG().addGroup(group); }
+		 */
 	}
 }

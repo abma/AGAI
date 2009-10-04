@@ -20,14 +20,15 @@ import agai.AGAI;
 
 import com.springrts.ai.oo.Unit;
 
-
 public class UAttacker extends AGUnit {
 
 	/**
 	 * Instantiates a new unit attacker.
-	 *
-	 * @param ai the ai
-	 * @param unit the unit
+	 * 
+	 * @param ai
+	 *            the ai
+	 * @param unit
+	 *            the unit
 	 */
 	public UAttacker(AGAI ai, Unit unit) {
 		super(ai, unit);

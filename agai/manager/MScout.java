@@ -20,6 +20,7 @@ package agai.manager;
 import java.util.List;
 
 import agai.AGAI;
+import agai.AGUnits;
 import agai.info.IBuildTreeUnit;
 import agai.info.ISearchUnitScout;
 import agai.task.Task;
@@ -27,17 +28,35 @@ import agai.task.Task;
 /**
  * The Class AGTScout.
  */
-public class MScout extends Manager{
-	
+public class MScout extends Manager {
+
+	/** The list. */
+	protected List<IBuildTreeUnit> list;
+
 	/** The count of all scouts */
 	private int scouts = 0;
-	
+
+	/**
+	 * Instantiates a new aG task scout.
+	 * 
+	 * @param ai
+	 *            the ai
+	 */
+	public MScout(AGAI ai) {
+		super(ai);
+		list = ai.getInfos().getAGF().Filter(new ISearchUnitScout(ai));
+		for (int i = 0; i < list.size(); i++) {
+			ai.msg(list.get(i).getUnit().getName() + "\t"
+					+ ai.getUnits().getTotalPrice(list.get(i).getUnit()));
+		}
+	}
+
 	/**
 	 * Dec scouts.
 	 */
 	public void decScouts() {
 		scouts--;
-		ai.msg(""+scouts);
+		ai.msg("" + scouts);
 	}
 
 	/**
@@ -45,32 +64,19 @@ public class MScout extends Manager{
 	 */
 	public void incScouts() {
 		scouts++;
-		ai.msg(""+scouts);
+		ai.msg("" + scouts);
 	}
 
-	/** The list. */
-	protected List <IBuildTreeUnit> list;
-	
-	/**
-	 * Instantiates a new aG task scout.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param ai the ai
-	 */
-	public MScout(AGAI ai) {
-		super(ai);
-		list=ai.getInfos().getAGF().Filter(new ISearchUnitScout(ai));
-		for (int i=0; i<list.size(); i++){
-			ai.msg(list.get(i).getUnit().getName() +"\t"+ ai.getUnits().getTotalPrice(list.get(i).getUnit()) );
-		}
-	}
-	
-	/* (non-Javadoc)
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
 	public void solve(Task task) {
-		if (scouts<10){
-			ai.buildUnit(task, list, task, AGAI.ElementType.unitAny);
+		if (scouts < 10) {
+			((MBuild) ai.getManagers().get(MBuild.class)).buildUnit(task, list,
+					task, AGUnits.ElementType.unitAny);
 		}
 	}
 }

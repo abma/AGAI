@@ -19,7 +19,6 @@ package agai.unit;
 
 import java.util.ArrayList;
 
-
 import agai.AGAI;
 import agai.task.Task;
 
@@ -34,55 +33,148 @@ import com.springrts.ai.command.StopUnitAICommand;
 import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
-
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class AGUnit.
  */
-public class AGUnit{
-	
-	/** The unit. */
-	protected Unit unit=null;
-	
-	/** The task. */
-	private Task task=null;
+public class AGUnit {
+
+	/** The ai. */
+	protected AGAI ai = null;
 
 	/** The last unit created. */
-	private AGUnit builder=null;
-	
+	private AGUnit builder = null;
+
+	/** The task. */
+	private Task task = null;
+
+	/** The unit. */
+	protected Unit unit = null;
+
+	/**
+	 * Instantiates a new aG unit.
+	 * 
+	 * @param ai
+	 *            the ai
+	 * @param unit
+	 *            the unit
+	 */
+	public AGUnit(AGAI ai, Unit unit) {
+		this.unit = unit;
+		this.ai = ai;
+	}
+
+	/**
+	 * Attack at position.
+	 * 
+	 * @param pos
+	 *            the position to attack
+	 * 
+	 * @return the int
+	 */
+	public int attackAt(AIFloat3 pos) {
+		AICommand command = new AttackAreaUnitAICommand(unit, -1,
+				new ArrayList<AICommand.Option>(), 10000, pos, 0);
+		return ai.handleEngineCommand(command);
+	}
+
+	/**
+	 * Attack unit.
+	 * 
+	 * @param unit
+	 *            the unit
+	 * 
+	 * @return the int
+	 */
+	public int attackUnit(Unit unit) {
+		AICommand command = new AttackUnitAICommand(unit, -1,
+				new ArrayList<AICommand.Option>(), 10000, unit);
+		return ai.handleEngineCommand(command);
+	}
+
+	/**
+	 * Builds the unit.
+	 * 
+	 * @param type
+	 *            the type
+	 * @param pos
+	 *            the pos
+	 * @param facing
+	 *            the facing
+	 * 
+	 * @return the int
+	 */
+	public int buildUnit(UnitDef type, AIFloat3 pos, int facing) {
+		AICommand command = new BuildUnitAICommand(unit, -1,
+				new ArrayList<AICommand.Option>(), 10000, type, pos, facing);
+		return ai.handleEngineCommand(command);
+	}
+
+	/**
+	 * Can build at.
+	 * 
+	 * @param pos
+	 *            the pos
+	 * @param unit
+	 *            the unit to build
+	 * @param radius
+	 *            the radius
+	 * @param minDistance
+	 *            the min distance
+	 * 
+	 * @return true, if successful
+	 */
+	public AIFloat3 canBuildAt(AIFloat3 pos, UnitDef unit, int radius,
+			int minDistance) {
+		if ((pos == null) || ((pos.x == -1) && (pos.y == 0) && (pos.z == 0)))
+			pos = this.unit.getPos();
+		AIFloat3 tmp = ai.getClb().getMap().findClosestBuildSite(unit, pos,
+				radius, minDistance, 0);
+		if ((tmp.x == -1) && (tmp.y == 0) && (tmp.z == 0)) {
+			ai.msg("Can't build here: " + unit.getName() + " radius " + radius
+					+ " x " + pos.x + " y " + pos.y + " z " + pos.z);
+			return null;
+		}
+		ai.msg("Can build at " + tmp.x + " " + tmp.y + " " + tmp.z);
+		return tmp;
+	}
+
+	/**
+	 * called if a unit is destroyed.
+	 */
+	public void destroyed() {
+		if (task != null) { // if unit had task, redo the task
+			task.setRepeat(Task.defaultRepeatTime);
+		}
+	}
+
+	public void fetchTask() {
+		ai.msg("");
+		// FIXME
+	}
+
 	public AGUnit getBuilder() {
 		return builder;
 	}
 
-	public void setBuilder(AGUnit builder) {
-		this.builder = builder;
+	/**
+	 * Gets the def.
+	 * 
+	 * @return the def
+	 */
+	public UnitDef getDef() {
+		return unit.getDef();
 	}
 
-	/** The ai. */
-	protected AGAI ai=null;
-	
 	/**
-	 * Instantiates a new aG unit.
+	 * Gets the position of the Unit.
 	 * 
-	 * @param ai the ai
-	 * @param unit the unit
+	 * @return the pos
 	 */
-	public AGUnit(AGAI ai, Unit unit){
-		this.unit=unit;
-		this.ai=ai;
+	public AIFloat3 getPos() {
+		return unit.getPos();
 	}
-	
-	/**
-	 * Gets the unit.
-	 * 
-	 * @return the unit
-	 */
-	public Unit getUnit(){
-		return this.unit;
-	}
-	
-	
+
 	/**
 	 * Gets the task.
 	 * 
@@ -91,171 +183,102 @@ public class AGUnit{
 	public Task getTask() {
 		return task;
 	}
-	
+
 	/**
-	 * Sets the task.
+	 * Gets the unit.
 	 * 
-	 * @param task the new task
+	 * @return the unit
 	 */
-	public void setTask(Task task) {
-		if (this.task!=null){
-			this.task.unassign(this);
-		}
-		this.task=task;
-		if (task!=null)
-			task.assign(this);
+	public Unit getUnit() {
+		return this.unit;
 	}
 
 	/**
-	 * called if a unit is destroyed.
-	 */
-	public void destroyed(){
-		if (task!=null){ //if unit had task, redo the task
-			task.setRepeat(Task.defaultRepeatTime);
-		}
-	}
-	
-	/**
-	 * Attack at position.
-	 * 
-	 * @param pos the position to attack
-	 * 
-	 * @return the int
-	 */
-	public int attackAt(AIFloat3 pos){
-		AICommand command = new AttackAreaUnitAICommand(unit, -1,new ArrayList<AICommand.Option>(), 10000, pos, 0);
-		return ai.handleEngineCommand(command);
-	}
-	
-	/**
-	 * Attack unit.
-	 * 
-	 * @param unit the unit
-	 * 
-	 * @return the int
-	 */
-	public int attackUnit(Unit unit){
-		AICommand command = new AttackUnitAICommand(unit, -1,new ArrayList<AICommand.Option>(), 10000, unit);
-		return ai.handleEngineCommand(command);
-	}
-	
-	/**
 	 * Gets the unit definiton.
 	 * 
-	 * @param str Short string of the definition (for ex. armcom)
+	 * @param str
+	 *            Short string of the definition (for ex. armcom)
 	 * 
 	 * @return the unit definiton
 	 */
-	public UnitDef getUnitDef(String str){
+	public UnitDef getUnitDef(String str) {
 		return unit.getDef();
 	}
-	
-	/**
-	 * Gets the position of the Unit.
-	 * 
-	 * @return the pos
-	 */
-	public AIFloat3 getPos(){
-		return unit.getPos();
-	}
-	
+
 	/**
 	 * Checks if is idle.
 	 * 
 	 * @return true, if is idle
 	 */
-	public boolean isIdle(){
-		return task==null;
+	public boolean isIdle() {
+		return task == null;
 	}
-	
+
 	/**
 	 * Move to position.
 	 * 
-	 * @param pos the pos
+	 * @param pos
+	 *            the pos
 	 * 
 	 * @return the int
 	 */
-	public int moveTo(AIFloat3 pos){
-		AICommand command = new MoveUnitAICommand(unit, -1,new ArrayList<AICommand.Option>(), 10000, pos);
+	public int moveTo(AIFloat3 pos) {
+		AICommand command = new MoveUnitAICommand(unit, -1,
+				new ArrayList<AICommand.Option>(), 10000, pos);
 		return ai.handleEngineCommand(command);
 	}
 
-	/**
-	 * Builds the unit.
-	 * 
-	 * @param type the type
-	 * @param pos the pos
-	 * @param facing the facing
-	 * 
-	 * @return the int
-	 */
-	public int buildUnit(UnitDef type,AIFloat3 pos, int facing){
-		AICommand command = new BuildUnitAICommand(unit, -1,new ArrayList<AICommand.Option>(), 10000, type, pos, facing);
-		return ai.handleEngineCommand(command);
-	}
-
-	/**
-	 * Sets the power.
-	 * 
-	 * @param power the new power
-	 */
-	public void setPower(boolean power){
-		AICommand command = new SetOnOffUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 10000, power);
-		ai.handleEngineCommand(command);
-	}
-	
-	/**
-	 * Gets the def.
-	 * 
-	 * @return the def
-	 */
-	public UnitDef getDef(){
-		return unit.getDef();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		String str=this.getClass().getName() +" "+unit.getDef().getName();
-		if (task!=null)
-			str=str+" "+task.toString();
-		return str;
-	}
-
-	/**
-	 * Can build at.
-	 *
-	 * @param pos the pos
-	 * @param unit the unit to build
-	 * @param radius the radius
-	 * @param minDistance the min distance
-	 *
-	 * @return true, if successful
-	 */
-	public AIFloat3 canBuildAt(AIFloat3 pos, UnitDef unit, int radius, int minDistance){
-		if ((pos==null)||((pos.x==-1) && (pos.y==0) && (pos.z==0)))
-			pos=this.unit.getPos();
-		AIFloat3 tmp=ai.getClb().getMap().findClosestBuildSite(unit, pos, radius, minDistance, 0);
-		if ((tmp.x==-1) && (tmp.y==0) && (tmp.z==0)){
-			ai.msg("Can't build here: "+unit.getName()+" radius "+radius+" x " +pos.x+" y "+pos.y+" z "+pos.z);
-			return null;
-		}
-		ai.msg("Can build at " + tmp.x +" "+ tmp.y +" " +tmp.z);
-		return tmp;
+	public void setBuilder(AGUnit builder) {
+		this.builder = builder;
 	}
 
 	/**
 	 * Sets Unit to Idle (Stop current command)
 	 */
 	public void setIdle() {
-		AICommand command = new StopUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 1000);
+		AICommand command = new StopUnitAICommand(unit, -1,
+				new ArrayList<AICommand.Option>(), 1000);
 		ai.handleEngineCommand(command);
 	}
 
-	public void fetchTask() {
-		ai.msg("");
-		//FIXME
+	/**
+	 * Sets the power.
+	 * 
+	 * @param power
+	 *            the new power
+	 */
+	public void setPower(boolean power) {
+		AICommand command = new SetOnOffUnitAICommand(unit, -1,
+				new ArrayList<AICommand.Option>(), 10000, power);
+		ai.handleEngineCommand(command);
+	}
+
+	/**
+	 * Sets the task.
+	 * 
+	 * @param task
+	 *            the new task
+	 */
+	public void setTask(Task task) {
+		if (this.task != null) {
+			this.task.unassign(this);
+		}
+		this.task = task;
+		if (task != null)
+			task.assign(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		String str = this.getClass().getName() + " " + unit.getDef().getName();
+		if (task != null)
+			str = str + " " + task.toString();
+		return str;
 	}
 
 }

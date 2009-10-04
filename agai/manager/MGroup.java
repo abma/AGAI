@@ -19,64 +19,67 @@ package agai.manager;
 import java.util.LinkedList;
 
 import agai.AGAI;
-import agai.task.Task;
 import agai.task.TGroup;
+import agai.task.Task;
 
 /**
  * The Class AGTGroupManager.
  */
-public class MGroup extends Manager{
-	
+public class MGroup extends Manager {
+
 	/** The list. */
 	private LinkedList<TGroup> list;
-	
+
 	/**
 	 * Instantiates a new aGT group manager.
 	 * 
-	 * @param ai the ai
+	 * @param ai
+	 *            the ai
 	 */
 	public MGroup(AGAI ai) {
 		super(ai);
-		list=new LinkedList<TGroup>();
+		list = new LinkedList<TGroup>();
 	}
 
+	/**
+	 * Adds the group.
+	 * 
+	 * @param group
+	 *            the group
+	 */
+	public void addGroup(TGroup group) {
+		list.add(group);
+	}
+
+	/**
+	 * Gets the count of type group
+	 * 
+	 * @param cn
+	 *            the cn
+	 * 
+	 * @return the groups
+	 */
+	public int getGroups(Class<?> cn) {
+		int count = 0;
+		for (int i = 0; i < list.size(); i++) {
+			if (cn == list.get(i).getTask().getClass())
+				count++;
+		}
+		return count;
+	}
 
 	public void remove(TGroup taskGroup) {
 		ai.msg("group died!");
 		list.remove(taskGroup);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
 	@Override
 	public void solve(Task task) {
 	}
-	
-	/**
-	 * Adds the group.
-	 *
-	 * @param group the group
-	 */
-	public void addGroup(TGroup group){
-		list.add(group);
-	}
 
-	/**
-	 * Gets the count of type group
-	 *
-	 * @param cn the cn
-	 *
-	 * @return the groups
-	 */
-	public int getGroups(Class <?>cn){
-		int count=0;
-		for (int i=0; i<list.size(); i++){
-			if (cn==list.get(i).getTask().getClass())
-				count++;
-		}
-		return count;
-	}
-	
 }

@@ -21,30 +21,33 @@ import agai.info.IPoIs;
 import agai.info.ISearchUnit;
 import agai.info.ISectors;
 
+import com.springrts.ai.AIFloat3;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class Info.
  */
 public class AGInfos {
 
+	/** The a gb. */
+	private IBuildTree aGB;
+
 	/** The a gf. */
 	private ISearchUnit aGF;
-
-	/** The a gp. */
-	private IPoIs aGP;
 
 	/** The a gm. */
 	private ISectors aGM;
 
-	/** The a gb. */
-	private IBuildTree aGB;
+	/** The a gp. */
+	private IPoIs aGP;
 
 	/**
 	 * Instantiates a new info.
-	 *
-	 * @param ai the ai
+	 * 
+	 * @param ai
+	 *            the ai
 	 */
-	AGInfos(AGAI ai){
+	AGInfos(AGAI ai) {
 		this.aGF = new ISearchUnit(ai);
 		this.aGP = new IPoIs(ai);
 		this.aGM = new ISectors(ai);
@@ -52,8 +55,17 @@ public class AGInfos {
 	}
 
 	/**
+	 * Gets the aGB.
+	 * 
+	 * @return the aGB
+	 */
+	public IBuildTree getAGB() {
+		return aGB;
+	}
+
+	/**
 	 * Gets the aGF.
-	 *
+	 * 
 	 * @return the aGF
 	 */
 	public ISearchUnit getAGF() {
@@ -61,17 +73,8 @@ public class AGInfos {
 	}
 
 	/**
-	 * Gets the aGP.
-	 *
-	 * @return the aGP
-	 */
-	public IPoIs getAGP() {
-		return aGP;
-	}
-
-	/**
 	 * Gets the aGM.
-	 *
+	 * 
 	 * @return the aGM
 	 */
 	public ISectors getAGM() {
@@ -79,12 +82,27 @@ public class AGInfos {
 	}
 
 	/**
-	 * Gets the aGB.
-	 *
-	 * @return the aGB
+	 * Gets the aGP.
+	 * 
+	 * @return the aGP
 	 */
-	public IBuildTree getAGB() {
-		return aGB;
+	public IPoIs getAGP() {
+		return aGP;
+	}
+
+	/**
+	 * Gets the difference.
+	 * 
+	 * @param pos1
+	 *            the pos1
+	 * @param pos2
+	 *            the pos2
+	 * 
+	 * @return the difference
+	 */
+	public double getDistance(AIFloat3 pos1, AIFloat3 pos2) {
+		return Math.sqrt((Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.z
+				- pos2.z, 2)));
 	}
 
 }

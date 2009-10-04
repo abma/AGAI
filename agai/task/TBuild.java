@@ -25,95 +25,67 @@ import com.springrts.ai.oo.UnitDef;
 import com.springrts.ai.oo.WeaponDef;
 
 // Task with unit to build
-public class TBuild extends Task{
+public class TBuild extends Task {
 	TBuild buildtask;
-	private void build(AGUnit unit){
-		if (buildtask!=null){
-			ai.msg(buildtask.toString());
-			AIFloat3 pos=buildtask.getPos();
-			if (pos==null)
-				pos=new AIFloat3(unit.getPos());
-			unit.buildUnit(buildtask.getUnitDef(), pos, AGAI.defaultFacing);
-		}
-	}
+	private int mindistance;
 
-	@Override
-	public void unitMoveFailed(AGUnit unit){
-		ai.msg("");
-	}
-
-	@Override
-	public void unitFinished(AGUnit builder, AGUnit unit){
-		ai.msg(unit.getDef().getName());
-		Task tmp=buildtask.getTasktoassign();
-		unit.setTask(tmp);
-		if (tmp!=null)
-			tmp.unitFinished(builder, unit); //call unitfinished event
-		setRepeat(0);
-		buildtask.setRepeat(0);
-		builder.setTask(null); //mark unit as idle, because unit was built
-	}
-	public void unitIdle(AGUnit unit){
-		build(unit);
-	}
-	@Override
-	public void unitCreated(AGUnit builder, AGUnit unit){
-		ai.msg("Setting LastUnitCreated");
-		unit.setBuilder(builder);
-	}
-	@Override
-	public void assign(AGUnit unit){
-		ai.msg("");
-		unit.setIdle();
-	}
-	@Override
-	public void unitWeaponFired(){
-		ai.msg("");
-	}
-	@Override
-	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer){
-		ai.msg("");
-	}
-	
 	/** The pos. */
 	private AIFloat3 pos;
-	
-	/** The unit. */
-	private UnitDef unitdef;
-	
+
 	/** The radius. */
 	private int radius;
 	private boolean solved;
-	private int mindistance;
 	private Task tasktoassign;
-
-	public Task getTasktoassign() {
-		return tasktoassign;
-	}
-
-	public void setTasktoassign(Task tasktoassign) {
-		this.tasktoassign = tasktoassign;
-	}
+	/** The unit. */
+	private UnitDef unitdef;
 
 	/**
 	 * Instantiates a new aG task build unit.
 	 * 
-	 * @param ai the ai
-	 * @param unitdef the unitdef
-	 * @param pos where to build the unit
-	 * @param radius at which radius
-	 * @param mindistance the mindistance
-	 * @param tasktoassign the tasktoassign
-	 * @param manager the manager
+	 * @param ai
+	 *            the ai
+	 * @param unitdef
+	 *            the unitdef
+	 * @param pos
+	 *            where to build the unit
+	 * @param radius
+	 *            at which radius
+	 * @param mindistance
+	 *            the mindistance
+	 * @param tasktoassign
+	 *            the tasktoassign
+	 * @param manager
+	 *            the manager
 	 */
-	public TBuild(AGAI ai, Manager manager, UnitDef unitdef, AIFloat3 pos, int radius, int mindistance, Task tasktoassign) {
+	public TBuild(AGAI ai, Manager manager, UnitDef unitdef, AIFloat3 pos,
+			int radius, int mindistance, Task tasktoassign) {
 		super(ai, manager);
-		this.pos=pos;
-		this.unitdef=unitdef;
-		this.radius=radius;
-		this.mindistance=mindistance;
-		this.tasktoassign=tasktoassign;
-		solved=false;
+		this.pos = pos;
+		this.unitdef = unitdef;
+		this.radius = radius;
+		this.mindistance = mindistance;
+		this.tasktoassign = tasktoassign;
+		solved = false;
+	}
+
+	@Override
+	public void assign(AGUnit unit) {
+		ai.msg("");
+		unit.setIdle();
+	}
+
+	private void build(AGUnit unit) {
+		if (buildtask != null) {
+			ai.msg(buildtask.toString());
+			AIFloat3 pos = buildtask.getPos();
+			if (pos == null)
+				pos = new AIFloat3(unit.getPos());
+			unit.buildUnit(buildtask.getUnitDef(), pos, AGAI.defaultFacing);
+		}
+	}
+
+	public int getMinDistance() {
+		return this.mindistance;
 	}
 
 	/**
@@ -126,6 +98,19 @@ public class TBuild extends Task{
 	}
 
 	/**
+	 * Gets the radius.
+	 * 
+	 * @return the radius
+	 */
+	public int getRadius() {
+		return radius;
+	}
+
+	public Task getTasktoassign() {
+		return tasktoassign;
+	}
+
+	/**
 	 * Gets the unit.
 	 * 
 	 * @return the unit
@@ -135,25 +120,16 @@ public class TBuild extends Task{
 	}
 
 	/**
-	 * Gets the radius.
-	 * 
-	 * @return the radius
-	 */
-	public int getRadius() {
-		return radius;
-	}
-	@Override
-	public String toString() {
-		return "AGTaskBuildUnit " + unitdef.getName() + " "+ unitdef.getHumanName();
-	}
-
-	/**
-	 * Checks if task-build-tree was created 
+	 * Checks if task-build-tree was created
 	 * 
 	 * @return true, if is solved
 	 */
 	public boolean isSolved() {
 		return solved;
+	}
+
+	public void setPos(AIFloat3 pos) {
+		this.pos = pos;
 	}
 
 	/**
@@ -163,12 +139,53 @@ public class TBuild extends Task{
 		this.solved = true;
 	}
 
-	public int getMinDistance() {
-		return this.mindistance;
+	public void setTasktoassign(Task tasktoassign) {
+		this.tasktoassign = tasktoassign;
 	}
 
-	public void setPos(AIFloat3 pos) {
-		this.pos=pos;
+	@Override
+	public String toString() {
+		return "AGTaskBuildUnit " + unitdef.getName() + " "
+				+ unitdef.getHumanName();
+	}
+
+	@Override
+	public void unitCreated(AGUnit builder, AGUnit unit) {
+		ai.msg("Setting LastUnitCreated");
+		unit.setBuilder(builder);
+	}
+
+	@Override
+	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction,
+			WeaponDef weaponDef, boolean paralyzer) {
+		ai.msg("");
+	}
+
+	@Override
+	public void unitFinished(AGUnit builder, AGUnit unit) {
+		ai.msg(unit.getDef().getName());
+		Task tmp = buildtask.getTasktoassign();
+		unit.setTask(tmp);
+		if (tmp != null)
+			tmp.unitFinished(builder, unit); // call unitfinished event
+		setRepeat(0);
+		buildtask.setRepeat(0);
+		builder.setTask(null); // mark unit as idle, because unit was built
+	}
+
+	@Override
+	public void unitIdle(AGUnit unit) {
+		build(unit);
+	}
+
+	@Override
+	public void unitMoveFailed(AGUnit unit) {
+		ai.msg("");
+	}
+
+	@Override
+	public void unitWeaponFired() {
+		ai.msg("");
 	}
 
 }

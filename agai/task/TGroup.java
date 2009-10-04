@@ -27,62 +27,68 @@ import agai.unit.UGroup;
 /**
  * The Class TaskGroup.
  */
-public class TGroup extends Task{
+public class TGroup extends Task {
+	private boolean go;
 	private UGroup group;
+	private int lastFrame;
+
+	private int size;
 	private Task task;
+
+	public TGroup(AGAI ai, Manager manager, Task task, int size) {
+		super(ai, manager);
+		this.size = size;
+		this.task = task;
+		go = false;
+		group = new UGroup(ai, this);
+	}
+
 	public Task getTask() {
 		return task;
 	}
 
-	private int size;
-	private boolean go;
-	private int lastFrame;
-	public TGroup(AGAI ai, Manager manager,Task task, int size) {
-		super(ai, manager);
-		this.size=size;
-		this.task=task;
-		go=false;
-		group=new UGroup(ai, this);
-	}
-	
 	public void setTask(Task task) {
-		this.task=task;
+		this.task = task;
+	}
+
+	@Override
+	public void unitCommandFinished(AGUnit unit) {
+		ai.msg(""); // wait until enough units have finished...
+		group.getPos();
+		if (!go)
+			return;
+		if (lastFrame + 3 > ai.getFrame()) // FIXME: there should be a better
+											// solution?: avoid mass-unit
+											// finished events
+			return;
+		lastFrame = ai.getFrame();
+		if (task != null)
+			task.unitCommandFinished(group);
+	}
+
+	@Override
+	public void unitDestroyed(AGUnit unit) {
+		ai.msg("");
+		if (!go)
+			return;
+		group.remove(unit);
+		if (group.size() == 0)
+			((MGroup) manager).remove(this);
 	}
 
 	/**
 	 * Adds the unit.
 	 * 
-	 * @param unit the unit
+	 * @param unit
+	 *            the unit
 	 */
 	@Override
-	public void unitFinished(AGUnit builder, AGUnit unit){
+	public void unitFinished(AGUnit builder, AGUnit unit) {
 		ai.msg("");
 		group.add(unit);
-		if (group.size()==size){
+		if (group.size() == size) {
 			ai.msg("clear to start!");
-			go=true;
+			go = true;
 		}
-	}
-	@Override
-	public void unitCommandFinished(AGUnit unit){
-		ai.msg(""); //wait until enough units have finished...
-		group.getPos();
-		if (!go)
-			return;
-		if (lastFrame+3>ai.getFrame()) //FIXME: there should be a better solution?: avoid mass-unit finished events
-			return;
-		lastFrame=ai.getFrame();
-		if (task!=null)
-			task.unitCommandFinished(group);
-	}
-	
-	@Override
-	public void unitDestroyed(AGUnit unit){
-		ai.msg("");
-		if (!go)
-			return;
-		group.remove(unit);
-		if (group.size()==0)
-			((MGroup)manager).remove(this);
 	}
 }

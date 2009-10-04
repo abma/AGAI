@@ -20,32 +20,30 @@ package agai.manager;
 import agai.AGAI;
 import agai.task.Task;
 
-
-
-//TODO: Auto-generated Javadoc
 /**
  * The Class AGTaskManager.
  */
-public abstract class Manager{
-	
+public abstract class Manager {
+
 	/** The ai. */
 	protected AGAI ai;
-	
-	
+
 	/**
 	 * Instantiates a new aG task manager.
 	 * 
-	 * @param ai the ai
+	 * @param ai
+	 *            the ai
 	 */
-	protected Manager(AGAI ai){
-		ai.msg("Initialized AGTaskManager "+this.getClass()+" "+ai);
-		this.ai=ai;
+	protected Manager(AGAI ai) {
+		ai.msg("Initialized AGTaskManager " + this.getClass() + " " + ai);
+		this.ai = ai;
 	}
 
 	/**
 	 * Solve.
 	 * 
-	 * @param task the task
+	 * @param task
+	 *            the task
 	 */
 	public abstract void solve(Task task);
 
