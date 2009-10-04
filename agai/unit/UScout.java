@@ -14,39 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package agai.manager;
+package agai.unit;
 
 import agai.AGAI;
-import agai.task.Task;
 
+import com.springrts.ai.oo.Unit;
 
+public class UScout extends AGUnit{
 
-//TODO: Auto-generated Javadoc
-/**
- * The Class AGTaskManager.
- */
-public abstract class Manager{
-	
-	/** The ai. */
-	protected AGAI ai;
-	
-	
 	/**
-	 * Instantiates a new aG task manager.
-	 * 
+	 * Instantiates a new unit scout.
+	 *
 	 * @param ai the ai
+	 * @param unit the unit
 	 */
-	protected Manager(AGAI ai){
-		ai.msg("Initialized AGTaskManager "+this.getClass()+" "+ai);
-		this.ai=ai;
+	public UScout(AGAI ai, Unit unit) {
+		super(ai, unit);
 	}
-
-	/**
-	 * Solve.
-	 * 
-	 * @param task the task
-	 */
-	public abstract void solve(Task task);
 
 }

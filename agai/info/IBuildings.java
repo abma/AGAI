@@ -14,39 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package agai.info;
 
-package agai.manager;
-
-import agai.AGAI;
-import agai.task.Task;
-
-
-
-//TODO: Auto-generated Javadoc
 /**
- * The Class AGTaskManager.
+ * The Class Buildings to store building positions and to get buildpositions
  */
-public abstract class Manager{
-	
-	/** The ai. */
-	protected AGAI ai;
-	
-	
-	/**
-	 * Instantiates a new aG task manager.
-	 * 
-	 * @param ai the ai
-	 */
-	protected Manager(AGAI ai){
-		ai.msg("Initialized AGTaskManager "+this.getClass()+" "+ai);
-		this.ai=ai;
-	}
-
-	/**
-	 * Solve.
-	 * 
-	 * @param task the task
-	 */
-	public abstract void solve(Task task);
+public class IBuildings {
 
 }

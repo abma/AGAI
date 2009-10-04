@@ -20,33 +20,35 @@ package agai.manager;
 import agai.AGAI;
 import agai.task.Task;
 
-
-
-//TODO: Auto-generated Javadoc
+// TODO: Auto-generated Javadoc
 /**
- * The Class AGTaskManager.
+ * The Class AGTBuildSuperWeapon.
  */
-public abstract class Manager{
-	
-	/** The ai. */
-	protected AGAI ai;
-	
-	
+public class MSuperWeapon extends Manager{
+	/*
+	 	Algorithm:
+	 	get all units with attack-damage
+	 	calculate sum/n
+	 	get the biggest values and try to build this units
+	 */
+
 	/**
-	 * Instantiates a new aG task manager.
+	 * Instantiates a new aGT build super weapon.
 	 * 
 	 * @param ai the ai
 	 */
-	protected Manager(AGAI ai){
-		ai.msg("Initialized AGTaskManager "+this.getClass()+" "+ai);
-		this.ai=ai;
+	MSuperWeapon(AGAI ai) {
+		super(ai);
+		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * Solve.
-	 * 
-	 * @param task the task
+	/* (non-Javadoc)
+	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
-	public abstract void solve(Task task);
+	@Override
+	public void solve(Task task) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -14,39 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package agai.manager;
+package agai.unit;
 
 import agai.AGAI;
-import agai.task.Task;
+import com.springrts.ai.oo.Unit;
 
-
-
-//TODO: Auto-generated Javadoc
+// TODO: Auto-generated Javadoc
 /**
- * The Class AGTaskManager.
+ * The Class UnitBuilder.
  */
-public abstract class Manager{
-	
-	/** The ai. */
-	protected AGAI ai;
-	
-	
+public class UBuilder extends AGUnit {
+
 	/**
-	 * Instantiates a new aG task manager.
-	 * 
+	 * Instantiates a new unit builder.
+	 *
 	 * @param ai the ai
+	 * @param unit the unit
 	 */
-	protected Manager(AGAI ai){
-		ai.msg("Initialized AGTaskManager "+this.getClass()+" "+ai);
-		this.ai=ai;
+	public UBuilder(AGAI ai, Unit unit) {
+		super(ai, unit);
+		ai.msg("");
 	}
-
-	/**
-	 * Solve.
-	 * 
-	 * @param task the task
-	 */
-	public abstract void solve(Task task);
-
 }

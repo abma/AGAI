@@ -18,7 +18,8 @@
 package agai.task;
 
 import agai.AGAI;
-import agai.info.PoIMap;
+import agai.info.IPoI;
+import agai.manager.Manager;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
@@ -52,16 +53,19 @@ public abstract class Task{
 	/** The ai. */
 	protected AGAI ai;
 	
+	protected Manager manager;
+	
 	/** The poi where the task refers to. */
-	private PoIMap poi=null;
+	private IPoI poi=null;
 
 	/**
 	 * Instantiates a new task.
 	 * 
 	 * @param ai the ai
 	 */
-	protected Task(AGAI ai){
+	protected Task(AGAI ai, Manager manager){
 		this.ai=ai;
+		this.manager=manager;
 		this.repeat=defaultRepeatTime;
 	}
 	
@@ -98,11 +102,6 @@ public abstract class Task{
 	}
 	
 	/**
-	 * Try to solve the Task, is called, when a Task is in the Tasklist
-	 */
-	public abstract void solve();
-
-	/**
 	 * Dumps the Task.
 	 * 
 	 * @return the string
@@ -116,7 +115,7 @@ public abstract class Task{
 	 * 
 	 * @return the poi
 	 */
-	public PoIMap getPoi() {
+	public IPoI getPoi() {
 		return poi;
 	}
 
@@ -125,7 +124,7 @@ public abstract class Task{
 	 * 
 	 * @param poi the new poi
 	 */
-	public void setPoi(PoIMap poi) {
+	public void setPoi(IPoI poi) {
 		this.poi = poi;
 	}
 

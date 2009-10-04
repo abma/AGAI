@@ -253,4 +253,9 @@ public class AGUnit{
 		ai.handleEngineCommand(command);
 	}
 
+	public void fetchTask() {
+		ai.msg("");
+		//FIXME
+	}
+
 }
