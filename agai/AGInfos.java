@@ -18,8 +18,10 @@ package agai;
 
 import agai.info.IBuildTree;
 import agai.info.IPoIs;
+import agai.info.IResources;
 import agai.info.ISearchUnit;
 import agai.info.ISectors;
+import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
 
@@ -33,13 +35,22 @@ public class AGInfos {
 	private IBuildTree aGB;
 
 	/** The a gf. */
-	private ISearchUnit aGF;
-
-	/** The a gm. */
-	private ISectors aGM;
+	private ISearchUnit search;
 
 	/** The a gp. */
 	private IPoIs aGP;
+
+	private IResources resources;
+
+	private ISectors sectors;
+
+	public ISectors getSectors() {
+		return sectors;
+	}
+
+	public IResources getResources() {
+		return resources;
+	}
 
 	/**
 	 * Instantiates a new info.
@@ -48,10 +59,11 @@ public class AGInfos {
 	 *            the ai
 	 */
 	AGInfos(AGAI ai) {
-		this.aGF = new ISearchUnit(ai);
-		this.aGP = new IPoIs(ai);
-		this.aGM = new ISectors(ai);
-		this.aGB = new IBuildTree(ai);
+		this.aGB = new IBuildTree(ai, this);
+		this.search = new ISearchUnit(ai, this);
+		this.aGP = new IPoIs(ai, this);
+		this.sectors = new ISectors(ai, this);
+		this.resources = new IResources(ai);
 	}
 
 	/**
@@ -63,22 +75,8 @@ public class AGInfos {
 		return aGB;
 	}
 
-	/**
-	 * Gets the aGF.
-	 * 
-	 * @return the aGF
-	 */
-	public ISearchUnit getAGF() {
-		return aGF;
-	}
-
-	/**
-	 * Gets the aGM.
-	 * 
-	 * @return the aGM
-	 */
-	public ISectors getAGM() {
-		return aGM;
+	public ISearchUnit getSearch() {
+		return search;
 	}
 
 	/**
@@ -103,6 +101,16 @@ public class AGInfos {
 	public double getDistance(AIFloat3 pos1, AIFloat3 pos2) {
 		return Math.sqrt((Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.z
 				- pos2.z, 2)));
+	}
+
+	public void UnitCreated(AGUnit u) {
+		aGB.searchNode(u.getDef()).incUnitcount();
+		resources.UnitCreated(u);
+	}
+	
+	public void UnitDestroyed(AGUnit u){
+		aGB.searchNode(u.getDef()).decUnitCount();
+		resources.UnitDestroyed(u);
 	}
 
 }

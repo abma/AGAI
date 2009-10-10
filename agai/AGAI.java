@@ -19,6 +19,7 @@ package agai;
 
 import java.util.List;
 
+import agai.info.IResource;
 import agai.loader.IAGAI;
 import agai.manager.MAttack;
 import agai.manager.MBuild;
@@ -62,7 +63,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	public static final int minDistance = 4;
 
 	/** The default distance to search for building poisitions. */
-	public static final int searchDistance = 100;
+	public static final int searchDistance = 1000;
 
 	/** The clb. */
 	private OOAICallback clb = null;
@@ -84,6 +85,12 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 
 	/** The metal. */
 	private Resource metal = null;
+
+	private int resourcecount=0;
+	
+	public int getResourcecount() {
+		return resourcecount;
+	}
 
 	/** The tasks. */
 	private AGTasks tasks = null;
@@ -222,7 +229,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int enemyEnterLOS(Unit enemy) {
-		infos.getAGM().addDanger(enemy);
+		infos.getSectors().addDanger(enemy);
 		return 0;
 	}
 
@@ -237,7 +244,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	@Override
 	public int enemyEnterRadar(Unit enemy) { // never call
 		// enemy.getDef().getName()!!
-		infos.getAGM().addDanger(enemy);
+		infos.getSectors().addDanger(enemy);
 		return 0;
 	}
 
@@ -273,19 +280,20 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * 
 	 * @param unit
 	 *            the unit
+	 * @param fs 
 	 * 
 	 * @return the resource that is mostly missing
 	 */
-	public Resource enoughResourcesToBuild(UnitDef unit) {
+	public Resource enoughResourcesToBuild(UnitDef unit, IResource fs) {
 		List<Resource> res = clb.getResources();
 		Resource ret = null;
 		float min = Float.MAX_VALUE;
 		for (int i = 0; i < res.size(); i++) {
 			float usage, unitcost, current, income;
-			usage = clb.getEconomy().getUsage(res.get(i)); // usage of energy
-			income = clb.getEconomy().getIncome(res.get(i)); // incoming
+			usage = fs.getUseage(i);
+			income = fs.getIncome(i);
 			unitcost = unit.getCost(res.get(i)); // cost of unit
-			current = clb.getEconomy().getCurrent(res.get(i)); // current
+			current = fs.getCurrent(i);
 			// avaiable
 			// resources
 			float cur = unitcost - (current + (income - usage));
@@ -426,20 +434,23 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * @param callback
 	 *            the callback
 	 * 
-	 * @return the int
+	 * @return the intgwer
 	 */
 	@Override
 	public int init(int teamId, OOAICallback callback) {
 		this.clb = callback;
 		this.teamId = teamId;
 		List<Resource> res = this.getClb().getResources();
+		resourcecount = res.size(); 
 		metal = res.get(0);
 		energy = res.get(1);
 
+		units = new AGUnits(this);
 		infos = new AGInfos(this);
 		controller = new AGController(this);
 		managers = new AGManagers(this);
-		units = new AGUnits(this);
+		tasks = new AGTasks(this);
+
 
 		List<Unit> list = clb.getTeamUnits();
 		for (int i = 0; i < list.size(); i++) {
@@ -482,7 +493,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			} else if (argv[0].equalsIgnoreCase("dumpbuildtree")) {
 				infos.getAGB().dumpUnits();
 			} else if (argv[0].equalsIgnoreCase("dumpmap")) {
-				infos.getAGM().dump();
+				infos.getSectors().dump();
 			} else if (argv[0].equalsIgnoreCase("attack")) {
 				tasks.add(new TAttack(this, managers.get(MAttack.class),
 						AGUnits.ElementType.unitLand));
@@ -513,7 +524,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 					+ e.getStackTrace()[1].getMethodName() + ":"
 					+ e.getStackTrace()[1].getLineNumber() + " " + str;
 		}
-		System.out.println(str);
+		System.out.println(frame+" "+str);
 	}
 
 	/**
@@ -646,7 +657,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			t.unitDamaged(u, damage, dir, weaponDef, paralyzer);
 		else
 			msg(unit.getDef().getName());
-		infos.getAGM().unitDamaged(unit, attacker, damage);
+		infos.getSectors().unitDamaged(unit, attacker, damage);
 		return 0;
 	}
 
@@ -669,7 +680,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		else
 			msg(unit.getDef().getName());
 		units.destroyed(unit, attacker);
-		getInfos().getAGM().unitDestroyed(unit);
+		getInfos().getSectors().unitDestroyed(unit);
 		return 0;
 	}
 
@@ -766,10 +777,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int update(int frame) {
-		if (frame % 30 == 0) {
-			units.employIdle();
-		}
 		this.frame = frame;
+		controller.update(frame);
 		return 0;
 	}
 

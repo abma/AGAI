@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agai.AGAI;
+import agai.AGInfos;
 
 import com.springrts.ai.AIFloat3;
 
@@ -50,8 +51,9 @@ public class IPoIs {
 	 * 
 	 * @param ai
 	 *            the ai
+	 * @param infos 
 	 */
-	public IPoIs(AGAI ai) {
+	public IPoIs(AGAI ai, AGInfos infos) {
 		this.ai = ai;
 		this.poi = new ArrayList<IPoI>();
 	}

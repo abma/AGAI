@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import agai.AGAI;
+import agai.AGInfos;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.oo.Resource;
@@ -51,8 +52,9 @@ public class IBuildTree {
 	 * 
 	 * @param ai
 	 *            the ai
+	 * @param infos 
 	 */
-	public IBuildTree(AGAI ai) {
+	public IBuildTree(AGAI ai, AGInfos infos) {
 		this.mark = 0;
 		this.ai = ai;
 		this.ress = ai.getClb().getResources();

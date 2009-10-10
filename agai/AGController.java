@@ -160,6 +160,7 @@ public class AGController {
 		ai.getTasks().clear();
 	}
 
+	int lastupdate=-1;
 	/**
 	 * Update.
 	 * 
@@ -167,7 +168,19 @@ public class AGController {
 	 *            the frame
 	 */
 	public void update(int frame) {
-		ai.getUnits().employIdle();
+		int i=frame % 100;
+		switch (i){
+			case 0:
+				ai.msg("");
+				if (lastupdate!=ai.getInfos().getResources().getLastchanged()){
+					ai.getManagers().update(ai.getInfos().getResources().update());
+					lastupdate=ai.getInfos().getResources().getLastchanged();
+				}
+				break;
+			case 50:
+				ai.getUnits().employIdle();
+				break;
+		}
 	}
 
 }

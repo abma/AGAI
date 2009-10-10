@@ -105,7 +105,7 @@ public class AGUnits {
 	}
 
 	/**
-	 * Adds the.
+	 * Adds the Unit to list
 	 * 
 	 * @param unit
 	 *            the unit
@@ -117,8 +117,8 @@ public class AGUnits {
 			ai.msg("Error: tried to add null");
 			return null;
 		}
-		units.add(new AGUnit(ai, unit));
-		ai.getInfos().getAGB().searchNode(unit.getDef()).incUnitcount();
+		AGUnit u=new AGUnit(ai, unit);
+		units.add(u);
 		return units.get(units.size() - 1);
 	}
 
@@ -131,9 +131,9 @@ public class AGUnits {
 	 *            the attacker
 	 */
 	public void destroyed(Unit unit, Unit attacker) {
-		ai.getInfos().getAGB().searchNode(unit.getDef()).decUnitCount();
 		for (int i = units.size() - 1; i >= 0; i--)
 			if (units.get(i).getUnit().equals(unit)) {
+				ai.getInfos().UnitDestroyed(units.get(i));
 				units.get(i).destroyed();
 				units.remove(i);
 				return;
@@ -189,6 +189,7 @@ public class AGUnits {
 	 * Employ idle.
 	 */
 	public void employIdle() {
+		ai.msg("");
 		for (int i = 0; i < units.size(); i++) {
 			if (units.get(i).isIdle())
 				units.get(i).fetchTask();

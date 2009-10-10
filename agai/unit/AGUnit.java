@@ -18,8 +18,10 @@
 package agai.unit;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import agai.AGAI;
+import agai.info.IResource;
 import agai.task.Task;
 
 import com.springrts.ai.AICommand;
@@ -105,6 +107,7 @@ public class AGUnit {
 	 * @return the int
 	 */
 	public int buildUnit(UnitDef type, AIFloat3 pos, int facing) {
+		ai.msg("");
 		AICommand command = new BuildUnitAICommand(unit, -1,
 				new ArrayList<AICommand.Option>(), 10000, type, pos, facing);
 		return ai.handleEngineCommand(command);
@@ -149,8 +152,10 @@ public class AGUnit {
 	}
 
 	public void fetchTask() {
-		ai.msg("");
-		// FIXME
+		Task task=ai.getTasks().getTask(this);
+		if (task!=null)
+			setTask(task);
+		
 	}
 
 	public AGUnit getBuilder() {
@@ -280,5 +285,26 @@ public class AGUnit {
 			str = str + " " + task.toString();
 		return str;
 	}
-
+	
+	public boolean isAbleToBuilt(UnitDef type){
+		List<UnitDef> buildOptions = unit.getDef().getBuildOptions();
+		for (int i = 0; i < buildOptions.size(); i++) {
+			if (buildOptions.get(i).getUnitDefId() == type.getUnitDefId()) {
+				ai.msg("Builder found to build " + type.getName());
+				return true;
+			}
+		}
+		return false;
+	}
+	private IResource production=null;
+	public IResource getProduction(){
+		if (production==null){
+			production = new IResource(ai);
+			for (int i=0; i<ai.getResourcecount(); i++){
+				production.setIncome(i, 
+				ai.getUnits().getProduction(getDef(), ai.getClb().getResources().get(i)));
+				}
+			}
+		return production;
+	}
 }

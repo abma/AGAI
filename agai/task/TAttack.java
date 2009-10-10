@@ -86,7 +86,7 @@ public class TAttack extends Task {
 		ai.msg("" + unit);
 		if (currentsec != null) {// unit reached sec, cleaned?
 			List<Unit> list = ai.getClb().getEnemyUnitsIn(currentsec.getPos(),
-					ai.getInfos().getAGM().getSectorSize());
+					ai.getInfos().getSectors().getSectorSize());
 			if (list.size() > 0) {
 				unit.attackUnit(list.get(0));
 				return;
@@ -94,7 +94,7 @@ public class TAttack extends Task {
 				currentsec.setClean(); // sector is clean
 			}
 		}
-		ISector sec = ai.getInfos().getAGM().getNextEnemyTarget(unit.getPos(),
+		ISector sec = ai.getInfos().getSectors().getNextEnemyTarget(unit.getPos(),
 				0);
 		if (sec != null) {
 			unit.setTask(new TSecureMove(ai, ai.getManagers()
@@ -108,5 +108,11 @@ public class TAttack extends Task {
 		setRepeat(0);
 		unit.setTask(null);
 		ai.msg("nothing to attack found!");
+	}
+
+	@Override
+	public boolean canBeDone(AGUnit unit) {
+		Manager m=ai.getManagers().get(MAttack.class);
+		return m.canSolve(this, unit);
 	}
 }

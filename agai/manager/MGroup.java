@@ -20,7 +20,6 @@ import java.util.LinkedList;
 
 import agai.AGAI;
 import agai.task.TGroup;
-import agai.task.Task;
 
 /**
  * The Class AGTGroupManager.
@@ -71,15 +70,6 @@ public class MGroup extends Manager {
 	public void remove(TGroup taskGroup) {
 		ai.msg("group died!");
 		list.remove(taskGroup);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see agai.AGTaskManager#solve(agai.AGTask)
-	 */
-	@Override
-	public void solve(Task task) {
 	}
 
 }

@@ -17,6 +17,7 @@
 package agai.task;
 
 import agai.AGAI;
+import agai.manager.MBuild;
 import agai.manager.Manager;
 import agai.unit.AGUnit;
 
@@ -26,7 +27,6 @@ import com.springrts.ai.oo.WeaponDef;
 
 // Task with unit to build
 public class TBuild extends Task {
-	TBuild buildtask;
 	private int mindistance;
 
 	/** The pos. */
@@ -67,23 +67,19 @@ public class TBuild extends Task {
 		this.tasktoassign = tasktoassign;
 		solved = false;
 	}
-
+	private void build(AGUnit unit){
+		AIFloat3 tmp=pos;
+		if (pos==null){ //task has no buildpos, assign one!
+			tmp=unit.getPos();
+			tmp=unit.canBuildAt(tmp , unitdef, this.radius, this.mindistance);
+		}
+		unit.buildUnit(unitdef, tmp, AGAI.defaultFacing);
+	}
 	@Override
 	public void assign(AGUnit unit) {
 		ai.msg("");
-		unit.setIdle();
+		build(unit);
 	}
-
-	private void build(AGUnit unit) {
-		if (buildtask != null) {
-			ai.msg(buildtask.toString());
-			AIFloat3 pos = buildtask.getPos();
-			if (pos == null)
-				pos = new AIFloat3(unit.getPos());
-			unit.buildUnit(buildtask.getUnitDef(), pos, AGAI.defaultFacing);
-		}
-	}
-
 	public int getMinDistance() {
 		return this.mindistance;
 	}
@@ -164,18 +160,13 @@ public class TBuild extends Task {
 	@Override
 	public void unitFinished(AGUnit builder, AGUnit unit) {
 		ai.msg(unit.getDef().getName());
-		Task tmp = buildtask.getTasktoassign();
+		Task tmp = getTasktoassign();
 		unit.setTask(tmp);
 		if (tmp != null)
 			tmp.unitFinished(builder, unit); // call unitfinished event
 		setRepeat(0);
-		buildtask.setRepeat(0);
 		builder.setTask(null); // mark unit as idle, because unit was built
-	}
-
-	@Override
-	public void unitIdle(AGUnit unit) {
-		build(unit);
+		ai.getInfos().UnitCreated(unit);
 	}
 
 	@Override
@@ -188,4 +179,14 @@ public class TBuild extends Task {
 		ai.msg("");
 	}
 
+	@Override
+	public boolean canBeDone(AGUnit unit) {
+		Manager m=ai.getManagers().get(MBuild.class);
+		return m.canSolve(this, unit);
+	}
+	@Override
+	public void unitIdle(AGUnit unit){
+		ai.msg("");
+		build(unit);
+	}
 }

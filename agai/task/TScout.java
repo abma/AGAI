@@ -63,4 +63,10 @@ public class TScout extends Task {
 		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MScout.class)));
 		setRepeat(0);
 	}
+
+	@Override
+	public boolean canBeDone(AGUnit unit) {
+		Manager m=ai.getManagers().get(MScout.class);
+		return m.canSolve(this, unit);
+	}
 }

@@ -19,6 +19,7 @@ package agai.info;
 import java.util.LinkedList;
 
 import agai.AGAI;
+import agai.AGInfos;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Unit;
@@ -54,11 +55,12 @@ public class ISectors {
 	 * 
 	 * @param ai
 	 *            the ai
+	 * @param infos 
 	 */
-	public ISectors(AGAI ai) {
+	public ISectors(AGAI ai, AGInfos infos) {
 		this.ai = ai;
 		this.mark = 1;
-		LinkedList<IBuildTreeUnit> list = ai.getInfos().getAGB().getUnitList();
+		LinkedList<IBuildTreeUnit> list = infos.getAGB().getUnitList();
 		float tmp = 0;
 		for (int i = 0; i < list.size(); i++) {
 			tmp = tmp + list.get(i).getUnit().getLosRadius();

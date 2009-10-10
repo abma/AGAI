@@ -23,6 +23,7 @@ import java.util.List;
 import agai.AGAI;
 import agai.info.IBuildTreeUnit;
 import agai.info.IPoI;
+import agai.info.IResource;
 import agai.info.ISearchUnitResource;
 import agai.task.TBuild;
 import agai.task.Task;
@@ -61,7 +62,7 @@ public class MResource extends Manager {
 		list = new ArrayList<List<IBuildTreeUnit>>();
 		for (int i = 0; i < res.size(); i++) {
 			initializeSpots(res.get(i));
-			list.add(i, ai.getInfos().getAGF().Filter(
+			list.add(i, ai.getInfos().getSearch().Filter(
 					new ISearchUnitResource(ai, res.get(i))));
 		}
 		List<Feature> f = ai.getClb().getFeatures();
@@ -108,12 +109,6 @@ public class MResource extends Manager {
 		}
 	}
 
-	@Override
-	public void solve(Task task) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void tryTobuild(Resource resource) {
 		UnitDef unit = null;
 		AGUnit builder = null;
@@ -121,7 +116,7 @@ public class MResource extends Manager {
 		AIFloat3 pos = null;
 		int min = AGAI.minDistance;
 		List<IBuildTreeUnit> tmp = list.get(resource.getResourceId());
-		int radius = 100; // default radius to search for buildings
+		int radius = AGAI.searchDistance; // default radius to search for buildings
 		for (int i = 0; i < tmp.size(); i++) { // search from units that fits
 												// best to the worst.. skip when
 												// unit can be built and enough
@@ -153,13 +148,13 @@ public class MResource extends Manager {
 					}
 				} else { // doesn't need spot, build at next point to builder
 					ai.msg("No spot needed");
-					pos = builder.canBuildAt(pos, unit, radius, 2);
+					pos = builder.canBuildAt(pos, unit, radius, min);
 					if (pos == null) // can't build, next unit
 						continue;
 					pos = null; // delete pos, because builder could have
 								// already a task and is moving
 				}
-				Resource res = ai.enoughResourcesToBuild(unit);
+				Resource res = ai.enoughResourcesToBuild(unit, getResToUse());
 				if (res == null) { // no resource is missing, building is ok!
 					break;
 				}
@@ -172,7 +167,7 @@ public class MResource extends Manager {
 			if (poi != null) { // build only one time at a spot
 				poi.setBuilt(true);
 			}
-			ai.msg("Sending command to build unit");
+			ai.msg("Adding Task to queue");
 			Task buildtask = new TBuild(ai, ai.getManagers().get(MBuild.class),
 					unit, pos, radius, 2, null);
 			buildtask.setPoi(poi);
@@ -183,5 +178,44 @@ public class MResource extends Manager {
 			if (unit == null)
 				ai.msg("No resource producing unit found");
 		}
+	}
+	@Override
+	public void setResToUse(IResource res){
+		resToUse=res;
+		float maxpercent=0;
+		int pos=0;;
+		ai.msg("");
+		IResource cur=ai.getInfos().getResources().get();
+		
+		for (int i=0; i<ai.getResourcecount(); i++){ //build resource whos usage has most percent
+			float income=cur.getIncome(i);
+			float usage=cur.getUseage(i);
+			float percent=0;
+			if (income!=0){
+				percent=usage/income;
+			}
+			ai.msg(""+percent);
+			if (percent>maxpercent){
+				pos=i;
+				maxpercent=percent;
+			}
+		}
+
+		for (int i=0; i<ai.getResourcecount(); i++){ //or build resource whos storage is maxpercent
+			float current=cur.getCurrent(i);
+			float storage=cur.getStorage(i);
+			float percent=0;
+			if (current!=0){
+				percent=1-storage/current;
+			}
+			ai.msg(""+percent);
+			if (percent>maxpercent){
+				pos=i;
+				maxpercent=percent;
+			}
+		}
+
+		Resource r=ai.getClb().getResources().get(pos);
+		tryTobuild(r);
 	}
 }

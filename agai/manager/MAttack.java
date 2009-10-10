@@ -21,8 +21,10 @@ import java.util.List;
 
 import agai.AGAI;
 import agai.info.IBuildTreeUnit;
+import agai.info.IResource;
 import agai.info.ISearchUnitAttacker;
 import agai.task.Task;
+import agai.unit.AGUnit;
 
 /**
  * The Class AGTAttack.
@@ -42,7 +44,7 @@ public class MAttack extends Manager {
 	 */
 	public MAttack(AGAI ai) {
 		super(ai);
-		list = ai.getInfos().getAGF().Filter(new ISearchUnitAttacker(ai));
+		list = ai.getInfos().getSearch().Filter(new ISearchUnitAttacker(ai));
 		for (int i = 0; i < list.size(); i++) {
 			ai.msg(list.get(i).getUnit().getName() + "\t"
 					+ ai.getUnits().getTotalPrice(list.get(i).getUnit()));
@@ -70,7 +72,6 @@ public class MAttack extends Manager {
 	 * 
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
-	@Override
 	public void solve(Task task) {
 		/*
 		 * if (ai.getAGG().getGroups(TAttack.class)<groups){ TAttack
@@ -79,5 +80,15 @@ public class MAttack extends Manager {
 		 * ai.buildUnit(group, list, a, a.getType()); }
 		 * ai.getAGG().addGroup(group); }
 		 */
+	}
+	public boolean canSolve(Task task, AGUnit unit){
+		for (int i=0; i<list.size(); i++)
+			if (unit.getDef().equals(list.get(i).getUnit()))
+				return true;
+		return false;
+	}
+	@Override
+	public void setResToUse(IResource res) {
+		ai.msg("");
 	}
 }

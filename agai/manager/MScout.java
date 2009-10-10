@@ -19,11 +19,14 @@ package agai.manager;
 
 import java.util.List;
 
+import com.springrts.ai.oo.Resource;
+
 import agai.AGAI;
 import agai.AGUnits;
 import agai.info.IBuildTreeUnit;
 import agai.info.ISearchUnitScout;
 import agai.task.Task;
+import agai.unit.AGUnit;
 
 /**
  * The Class AGTScout.
@@ -44,7 +47,7 @@ public class MScout extends Manager {
 	 */
 	public MScout(AGAI ai) {
 		super(ai);
-		list = ai.getInfos().getAGF().Filter(new ISearchUnitScout(ai));
+		list = ai.getInfos().getSearch().Filter(new ISearchUnitScout(ai));
 		for (int i = 0; i < list.size(); i++) {
 			ai.msg(list.get(i).getUnit().getName() + "\t"
 					+ ai.getUnits().getTotalPrice(list.get(i).getUnit()));
@@ -72,11 +75,20 @@ public class MScout extends Manager {
 	 * 
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
-	@Override
 	public void solve(Task task) {
 		if (scouts < 10) {
-			((MBuild) ai.getManagers().get(MBuild.class)).buildUnit(task, list,
-					task, AGUnits.ElementType.unitAny);
+			Resource res=((MBuild) ai.getManagers().get(MBuild.class)).buildUnit(task, list,
+					task, AGUnits.ElementType.unitAny, getResToUse());
+			if (res!=null){
+				ai.getManagers().get(MResource.class).setResToUse(getResToUse());
+				//FIXME: clear used resources
+			}
 		}
+	}
+	public boolean canSolve(Task task, AGUnit unit){
+		for (int i=0; i<list.size(); i++)
+			if (unit.getDef().equals(list.get(i).getUnit()))
+				return true;
+		return false;
 	}
 }

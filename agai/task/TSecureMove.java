@@ -51,16 +51,16 @@ public class TSecureMove extends Task {
 
 	@Override
 	public void unitCommandFinished(AGUnit unit) {
-		if (ai.getInfos().getAGM().isPosInSec(unit.getPos(), destination)) {
+		if (ai.getInfos().getSectors().isPosInSec(unit.getPos(), destination)) {
 			ai.msg("Destination reached, back to the old task!");
 			setRepeat(0);
 			unit.setTask(taskWhenReached);
 		} else { // when moving, try to avoid danger sectors
 			ai.msg("Sneak moving");
 			if (path == null) {
-				ISector cursec = ai.getInfos().getAGM()
+				ISector cursec = ai.getInfos().getSectors()
 						.getSector(unit.getPos());
-				path = ai.getInfos().getAGM()
+				path = ai.getInfos().getSectors()
 						.getSecurePath(cursec, destination);
 			}
 			if (path.size() > 0)
@@ -85,5 +85,11 @@ public class TSecureMove extends Task {
 		setRepeat(0);
 		u.setTask(taskWhenReached);
 		u.setIdle();
+	}
+
+	@Override
+	public boolean canBeDone(AGUnit unit) {
+		ai.msg("Warning: this task shouldn't be in the task list!");
+		return false;
 	}
 }

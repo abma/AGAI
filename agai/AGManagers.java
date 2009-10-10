@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
+import agai.info.IResource;
 import agai.manager.MAttack;
 import agai.manager.MBuild;
 import agai.manager.MResource;
@@ -120,5 +121,11 @@ public class AGManagers {
 	 */
 	public void sort() {
 		Collections.sort(tasks, new AGTaskcompare());
+	}
+	
+	public void update(IResource res){
+		res.divide(list.size());
+		for (int i=0; i<list.size(); i++)
+			list.get(i).setResToUse(res);
 	}
 }

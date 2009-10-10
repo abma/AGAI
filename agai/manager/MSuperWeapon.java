@@ -46,7 +46,6 @@ public class MSuperWeapon extends Manager {
 	 * 
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
-	@Override
 	public void solve(Task task) {
 		// TODO Auto-generated method stub
 

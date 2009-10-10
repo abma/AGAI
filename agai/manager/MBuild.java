@@ -22,11 +22,13 @@ import java.util.List;
 import agai.AGAI;
 import agai.AGUnits;
 import agai.info.IBuildTreeUnit;
+import agai.info.IResource;
 import agai.task.TBuild;
 import agai.task.Task;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.Resource;
 import com.springrts.ai.oo.UnitDef;
 
 /**
@@ -47,17 +49,16 @@ public class MBuild extends Manager {
 	/**
 	 * Builds a best fitting unit and assigns task.
 	 * 
-	 * @param task
-	 *            the task
-	 * @param list
-	 *            the list
-	 * @param tasktoassign
-	 *            the tasktoassign
-	 * @param type
-	 *            the type (Air, Water, ...)
+	 * @param task the task
+	 * @param list the list
+	 * @param tasktoassign the tasktoassign
+	 * @param type the type (Air, Water, ...)
+	 * @param resources the resources
+	 * 
+	 * @return the resource that is missing to build the cheapest unit
 	 */
-	public void buildUnit(Task task, List<IBuildTreeUnit> list,
-			Task tasktoassign, AGUnits.ElementType type) {
+	public Resource buildUnit(Task task, List<IBuildTreeUnit> list,
+			Task tasktoassign, AGUnits.ElementType type, IResource resources) {
 		UnitDef unit = null;
 		task.setRepeat(Task.defaultRepeatTime);
 		for (int i = 0; i < list.size(); i++) { // searching for existing unit
@@ -68,13 +69,16 @@ public class MBuild extends Manager {
 					ai.msg("assigned task to existing idle unit");
 					u.setTask(tasktoassign);
 					task.setRepeat(0);
-					return;
+					return null;
 				}
 			}
 		}
 		for (int i = 0; i < list.size(); i++) { // no unit found, try to build
 												// with exisiting factories
 			if (ai.getUnits().UnitInType(list.get(i).getUnit(), type)) {
+				Resource res=ai.enoughResourcesToBuild(unit, resources);
+				if (res!=null) //to few resources!
+					return res;
 				AGUnit builder = ai.getUnits().getBuilder(unit);
 				if (builder != null) {
 					Task buildtask = new TBuild(ai, ai.getManagers().get(
@@ -82,12 +86,15 @@ public class MBuild extends Manager {
 							AGAI.minDistance, tasktoassign);
 					ai.getTasks().add(buildtask);
 					task.setRepeat(0);
-					return;
+					return null;
 				}
 			}
 		}
-		// no unit found, build cheapest one
+		// no unit found, try to build cheapest
 		if (unit != null) {
+			Resource res=ai.enoughResourcesToBuild(unit, resources);
+			if (res!=null) //to few resources!
+				return res; 
 			Task buildtask = new TBuild(ai, ai.getManagers().get(MBuild.class),
 					unit, null, AGAI.searchDistance, AGAI.minDistance,
 					tasktoassign);
@@ -96,6 +103,7 @@ public class MBuild extends Manager {
 		} else {
 			ai.msg("No unit found to build " + type);
 		}
+		return null;
 	}
 
 	/**
@@ -188,7 +196,6 @@ public class MBuild extends Manager {
 	 * 
 	 * @see agai.AGTaskManager#solve(agai.AGTask)
 	 */
-	@Override
 	public void solve(Task task) {
 		ai.msg("" + task);
 		TBuild t = (TBuild) task;
@@ -212,6 +219,12 @@ public class MBuild extends Manager {
 			}
 			task.setRepeat(Task.defaultRepeatTime);
 		}
+	}
+	@Override
+	public boolean canSolve(Task task, AGUnit unit){
+		ai.msg("");
+		TBuild t=(TBuild) task;
+		return unit.isAbleToBuilt(t.getUnitDef());
 	}
 
 }

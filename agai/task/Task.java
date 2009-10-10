@@ -35,9 +35,6 @@ public abstract class Task {
 	/** The ai. */
 	protected AGAI ai;
 
-	/** The frame the task was last run */
-	public int lastrun;
-
 	protected Manager manager;
 
 	/** The poi where the task refers to. */
@@ -76,15 +73,6 @@ public abstract class Task {
 	 */
 	public void decPriority() {
 		priority--;
-	}
-
-	/**
-	 * Gets the lastrun.
-	 * 
-	 * @return the lastrun
-	 */
-	public int getLastrun() {
-		return lastrun;
 	}
 
 	/**
@@ -138,7 +126,7 @@ public abstract class Task {
 	@Override
 	public String toString() {
 		return this.getClass().getName() + " " + this.priority + " "
-				+ this.lastrun + " toString not implemented!";
+				+ " toString not implemented!";
 	}
 
 	/**
@@ -255,7 +243,7 @@ public abstract class Task {
 	 *            the unit
 	 */
 	public void unitIdle(AGUnit unit) {
-		ai.msg(this.getClass().getName());
+		ai.msg(this.getClass().getName()); 
 	}
 
 	/**
@@ -273,5 +261,10 @@ public abstract class Task {
 	 */
 	public void unitWeaponFired() {
 		ai.msg(this.getClass().getName());
+	}
+	
+	public boolean canBeDone(AGUnit unit){
+		ai.msg("Warning: this task shouldn't be in the task list!");
+		return false;
 	}
 }

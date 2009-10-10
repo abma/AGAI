@@ -18,7 +18,9 @@
 package agai.manager;
 
 import agai.AGAI;
+import agai.info.IResource;
 import agai.task.Task;
+import agai.unit.AGUnit;
 
 /**
  * The Class AGTaskManager.
@@ -27,6 +29,28 @@ public abstract class Manager {
 
 	/** The ai. */
 	protected AGAI ai;
+	protected IResource resToUse; 
+	private int idleTasks;
+
+	public int getIdleTasks() {
+		return idleTasks;
+	}
+
+	public void setIdleTasks(int idleTasks) {
+		this.idleTasks = idleTasks;
+	}
+
+	public IResource getResToUse() {
+		return resToUse;
+	}
+
+	public void setResToUse(IResource res) {
+		this.resToUse = res;
+	}
+	
+	public void incResToUse(IResource res){
+		resToUse.add(res);
+	}
 
 	/**
 	 * Instantiates a new aG task manager.
@@ -37,14 +61,12 @@ public abstract class Manager {
 	protected Manager(AGAI ai) {
 		ai.msg("Initialized AGTaskManager " + this.getClass() + " " + ai);
 		this.ai = ai;
+		this.idleTasks=0;
 	}
 
-	/**
-	 * Solve.
-	 * 
-	 * @param task
-	 *            the task
-	 */
-	public abstract void solve(Task task);
-
+	public boolean canSolve(Task task, AGUnit unit){
+		ai.msg(this.getClass().getName()+ " Warning: canSolve() needs to be implemented!");
+		return false;
+	}
+	
 }

@@ -22,23 +22,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 import agai.AGAI;
+import agai.AGInfos;
 
 /**
  * The Class ISearch to find Units.
  */
 public class ISearchUnit {
 
-	/** The list. */
-	private LinkedList<IBuildTreeUnit> list;
+	private AGAI ai;
 
 	/**
 	 * Instantiates a new aG filter.
 	 * 
 	 * @param ai
 	 *            the ai
+	 * @param infos 
 	 */
-	public ISearchUnit(AGAI ai) {
-		list = ai.getInfos().getAGB().getUnitList();
+	public ISearchUnit(AGAI ai, AGInfos infos) {
+		this.ai=ai;
 	}
 
 	/**
@@ -51,6 +52,7 @@ public class ISearchUnit {
 	 * @return the list< ag build tree unit>
 	 */
 	public List<IBuildTreeUnit> Filter(IUnitProperty props) {
+		LinkedList<IBuildTreeUnit> list= ai.getInfos().getAGB().getUnitList();
 		if (props == null)
 			return list;
 		LinkedList<IBuildTreeUnit> res = new LinkedList<IBuildTreeUnit>();
@@ -60,7 +62,6 @@ public class ISearchUnit {
 			}
 		}
 		props.update();
-
 		if (res.size() > 0) {
 			if (props.sort()) {
 				Collections.sort(res, props);
