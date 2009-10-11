@@ -217,5 +217,6 @@ public class MResource extends Manager {
 
 		Resource r=ai.getClb().getResources().get(pos);
 		tryTobuild(r);
+		tryTobuild(r);
 	}
 }

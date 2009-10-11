@@ -60,8 +60,7 @@ public class TSecureMove extends Task {
 			if (path == null) {
 				ISector cursec = ai.getInfos().getSectors()
 						.getSector(unit.getPos());
-				path = ai.getInfos().getSectors()
-						.getSecurePath(cursec, destination);
+				path = ai.getInfos().getSectors().getSecurePath(cursec, destination, unit.getMaxSlope(), unit.getMinWaterDepth(), unit.getMaxWaterDepth());
 			}
 			if (path.size() > 0)
 				unit.moveTo(path.remove(0).getPos());

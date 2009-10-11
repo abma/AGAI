@@ -72,6 +72,8 @@ public class TBuild extends Task {
 		if (pos==null){ //task has no buildpos, assign one!
 			tmp=unit.getPos();
 			tmp=unit.canBuildAt(tmp , unitdef, this.radius, this.mindistance);
+			if (tmp==null)//empty buildpos
+				tmp=new AIFloat3();
 		}
 		unit.buildUnit(unitdef, tmp, AGAI.defaultFacing);
 	}

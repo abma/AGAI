@@ -24,7 +24,10 @@ import com.springrts.ai.oo.Resource;
 import agai.AGAI;
 import agai.AGUnits;
 import agai.info.IBuildTreeUnit;
+import agai.info.IResource;
 import agai.info.ISearchUnitScout;
+import agai.task.TBuild;
+import agai.task.TScout;
 import agai.task.Task;
 import agai.unit.AGUnit;
 
@@ -85,10 +88,27 @@ public class MScout extends Manager {
 			}
 		}
 	}
+	@Override
 	public boolean canSolve(Task task, AGUnit unit){
 		for (int i=0; i<list.size(); i++)
 			if (unit.getDef().equals(list.get(i).getUnit()))
 				return true;
 		return false;
 	}
+
+	@Override
+	public void setResToUse(IResource res) {
+		ai.msg("");
+		ai.getInfos().getResources().get();
+		for(int i=0; i<list.size();i++){
+			if (list.get(i).getCost().lessOrEqual(res)){
+				MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
+				ai.getTasks().add(new TBuild(ai, m, list.get(i).getUnit(), null, 0, 0, new TScout(ai, this)));
+				return;
+			}
+		}
+		ai.msg("To few resources to build a scout!");
+		ai.getManagers().get(MResource.class).incResToUse(res);
+	}
+
 }

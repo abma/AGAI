@@ -101,6 +101,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 
 	/** The a gu. */
 	private AGUnits units = null;
+	private AIFloat3 startpos=null;
+	public AIFloat3 getStartpos() {
+		return startpos;
+	}
 
 	/**
 	 * Instantiates a new aGAI.
@@ -627,6 +631,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				}
 			}
 		}
+		if (startpos==null)
+			startpos=unit.getPos();
 		return 0;
 	}
 
@@ -743,8 +749,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		Task t = u.getTask();
 		if ((u != null) && (t != null))
 			t.unitIdle(u);
-		else
-			msg("");
+		else{
+			u.fetchTask();
+		}
 		return 0;
 	}
 

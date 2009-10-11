@@ -34,7 +34,7 @@ public class IResource{
 	/** The resources. */
 	private List <Resource> resources;
 
-	private AGAI ai; 
+	private AGAI ai;
 
 	/** The Constant current. */
 	final static int current=0;
@@ -159,16 +159,20 @@ public class IResource{
 	}
 
 	/**
-	 * Adds Resource to this res
+	 * Adds Resource to this res.
 	 * 
 	 * @param resource the resource
+	 * 
+	 * @return the resource
 	 */
-	public void add(IResource resource) {
-		for (int i=0; i<res.length; i++){
-			for (int j=0; j<res[i].length; j++){
-				res[i][j]=res[i][j]+resource.get(i,j);
+	public IResource add(IResource resource) {
+		if (resource!=null)
+			for (int i=0; i<res.length; i++){
+				for (int j=0; j<res[i].length; j++){
+					res[i][j]=res[i][j]+resource.get(i,j);
+				}
 			}
-		}
+		return this;
 	}
 
 	/**
@@ -210,6 +214,16 @@ public class IResource{
 		for (int i=0; i<res.length; i++){
 			for (int j=0; j<res[i].length; j++){
 				if (res[i][j]!=0)
+					return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean lessOrEqual(IResource resource) {
+		for (int i=0; i<res.length; i++){
+			for (int j=0; j<res[i].length; j++){
+				if (res[i][j]<resource.get(i,j))
 					return false;
 			}
 		}

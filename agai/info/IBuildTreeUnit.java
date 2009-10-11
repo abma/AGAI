@@ -17,7 +17,11 @@
 package agai.info;
 
 import java.util.LinkedList;
+import java.util.List;
 
+import agai.AGAI;
+
+import com.springrts.ai.oo.Resource;
 import com.springrts.ai.oo.UnitDef;
 
 // TODO: Auto-generated Javadoc
@@ -47,6 +51,20 @@ public class IBuildTreeUnit {
 
 	/** The unitcount. */
 	private int unitcount;
+	
+	private IResource cost;
+	private AGAI ai;
+
+	public IResource getCost() {
+		if (cost==null){
+			List <Resource> res=ai.getClb().getResources();
+			cost = new IResource(ai);
+			for(int i=0; i<res.size(); i++){
+				cost.setCurrent(i, unit.getCost(res.get(i)));
+			}
+		}
+		return cost;
+	}
 
 	/**
 	 * Instantiates a new builds the tree unit.
@@ -54,9 +72,10 @@ public class IBuildTreeUnit {
 	 * @param unit
 	 *            the unit
 	 */
-	IBuildTreeUnit(UnitDef unit) {
+	IBuildTreeUnit(AGAI ai, UnitDef unit) {
 		nodes = new LinkedList<IBuildTreeUnit>();
 		backlink = new LinkedList<IBuildTreeUnit>();
+		this.ai=ai;
 		this.unit = unit;
 		this.mark = 0;
 		this.parent = null;

@@ -13,6 +13,16 @@ public class ISector {
 	private int lastvisit; // frame
 	private int mark;
 	private int markgrey;
+	private float maxslope; //max slope in sector (is it passable?)
+	private float waterdepth;
+
+	public float getWaterdepth() {
+		return waterdepth;
+	}
+
+	public void setWaterdepth(float waterdepth) {
+		this.waterdepth = waterdepth;
+	}
 
 	private ISector parent;
 	private AIFloat3 pos;
@@ -27,6 +37,14 @@ public class ISector {
 		this.x = x;
 		this.z = z;
 		this.pos = pos;
+	}
+
+	public float getMaxslope() {
+		return maxslope;
+	}
+
+	public void setMaxslope(float maxslope) {
+		this.maxslope = maxslope;
 	}
 
 	public int getDamageReceived() {

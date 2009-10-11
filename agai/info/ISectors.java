@@ -17,6 +17,7 @@
 package agai.info;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import agai.AGAI;
 import agai.AGInfos;
@@ -90,6 +91,36 @@ public class ISectors {
 		ai.msg("real map size" + ai.getClb().getMap().getWidth() * 8 + "x"
 				+ ai.getClb().getMap().getHeight() * 8);
 	}
+	
+	/**
+	 * Update slope.
+	 * each data position in SlopeMap is  2*2 in size
+	 */
+	public void updateSlope(){
+		List<Float> heightmap = ai.getClb().getMap().getSlopeMap();
+		int width = ai.getClb().getMap().getWidth()*8;
+		AIFloat3 pos=new AIFloat3();
+		for (int i=0; i<heightmap.size(); i++){
+			pos.x=(i*16)%width;
+			pos.z=(i*256)/width;
+			ISector sec=getSector(pos);
+			float tmp=sec.getMaxslope();
+			float slope=heightmap.get(i);
+			if (slope>tmp)
+				sec.setMaxslope(slope);
+		}
+	}
+	
+	/**
+	 * Update water depth.
+	 */
+	public void updateWaterDepth(){
+		for (int i=0; i<map.length; i++)
+			for (int j=0; j<map[i].length; j++){
+				AIFloat3 pos=map[i][j].getPos();
+				map[i][j].setWaterdepth(ai.getClb().getMap().getElevationAt(pos.x, pos.z));
+		}
+	}
 
 	/**
 	 * Adds the attacker.
@@ -114,14 +145,18 @@ public class ISectors {
 	 * Dump.
 	 */
 	public void dump() {
+		ai.msg(""+secWidth +" "+secHeight);
+		updateSlope();
+		updateWaterDepth();		
 		for (int i = 0; i < map.length; i++) {
 			String line = "";
 			for (int j = 0; j < map[i].length; j++) {
 				line = line + map[i][j].toString();
 				if (map[i][j].getDanger() > 0)
-					ai
-							.drawPoint(map[i][j].getPos(), ""
+					ai.drawPoint(map[i][j].getPos(), ""
 									+ map[i][j].getDanger());
+				if (map[i][j].getWaterdepth()<0)
+					ai.drawPoint(map[i][j].getPos(), ".");
 			}
 			ai.msg(line);
 		}
@@ -213,9 +248,15 @@ public class ISectors {
 		int x, y;
 		x = Math.round(pos.x / avgLos);
 		y = Math.round(pos.z / avgLos);
-		if ((x > 0) && (x < secWidth) && (y > 0) && (y < secHeight))
-			return map[x][y];
-		return null;
+		if (x<=0)
+			x=0;
+		if (y<=0)
+			y=0;
+		if (y>=secHeight)
+			y=secHeight-1;
+		if (x>=secWidth)
+			x=secWidth-1;
+		return map[x][y];
 	}
 
 	public float getSectorSize() {
@@ -225,14 +266,15 @@ public class ISectors {
 	/**
 	 * Gets the secure path, cur.getParent().getParent()... contains the path
 	 * 
-	 * @param from
-	 *            the from
-	 * @param to
-	 *            the to
+	 * @param from the from
+	 * @param to the to
+	 * @param MaxSlope the max slope
+	 * @param MaxWaterDepth the max water depth
+	 * @param MinWaterDepth the min water depth
 	 * 
 	 * @return the secure path
 	 */
-	public LinkedList<ISector> getSecurePath(ISector from, ISector to) {
+	public LinkedList<ISector> getSecurePath(ISector from, ISector to, float MaxSlope, float MaxWaterDepth, float MinWaterDepth) {
 		LinkedList<ISector> queue = new LinkedList<ISector>();
 		mark++;
 		queue.clear();
@@ -255,7 +297,11 @@ public class ISectors {
 					if (!((i == 1) && (j == 1))) { // do not add curpos to queue
 						ISector sec = get(cur.getX() + (1 - i), cur.getY()
 								+ (1 - j));
-						if ((sec != null) && (sec.getMark() != mark)) {
+						if ((sec != null) && (sec.getMark() != mark) &&
+								(MaxSlope<sec.getMaxslope()) &&
+								(MinWaterDepth>sec.getWaterdepth()) &&
+								(MaxWaterDepth<sec.getWaterdepth()))
+						{
 							sec.setMark(mark);
 							queue.add(sec);
 							sec.setParent(cur);

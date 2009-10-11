@@ -73,7 +73,7 @@ public class IBuildTree {
 	 */
 	public void addNode(UnitDef unit, UnitDef parent) {
 		if (graph == null) {
-			graph = new IBuildTreeUnit(unit);
+			graph = new IBuildTreeUnit(ai, unit);
 			return;
 		}
 		IBuildTreeUnit pnode = searchNode(parent); // search parent entry
@@ -82,7 +82,7 @@ public class IBuildTree {
 			if (node != null) {
 				pnode.addNode(node);
 			} else
-				pnode.addNode(new IBuildTreeUnit(unit)); // insert new unit-node
+				pnode.addNode(new IBuildTreeUnit(ai, unit)); // insert new unit-node
 															// into graph
 			return;
 		}
