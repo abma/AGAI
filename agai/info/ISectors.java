@@ -90,6 +90,8 @@ public class ISectors {
 		}
 		ai.msg("real map size" + ai.getClb().getMap().getWidth() * 8 + "x"
 				+ ai.getClb().getMap().getHeight() * 8);
+		updateSlope();
+		updateWaterDepth();
 	}
 	
 	/**
@@ -146,8 +148,6 @@ public class ISectors {
 	 */
 	public void dump() {
 		ai.msg(""+secWidth +" "+secHeight);
-		updateSlope();
-		updateWaterDepth();		
 		for (int i = 0; i < map.length; i++) {
 			String line = "";
 			for (int j = 0; j < map[i].length; j++) {
@@ -274,7 +274,7 @@ public class ISectors {
 	 * 
 	 * @return the secure path
 	 */
-	public LinkedList<ISector> getSecurePath(ISector from, ISector to, float MaxSlope, float MaxWaterDepth, float MinWaterDepth) {
+	public LinkedList<ISector> getSecurePath(ISector from, ISector to, float MaxSlope, float MinWaterDepth, float MaxWaterDepth) {
 		LinkedList<ISector> queue = new LinkedList<ISector>();
 		mark++;
 		queue.clear();
@@ -298,9 +298,9 @@ public class ISectors {
 						ISector sec = get(cur.getX() + (1 - i), cur.getY()
 								+ (1 - j));
 						if ((sec != null) && (sec.getMark() != mark) &&
-								(MaxSlope<sec.getMaxslope()) &&
-								(MinWaterDepth>sec.getWaterdepth()) &&
-								(MaxWaterDepth<sec.getWaterdepth()))
+								(sec.getMaxslope()<=MaxSlope) &&
+								(sec.getWaterdepth()>=MinWaterDepth) &&
+								(sec.getWaterdepth()<=MaxWaterDepth))
 						{
 							sec.setMark(mark);
 							queue.add(sec);
@@ -314,7 +314,7 @@ public class ISectors {
 	}
 
 	public boolean isPosInSec(AIFloat3 pos, ISector destination) {
-		return (getSector(pos) == destination);
+		return (destination.getDistance(pos)<=this.avgLos);
 	}
 
 	public void unitDamaged(Unit unit, Unit attacker, float damage) {

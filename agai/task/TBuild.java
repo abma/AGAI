@@ -17,6 +17,7 @@
 package agai.task;
 
 import agai.AGAI;
+import agai.info.ISector;
 import agai.manager.MBuild;
 import agai.manager.Manager;
 import agai.unit.AGUnit;
@@ -68,14 +69,17 @@ public class TBuild extends Task {
 		solved = false;
 	}
 	private void build(AGUnit unit){
-		AIFloat3 tmp=pos;
 		if (pos==null){ //task has no buildpos, assign one!
-			tmp=unit.getPos();
-			tmp=unit.canBuildAt(tmp , unitdef, this.radius, this.mindistance);
-			if (tmp==null)//empty buildpos
-				tmp=new AIFloat3();
+			pos=unit.getPos();
+			pos=unit.canBuildAt(pos , unitdef, this.radius, this.mindistance);
+			if (pos==null)//empty buildpos
+				pos=new AIFloat3();
 		}
-		unit.buildUnit(unitdef, tmp, AGAI.defaultFacing);
+		ISector target=ai.getInfos().getSectors().getSector(pos);
+		if (!ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)){
+			unit.setTask(new TSecureMove(ai, null, this, target));
+		}else
+			unit.buildUnit(unitdef, pos, AGAI.defaultFacing);
 	}
 	@Override
 	public void assign(AGUnit unit) {
