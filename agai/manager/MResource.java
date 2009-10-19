@@ -180,7 +180,7 @@ public class MResource extends Manager {
 		}
 	}
 	@Override
-	public void setResToUse(IResource res){
+	public void setResToUse(IResource res, int timetonextchange){
 		resToUse=res;
 		float maxpercent=0;
 		int pos=0;;

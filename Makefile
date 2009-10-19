@@ -1,6 +1,5 @@
-SPRING=/usr
-
-SPRINGINTERFACE=${SPRING}/lib/spring/AI/Interfaces/Java/0.1
+SPRING=/usr/share/games
+SPRINGINTERFACE=${SPRING}/spring/AI/Interfaces/Java/0.1
 JAVAOTPS=-d classes -classpath ${SPRINGINTERFACE}/AIInterface.jar:${SPRINGINTERFACE}/jlib/vecmath.jar:${SPRINGINTERFACE}/jlib/jna.jar:SkirmishAI.jar:SkirmishAIReal.jar
 
 JAVASRC=agai/*.java agai/info/*.java agai/manager/*.java agai/task/*.java agai/unit/*.java
@@ -16,5 +15,5 @@ loader:
 
 run:
 	cp script.txt ~/.spring/testai.txt
-	nice ${SPRING}/bin/spring --window -x 1024 -y 768 testai.txt
+	nice /usr/bin/spring --window -x 1024 -y 768 testai.txt
 

@@ -123,9 +123,9 @@ public class AGManagers {
 		Collections.sort(tasks, new AGTaskcompare());
 	}
 	
-	public void update(IResource res){
+	public void update(IResource res, int timetonextchange){
 		res.divide(list.size());
 		for (int i=0; i<list.size(); i++)
-			list.get(i).setResToUse(res);
+			list.get(i).setResToUse(res, timetonextchange);
 	}
 }

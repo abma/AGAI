@@ -21,6 +21,7 @@ import java.util.List;
 
 import agai.AGAI;
 import agai.AGInfos;
+import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Unit;
@@ -120,7 +121,10 @@ public class ISectors {
 		for (int i=0; i<map.length; i++)
 			for (int j=0; j<map[i].length; j++){
 				AIFloat3 pos=map[i][j].getPos();
-				map[i][j].setWaterdepth(ai.getClb().getMap().getElevationAt(pos.x, pos.z));
+				float depth=ai.getClb().getMap().getElevationAt(pos.x, pos.z);
+				if (depth>0)
+					depth=0;
+				map[i][j].setWaterdepth(depth);
 		}
 	}
 
@@ -268,18 +272,20 @@ public class ISectors {
 	 * 
 	 * @param from the from
 	 * @param to the to
-	 * @param MaxSlope the max slope
-	 * @param MaxWaterDepth the max water depth
-	 * @param MinWaterDepth the min water depth
+	 * @param unit the unit
 	 * 
 	 * @return the secure path
 	 */
-	public LinkedList<ISector> getSecurePath(ISector from, ISector to, float MaxSlope, float MinWaterDepth, float MaxWaterDepth) {
+	public LinkedList<ISector> getSecurePath(ISector from, ISector to, AGUnit unit) {
 		LinkedList<ISector> queue = new LinkedList<ISector>();
+		float MaxSlope=unit.getMaxSlope();
+		float MinWaterDepth=unit.getMinWaterDepth();
+		float MaxWaterDepth=unit.getMaxWaterDepth();
 		mark++;
 		queue.clear();
 		queue.add(from);
 		from.setParent(null);
+		ai.msg(""+MaxSlope+" "+MinWaterDepth+" "+MaxWaterDepth);
 		while (queue.size() > 0) {
 			ISector cur = queue.remove(extractMin(queue));
 			if (cur == to) { // target reached

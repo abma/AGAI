@@ -173,7 +173,7 @@ public class AGController {
 			case 0:
 				ai.msg("");
 				if (lastupdate!=ai.getInfos().getResources().getLastchanged()){
-					ai.getManagers().update(ai.getInfos().getResources().update());
+					ai.getManagers().update(ai.getInfos().getResources().update(), 1000);
 					lastupdate=ai.getInfos().getResources().getLastchanged();
 				}
 				break;

@@ -44,7 +44,7 @@ public abstract class Manager {
 		return resToUse;
 	}
 
-	public void setResToUse(IResource res) {
+	public void setResToUse(IResource res, int timetonextchange) {
 		this.resToUse = res;
 	}
 	

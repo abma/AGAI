@@ -83,7 +83,7 @@ public class MScout extends Manager {
 			Resource res=((MBuild) ai.getManagers().get(MBuild.class)).buildUnit(task, list,
 					task, AGUnits.ElementType.unitAny, getResToUse());
 			if (res!=null){
-				ai.getManagers().get(MResource.class).setResToUse(getResToUse());
+				ai.getManagers().get(MResource.class).setResToUse(getResToUse(), 1000);
 				//FIXME: clear used resources
 			}
 		}
@@ -97,7 +97,7 @@ public class MScout extends Manager {
 	}
 
 	@Override
-	public void setResToUse(IResource res) {
+	public void setResToUse(IResource res, int timetonextchange) {
 		ai.msg("");
 		ai.getInfos().getResources().get();
 		for(int i=0; i<list.size();i++){

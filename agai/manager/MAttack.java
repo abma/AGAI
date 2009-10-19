@@ -88,10 +88,10 @@ public class MAttack extends Manager {
 		return false;
 	}
 	@Override
-	public void setResToUse(IResource res) {
+	public void setResToUse(IResource res, int timetonextchange) {
 		if (ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0)==null){ //no targets, build scouts
 			MScout scout=(MScout) ai.getManagers().get(MScout.class);
-			scout.setResToUse(res.add(scout.getResToUse()));
+			scout.setResToUse(res.add(scout.getResToUse()), timetonextchange);
 		}
 	}
 	
