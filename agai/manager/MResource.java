@@ -194,7 +194,6 @@ public class MResource extends Manager {
 			if (income!=0){
 				percent=usage/income;
 			}
-			ai.msg(""+percent);
 			if (percent>maxpercent){
 				pos=i;
 				maxpercent=percent;

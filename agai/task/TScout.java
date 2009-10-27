@@ -19,6 +19,7 @@ package agai.task;
 import agai.AGAI;
 import agai.info.IPoI;
 import agai.info.IPoIs;
+import agai.info.ISector;
 import agai.manager.MScout;
 import agai.manager.Manager;
 import agai.unit.AGUnit;
@@ -48,9 +49,10 @@ public class TScout extends Task {
 	public void unitCommandFinished(AGUnit unit) {
 		IPoI p = ai.getInfos().getAGP().getNearestPoi(unit.getPos(),
 				IPoIs.PoIAny, true, true);
-		if (p != null) {
+		if ((p != null) && (unit.canMoveTo(p.getPos()))) {
+			ISector destination=ai.getInfos().getSectors().getSector(p.getPos());
 			ai.msg("moving to " + p.getPos().x + " " + p.getPos().z);
-			unit.moveTo(p.getPos());
+			unit.setTask(new TSecureMove(ai, null, this, destination));
 			p.setVisited(true);
 		} else {
 			ai.msg("No point to scout found!");

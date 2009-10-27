@@ -18,12 +18,12 @@
 package agai;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 
 import agai.info.IResource;
 import agai.manager.MAttack;
 import agai.manager.MBuild;
+import agai.manager.MExpensiveBuild;
 import agai.manager.MResource;
 import agai.manager.MScout;
 import agai.manager.Manager;
@@ -35,24 +35,6 @@ import agai.task.Task;
  */
 
 public class AGManagers {
-
-	/**
-	 * The Class AGTaskcompare.
-	 */
-	private class AGTaskcompare implements Comparator<Task> {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Task o1, Task o2) {
-			if (o1.getPriority() > o2.getPriority())
-				return 1;
-			return 0;
-		}
-
-	}
 
 	/** The ai. */
 	AGAI ai;
@@ -78,6 +60,7 @@ public class AGManagers {
 		list.add(new MScout(ai));
 		list.add(new MAttack(ai));
 		list.add(new MBuild(ai));
+		list.add(new MExpensiveBuild(ai));
 	}
 
 	/**
@@ -120,7 +103,7 @@ public class AGManagers {
 	 * Sort list bye priorities.
 	 */
 	public void sort() {
-		Collections.sort(tasks, new AGTaskcompare());
+		Collections.sort(tasks);
 	}
 	
 	public void update(IResource res, int timetonextchange){

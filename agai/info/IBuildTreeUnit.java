@@ -203,4 +203,13 @@ public class IBuildTreeUnit {
 	public void setPlannedunits(int plannedunits) {
 		this.plannedunits = plannedunits;
 	}
+
+	/**
+	 * Can build.
+	 * 
+	 * @return true, if a builder is avaiable to build this unit
+	 */
+	public boolean canBuild() {
+		return (ai.getInfos().getAGB().getBuilder(unit)!=null);
+	}
 }

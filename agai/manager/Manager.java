@@ -49,7 +49,9 @@ public abstract class Manager {
 	}
 	
 	public void incResToUse(IResource res){
+		ai.msg("");
 		resToUse.add(res);
+		setResToUse(res, 0);
 	}
 
 	/**
@@ -61,6 +63,7 @@ public abstract class Manager {
 	protected Manager(AGAI ai) {
 		ai.msg("Initialized AGTaskManager " + this.getClass() + " " + ai);
 		this.ai = ai;
+		this.resToUse = new IResource(ai);
 		this.idleTasks=0;
 	}
 

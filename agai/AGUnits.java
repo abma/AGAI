@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agai.info.IBuildTreeUnit;
+import agai.info.IResource;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
@@ -447,4 +448,15 @@ public class AGUnits {
 		return type == type1;
 	}
 
+	private IResource price=null;
+	public IResource getPrice(UnitDef unit){
+		if (price==null){
+			price=new IResource(ai);
+			for (int i=0; i<price.size(); i++){
+				Resource r=ai.getClb().getResources().get(i);
+				price.setCurrent(i, unit.getCost(r));
+			}
+		}
+		return price;
+	}
 }

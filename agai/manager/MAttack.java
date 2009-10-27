@@ -58,28 +58,12 @@ public class MAttack extends Manager {
 		ai.msg("Task Attack");
 	}
 
-	// private int groupsize=0;
 	public int getGroups() {
 		return groups;
 	}
 
 	public void setGroups(int groups) {
 		this.groups = groups;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see agai.AGTaskManager#solve(agai.AGTask)
-	 */
-	public void solve(Task task) {
-		/*
-		 * if (ai.getAGG().getGroups(TAttack.class)<groups){ TAttack
-		 * a=((TAttack)task); TGroup group=new TGroup(ai, new TAttack(ai,
-		 * ElementType.unitLand), groupsize); for (int i=0; i<groupsize; i++){
-		 * ai.buildUnit(group, list, a, a.getType()); }
-		 * ai.getAGG().addGroup(group); }
-		 */
 	}
 	public boolean canSolve(Task task, AGUnit unit){
 		for (int i=0; i<list.size(); i++)
@@ -90,8 +74,9 @@ public class MAttack extends Manager {
 	@Override
 	public void setResToUse(IResource res, int timetonextchange) {
 		if (ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0)==null){ //no targets, build scouts
+			ai.msg("Giving all resources to scouts, because no target exists");
 			MScout scout=(MScout) ai.getManagers().get(MScout.class);
-			scout.setResToUse(res.add(scout.getResToUse()), timetonextchange);
+			scout.incResToUse(res);
 		}
 	}
 	

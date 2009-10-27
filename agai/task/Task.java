@@ -30,7 +30,7 @@ import com.springrts.ai.oo.WeaponDef;
 /**
  * The Class AGTask.
  */
-public abstract class Task {
+public abstract class Task implements Comparable<Object> {
 	public static int defaultRepeatTime = 100;
 	/** The ai. */
 	protected AGAI ai;
@@ -266,5 +266,19 @@ public abstract class Task {
 	public boolean canBeDone(AGUnit unit){
 		ai.msg("Warning: this task shouldn't be in the task list!");
 		return false;
+	}
+
+	public int compare(Object o1, Object o2) {
+		Task t1=(Task) o1;
+		Task t2=(Task) o2;
+		if (t1.getPriority()>t2.getPriority())
+			return 1;
+		if (t1.getPriority()<t2.getPriority())
+			return -1;
+		return 0;
+	}
+	
+	public int compareTo(Object o){
+		return compare(this,o);
 	}
 }

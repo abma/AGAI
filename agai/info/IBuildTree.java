@@ -178,10 +178,8 @@ public class IBuildTree {
 		LinkedList<IBuildTreeUnit> list = node.getBacklink();
 		LinkedList<AGUnit> res = new LinkedList<AGUnit>();
 		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getUnitcount() > 0) { // search only for units
-													// avaiable
-				List<AGUnit> units = ai.getUnits().getUnits(
-						list.get(i).getUnit());
+			if (list.get(i).getUnitcount() > 0) { // search only for units avaiable
+				List<AGUnit> units = ai.getUnits().getUnits(list.get(i).getUnit());
 				for (int j = 0; j < units.size(); j++) {
 					res.add(units.get(j));
 				}
@@ -288,5 +286,22 @@ public class IBuildTree {
 	 */
 	public IBuildTreeUnit searchNode(UnitDef root, UnitDef unit) {
 		return searchNode(searchNode(root), unit);
+	}
+	
+	
+	/**
+	 * Returns all possible (also non-existing) Units that can build the Unit u 
+	 * 
+	 * @param u the u
+	 * 
+	 * @return the all builders
+	 */
+	public LinkedList <UnitDef>getAllBuilders(UnitDef u){
+		IBuildTreeUnit tmp=searchNode(graph, u);
+		LinkedList<UnitDef> res=new LinkedList<UnitDef>();
+		for (int i=0; i<tmp.getBacklink().size(); i++){
+			res.add(tmp.getBacklink().get(i).getUnit());
+		}
+		return res;
 	}
 }

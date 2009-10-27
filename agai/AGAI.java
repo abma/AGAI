@@ -110,7 +110,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * Instantiates a new aGAI.
 	 */
 	public AGAI() {
-		System.out.println("Default Constructor");
+		System.out.println("AGAI Class Loaded");
 	}
 
 	/**

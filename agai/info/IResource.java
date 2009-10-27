@@ -223,11 +223,24 @@ public class IResource{
 	public boolean lessOrEqual(IResource resource) {
 		for (int i=0; i<res.length; i++){
 			for (int j=0; j<res[i].length; j++){
-				if (res[i][j]<resource.get(i,j))
+				if (res[i][j]>resource.get(i,j)){
 					return false;
+				}
 			}
 		}
 		return true;
 	}
 	
+	public String toString(){
+		String str="";
+		for (int i=0; i<res.length; i++){
+			for (int j=0; j<res[i].length; j++){
+				str=str+" "+res[i][j];
+			}
+		}
+		return str;
+	}
+	public int size(){
+		return resources.size();
+	}
 }

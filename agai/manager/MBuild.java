@@ -65,7 +65,7 @@ public class MBuild extends Manager {
 			if (ai.getUnits().UnitInType(list.get(i).getUnit(), type)) {
 				unit = list.get(i).getUnit();
 				AGUnit u = ai.getUnits().getIdle(unit);
-				if (u != null) { // unit to scout exists, assign task!
+				if (u != null) { // unit to do task already exists, assign task!
 					ai.msg("assigned task to existing idle unit");
 					u.setTask(tasktoassign);
 					task.setRepeat(0);
@@ -74,7 +74,7 @@ public class MBuild extends Manager {
 			}
 		}
 		for (int i = 0; i < list.size(); i++) { // no unit found, try to build
-												// with exisiting factories
+												// with existing factories
 			if (ai.getUnits().UnitInType(list.get(i).getUnit(), type)) {
 				Resource res=ai.enoughResourcesToBuild(unit, resources);
 				if (res!=null) //to few resources!
@@ -222,7 +222,6 @@ public class MBuild extends Manager {
 	}
 	@Override
 	public boolean canSolve(Task task, AGUnit unit){
-		ai.msg("");
 		TBuild t=(TBuild) task;
 		return unit.isAbleToBuilt(t.getUnitDef());
 	}

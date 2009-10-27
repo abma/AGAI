@@ -17,6 +17,7 @@
 package agai.task;
 
 import agai.AGAI;
+import agai.info.IResource;
 import agai.info.ISector;
 import agai.manager.MBuild;
 import agai.manager.Manager;
@@ -71,7 +72,8 @@ public class TBuild extends Task {
 	private void build(AGUnit unit){
 		if (pos==null){ //task has no buildpos, assign one!
 			pos=unit.getPos();
-			pos=unit.canBuildAt(pos , unitdef, this.radius, this.mindistance);
+			if (unitdef.getSpeed()<=0) //unit to build can move itself, ignore position
+				pos=unit.canBuildAt(pos , unitdef, this.radius, this.mindistance);
 			if (pos==null)//empty buildpos
 				pos=new AIFloat3();
 		}
@@ -194,5 +196,8 @@ public class TBuild extends Task {
 	public void unitIdle(AGUnit unit){
 		ai.msg("");
 		build(unit);
+	}
+	public IResource getPrice(){
+		return ai.getUnits().getPrice(unitdef);
 	}
 }

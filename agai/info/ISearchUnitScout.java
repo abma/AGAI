@@ -18,8 +18,7 @@ public class ISearchUnitScout extends IUnitProperty {
 	public int compare(IBuildTreeUnit o1, IBuildTreeUnit o2) {
 		UnitDef u1 = o1.getUnit();
 		UnitDef u2 = o2.getUnit();
-		return (int) (ai.getUnits().getTotalPrice(u2) - ai.getUnits()
-				.getTotalPrice(u1));
+		return (int) (ai.getUnits().getTotalPrice(u2) - ai.getUnits().getTotalPrice(u1));
 	}
 
 	@Override

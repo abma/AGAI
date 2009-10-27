@@ -21,6 +21,7 @@ import agai.info.IPoIs;
 import agai.info.IResources;
 import agai.info.ISearchUnit;
 import agai.info.ISectors;
+import agai.info.ITime;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
@@ -44,6 +45,8 @@ public class AGInfos {
 
 	private ISectors sectors;
 
+	private ITime time;
+
 	public ISectors getSectors() {
 		return sectors;
 	}
@@ -64,6 +67,11 @@ public class AGInfos {
 		this.aGP = new IPoIs(ai, this);
 		this.sectors = new ISectors(ai, this);
 		this.resources = new IResources(ai);
+		this.time = new ITime(ai);
+	}
+
+	public ITime getTime() {
+		return time;
 	}
 
 	/**

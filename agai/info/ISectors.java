@@ -21,7 +21,6 @@ import java.util.List;
 
 import agai.AGAI;
 import agai.AGInfos;
-import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Unit;
@@ -272,15 +271,14 @@ public class ISectors {
 	 * 
 	 * @param from the from
 	 * @param to the to
-	 * @param unit the unit
+	 * @param MaxSlope the max slope
+	 * @param MinWaterDepth the min water depth
+	 * @param MaxWaterDepth the max water depth
 	 * 
 	 * @return the secure path
 	 */
-	public LinkedList<ISector> getSecurePath(ISector from, ISector to, AGUnit unit) {
+	public LinkedList<ISector> getSecurePath(ISector from, ISector to, float MaxSlope, float MinWaterDepth, float MaxWaterDepth) {
 		LinkedList<ISector> queue = new LinkedList<ISector>();
-		float MaxSlope=unit.getMaxSlope();
-		float MinWaterDepth=unit.getMinWaterDepth();
-		float MaxWaterDepth=unit.getMaxWaterDepth();
 		mark++;
 		queue.clear();
 		queue.add(from);

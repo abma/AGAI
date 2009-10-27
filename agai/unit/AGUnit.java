@@ -18,10 +18,12 @@
 package agai.unit;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import agai.AGAI;
 import agai.info.IResource;
+import agai.info.ISector;
 import agai.task.Task;
 
 import com.springrts.ai.AICommand;
@@ -319,4 +321,11 @@ public class AGUnit {
 	public float getMaxWaterDepth() {
 		return unit.getDef().getMaxWaterDepth();
 	}
+	public boolean canMoveTo(AIFloat3 Pos){
+		ISector to=ai.getInfos().getSectors().getSector(Pos);
+		ISector from=ai.getInfos().getSectors().getSector(unit.getPos());
+		LinkedList<ISector> path = ai.getInfos().getSectors().getSecurePath(from,to, getMaxSlope(), getMinWaterDepth(), getMaxWaterDepth());
+		return (path!=null);
+	}
+	
 }

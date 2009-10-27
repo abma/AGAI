@@ -18,6 +18,7 @@ package agai.info;
 
 import java.util.List;
 import com.springrts.ai.oo.Resource;
+
 import agai.AGAI;
 import agai.unit.AGUnit;
 
@@ -59,4 +60,5 @@ public class IResources {
 		if (!u.getProduction().isZero())
 			lastchanged=ai.getFrame();
 	}
+
 }

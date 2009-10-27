@@ -17,9 +17,11 @@
 
 package agai.manager;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.springrts.ai.oo.Resource;
+import com.springrts.ai.oo.UnitDef;
 
 import agai.AGAI;
 import agai.AGUnits;
@@ -98,17 +100,24 @@ public class MScout extends Manager {
 
 	@Override
 	public void setResToUse(IResource res, int timetonextchange) {
-		ai.msg("");
-		ai.getInfos().getResources().get();
-		for(int i=0; i<list.size();i++){
+		ai.msg(""+res);
+		int i=0;
+		for(i=0; i<list.size();i++){
 			if (list.get(i).getCost().lessOrEqual(res)){
-				MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
-				ai.getTasks().add(new TBuild(ai, m, list.get(i).getUnit(), null, 0, 0, new TScout(ai, this)));
-				return;
+				if (ai.getInfos().getAGB().getBuilder(list.get(i).getUnit())!=null){ //factory is avaiable
+					ai.msg("");
+					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
+					ai.getTasks().add(new TBuild(ai, m, list.get(i).getUnit(), null, 0, 0, new TScout(ai, this)));
+					return;
+				}
 			}
 		}
-		ai.msg("To few resources to build a scout!");
-		ai.getManagers().get(MResource.class).incResToUse(res);
+		//no factory, build factory!
+		ai.msg("Giving all resources to build factory");
+		MExpensiveBuild m= (MExpensiveBuild) ai.getManagers().get(MExpensiveBuild.class);
+		LinkedList<UnitDef> tmp = ai.getInfos().getAGB().getAllBuilders(list.get(list.size()-1).getUnit());
+		m.add(tmp.get(0));
+		m.incResToUse(res);
 	}
 
 }
