@@ -5,10 +5,10 @@
 	IsHost=1;
 	MyPlayerName=abma;
 
-	ModHash=133369194;
-	MapHash=2248727990;
-	Mapname=2Lakes.smf;
-	GameType=Balanced Annihilation V7.01;
+	ModHash=1710003519;
+	MapHash=1621976297;
+	Mapname=SmallDivide.smf;
+	GameType=Balanced Annihilation V7.04;
 
 	startpostype=3;
 	[mapoptions]
@@ -55,7 +55,7 @@
 	}
 	[AI0]
 	{
-		Name=Bot1;
+		Name=AGAI;
 		ShortName=AGAI;
 		Version=0.1;
 		Team=0;
@@ -67,7 +67,7 @@
 	}
 	[AI1]
 	{
-		Name=Bot2;
+		Name=NullAI;
 		ShortName=NullAI;
 		Version=0.1;
 		Team=1;
@@ -81,8 +81,8 @@
 	[TEAM0]
 	{
 		TeamLeader=2;
-		StartPosX=496;
-		StartPosZ=1924;
+		StartPosX=3600;
+		StartPosZ=3600;
 		AllyTeam=1;
 		RGBColor=0.976471 1 0;
 		Side=ARM;
@@ -91,8 +91,8 @@
 	[TEAM1]
 	{
 		TeamLeader=2;
-		StartPosX=456;
-		StartPosZ=893;
+		StartPosX=600;
+		StartPosZ=600;
 		AllyTeam=2;
 		RGBColor=0.509804 0.498039 1;
 		Side=ARM;
