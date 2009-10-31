@@ -107,6 +107,7 @@ public class AGManagers {
 	}
 	
 	public void update(IResource res, int timetonextchange){
+		ai.getTasks().clear();
 		res.divide(list.size());
 		for (int i=0; i<list.size(); i++)
 			list.get(i).setResToUse(res, timetonextchange);

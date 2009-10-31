@@ -327,5 +327,9 @@ public class AGUnit {
 		LinkedList<ISector> path = ai.getInfos().getSectors().getSecurePath(from,to, getMaxSlope(), getMinWaterDepth(), getMaxWaterDepth());
 		return (path!=null);
 	}
+
+	public int getBuildSpeed() {
+		return Math.round(unit.getDef().getBuildSpeed());
+	}
 	
 }

@@ -185,8 +185,10 @@ public class IBuildTree {
 				}
 			}
 		}
-		if (res.size() == 0)
+		if (res.size() == 0){
 			ai.msg("found no builder to build unit: " + unit.getName());
+			return null;
+		}
 		return res;
 	}
 

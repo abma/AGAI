@@ -513,7 +513,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		}
 		return 0;
 	}
-
+	private String lastclass="";
 	/**
 	 * Print a debug message on console.
 	 * 
@@ -524,7 +524,15 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		try {
 			throw new Exception();
 		} catch (Exception e) {
-			str = e.getStackTrace()[1].getClassName() + "."
+			String cur=e.getStackTrace()[1].getFileName();
+			cur=cur.substring(0, cur.length()-5); //remove .java
+			if (lastclass.contains(cur)){
+				cur="";
+				for (int i=0; i<lastclass.length(); i++)
+					cur=cur+" ";
+			}else
+				lastclass=cur;
+			str =  cur + "."
 					+ e.getStackTrace()[1].getMethodName() + ":"
 					+ e.getStackTrace()[1].getLineNumber() + " " + str;
 		}

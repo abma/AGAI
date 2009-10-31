@@ -103,11 +103,12 @@ public class MScout extends Manager {
 		ai.msg(""+res);
 		int i=0;
 		for(i=0; i<list.size();i++){
-			if (list.get(i).getCost().lessOrEqual(res)){
-				if (ai.getInfos().getAGB().getBuilder(list.get(i).getUnit())!=null){ //factory is avaiable
-					ai.msg("");
+			 IBuildTreeUnit u = list.get(i); 
+			if (u.getCost().lessOrEqual(res, timetonextchange)){
+				if (ai.getUnits().getBuilder(u.getUnit())!=null){ //factory is avaiable
+					ai.msg("building ");
 					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
-					ai.getTasks().add(new TBuild(ai, m, list.get(i).getUnit(), null, 0, 0, new TScout(ai, this)));
+					ai.getTasks().add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TScout(ai, this)));
 					return;
 				}
 			}

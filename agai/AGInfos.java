@@ -17,6 +17,7 @@
 package agai;
 
 import agai.info.IBuildTree;
+import agai.info.IBuildTreeUnit;
 import agai.info.IPoIs;
 import agai.info.IResources;
 import agai.info.ISearchUnit;
@@ -25,6 +26,7 @@ import agai.info.ITime;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.UnitDef;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -112,13 +114,20 @@ public class AGInfos {
 	}
 
 	public void UnitCreated(AGUnit u) {
-		aGB.searchNode(u.getDef()).incUnitcount();
+		IBuildTreeUnit info =  aGB.searchNode(u.getDef());
+		info.incUnitcount();
+		info.setPlannedunits(info.getPlannedunits()-1);
 		resources.UnitCreated(u);
 	}
 	
 	public void UnitDestroyed(AGUnit u){
 		aGB.searchNode(u.getDef()).decUnitCount();
 		resources.UnitDestroyed(u);
+	}
+
+	public void IncPlannedUnit(UnitDef unitDef) {
+		IBuildTreeUnit info = aGB.searchNode(unitDef);
+		info.setPlannedunits(info.getPlannedunits()+1);
 	}
 
 }

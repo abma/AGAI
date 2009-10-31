@@ -16,6 +16,8 @@
  */
 package agai.info;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 import agai.AGAI;
@@ -34,6 +36,7 @@ public class IResource{
 	/** The resources. */
 	private List <Resource> resources;
 
+	/** The ai. */
 	private AGAI ai;
 
 	/** The Constant current. */
@@ -147,9 +150,9 @@ public class IResource{
 	}
 
 	/**
-	 * Returns the resource
+	 * Returns the resource.
 	 * 
-	 * @param type the type
+	 * @param type the type (current, usage, income, storage)
 	 * @param resource the resource
 	 * 
 	 * @return the float
@@ -176,7 +179,7 @@ public class IResource{
 	}
 
 	/**
-	 * Subtract resources from this resource
+	 * Subtract resources from this resource.
 	 * 
 	 * @param resource the resource
 	 */
@@ -189,7 +192,7 @@ public class IResource{
 	}
 
 	/**
-	 * Set all to Zero
+	 * Set all to Zero.
 	 */
 	public void zero(){
 		for (int i=0; i<res.length; i++){
@@ -199,6 +202,11 @@ public class IResource{
 		}
 	}
 	
+	/**
+	 * Divide.
+	 *
+	 * @param divider the divider the resource will be divided
+	 */
 	public void divide(int divider){
 		if (divider==0){
 			ai.msg("");
@@ -210,6 +218,12 @@ public class IResource{
 			}
 		}
 	}
+
+	/**
+	 * Checks if is zero.
+	 *
+	 * @return true, if is zero
+	 */
 	public boolean isZero(){
 		for (int i=0; i<res.length; i++){
 			for (int j=0; j<res[i].length; j++){
@@ -220,26 +234,74 @@ public class IResource{
 		return true;
 	}
 
-	public boolean lessOrEqual(IResource resource) {
-		for (int i=0; i<res.length; i++){
-			for (int j=0; j<res[i].length; j++){
-				if (res[i][j]>resource.get(i,j)){
-					return false;
-				}
+	/**
+	 * Gets the total Resources available (seen over time).
+	 *
+	 * @param ResID the res id
+	 * @param time the time
+	 *
+	 * @return the total
+	 */
+	public float getTotal(int ResID, int time){
+		return getCurrent(ResID) + (time+1)*(getIncome(ResID) - getUseage(ResID));
+	}
+
+	/**
+	 * Less or equal.
+	 *
+	 * @param resource the resource
+	 * @param time the time
+	 *
+	 * @return true, if successful
+	 */
+	public boolean lessOrEqual(IResource resource, int time) {
+		for (int i=0; i<resources.size(); i++){
+			if (getTotal(i, time)<resource.getTotal(i, time)){
+				ai.msg("Resource is to few: " +  resources.get(i).getName() +" " + getTotal(i, time) +" " + resource.getTotal(i, time));
+				return false;
 			}
 		}
 		return true;
 	}
 	
+	private String getType(int i){
+		switch (i){
+			case 0: return "current";
+			case 1: return "useage";
+			case 2: return "income";
+			case 3: return "storage";
+		}
+		return "Unknown type!";
+	}
+
+	private String format(float value){
+		NumberFormat numberFormat = new DecimalFormat("######.##");
+		return numberFormat.format(value);
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
 		String str="";
-		for (int i=0; i<res.length; i++){
-			for (int j=0; j<res[i].length; j++){
-				str=str+" "+res[i][j];
+		int i=0;
+		for (int j=0; j<res[0].length; j++){
+			if (j>0)
+				str=str+"                              ";
+			str = str + resources.get(j).getName();
+			for (i=0; i<res.length; i++){
+				str=str+"\t" +getType(i) + "\t" +format(res[i][j]);
 			}
+			if (j<res[0].length-1)
+				str = str+  "\n";
 		}
 		return str;
 	}
+
+	/**
+	 * Size.
+	 *
+	 * @return the int
+	 */
 	public int size(){
 		return resources.size();
 	}

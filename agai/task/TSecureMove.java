@@ -56,7 +56,6 @@ public class TSecureMove extends Task {
 			setRepeat(0);
 			unit.setTask(taskWhenReached);
 		} else { // when moving, try to avoid danger sectors
-			ai.msg("Sneak moving");
 			if (path == null) {
 				ISector cursec = ai.getInfos().getSectors()
 						.getSector(unit.getPos());
@@ -93,5 +92,8 @@ public class TSecureMove extends Task {
 	public boolean canBeDone(AGUnit unit) {
 		ai.msg("Warning: this task shouldn't be in the task list!");
 		return false;
+	}
+	@Override
+	public void unitIdle(AGUnit unit){
 	}
 }
