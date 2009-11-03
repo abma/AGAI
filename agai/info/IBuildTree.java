@@ -35,9 +35,6 @@ public class IBuildTree {
 	/** The ai. */
 	private AGAI ai;
 
-	/** The tree. */
-	private IBuildTreeUnit graph;
-
 	/** The mark. */
 	private int mark; // value to mark nodes already visited in search
 
@@ -58,8 +55,12 @@ public class IBuildTree {
 		this.mark = 0;
 		this.ai = ai;
 		this.ress = ai.getClb().getResources();
-		generateGraph(ai.getUnits().getUnitDef("armcom"));
-		generateList();
+		updateGraph();
+	}
+	
+	public void updateGraph(){
+		generateList(ai.getClb().getUnitDefs());
+		generateGraph();
 	}
 
 	/**
@@ -71,22 +72,15 @@ public class IBuildTree {
 	 * @param unit
 	 *            the unit
 	 */
-	public void addNode(UnitDef unit, UnitDef parent) {
-		if (graph == null) {
-			graph = new IBuildTreeUnit(ai, unit);
-			return;
-		}
+	public void linkNode(UnitDef unit, UnitDef parent) {
 		IBuildTreeUnit pnode = searchNode(parent); // search parent entry
-		IBuildTreeUnit node = searchNode(unit);
-		if (pnode != null) {
-			if (node != null) {
-				pnode.addNode(node);
-			} else
-				pnode.addNode(new IBuildTreeUnit(ai, unit)); // insert new unit-node
-															// into graph
-			return;
+		IBuildTreeUnit node = searchNode(unit); 
+		for (int i=0; i<pnode.getNodes().size(); i++){//check if link already exists
+			if (pnode.getNodes().get(i).getId()==node.getId())
+				return;
 		}
-		ai.msg("Parent not found: " + parent.getName());
+		pnode.addNode(node); //link nodes
+		node.setParent(pnode);
 	}
 
 	/**
@@ -127,49 +121,27 @@ public class IBuildTree {
 	}
 
 	/**
-	 * Inits the build tree.
-	 * 
-	 * @param cur
-	 *            the cur
+	 * Links the Nodes together
 	 */
-	private void generateGraph(UnitDef cur) {
+	private void generateGraph() {
 		ai.msg("Initializing Build Graph....");
-		LinkedList<UnitDef> queue = new LinkedList<UnitDef>();
-		addNode(cur, null);
-		do {
-			List<UnitDef> units = cur.getBuildOptions();
-			for (int i = 0; i < units.size(); i++) {
-				if (searchNode(graph, units.get(i)) == null) { // unit isnt in
-																// tree, insert
-																// it
-					queue.add(units.get(i));
-				}
-				addNode(units.get(i), cur);
+		for (int i=0; i<unitList.size(); i++){
+			IBuildTreeUnit cur = unitList.get(i);
+			List<UnitDef> buildopts = cur.getUnit().getBuildOptions();
+			for (int j=0; j<buildopts.size(); j++){
+				linkNode(buildopts.get(j), cur.getUnit());
 			}
-			cur = queue.getFirst();
-			queue.removeFirst();
-		} while (queue.size() > 0);
+		}
 	}
 
 	/**
 	 * Fill unitList with all avaiable Units from Graph.
+	 * @param list 
 	 */
-	private void generateList() {
-		LinkedList<IBuildTreeUnit> queue = new LinkedList<IBuildTreeUnit>();
-		IBuildTreeUnit tmp;
-		queue.add(graph);
+	private void generateList(List<UnitDef> list) {
 		unitList = new LinkedList<IBuildTreeUnit>();
-		mark++;
-		while (queue.size() > 0) {
-			tmp = queue.removeFirst();
-			if (tmp.getMark() != mark)
-				unitList.add(tmp);
-			tmp.setMark(mark);
-			for (int i = 0; i < tmp.getNodes().size(); i++) {
-				if (tmp.getNodes().get(i).getMark() != mark) {
-					queue.add(tmp.getNodes().get(i));
-				}
-			}
+		for (int i=0; i<list.size(); i++){
+			unitList.add(new IBuildTreeUnit(ai, list.get(i)));
 		}
 	}
 
@@ -274,10 +246,7 @@ public class IBuildTree {
 			for (int i = 0; i < tmp.getNodes().size(); i++) {
 				if (tmp.getNodes().get(i).getMark() != mark) {
 					queue.add(tmp.getNodes().get(i));
-					tmp.getNodes().get(i).setParent(tmp); // set backlink to
-															// recognize later
-															// the path we
-															// wentso
+					tmp.getNodes().get(i).setParent(tmp); // set backlink to recognize later the path we went so
 				}
 			}
 		}
@@ -293,7 +262,13 @@ public class IBuildTree {
 	 * @return the aG build tree unit
 	 */
 	public IBuildTreeUnit searchNode(UnitDef node) {
-		return searchNode(graph, node);
+		if (node==null)
+			return null;
+		for (int i=0; i<unitList.size(); i++){
+			if (unitList.get(i).getUnit().getUnitDefId()==node.getUnitDefId())
+				return unitList.get(i);
+		}
+		return null;
 	}
 
 	/**
@@ -319,11 +294,16 @@ public class IBuildTree {
 	 * @return the all builders
 	 */
 	public LinkedList <UnitDef>getAllBuilders(UnitDef u){
-		IBuildTreeUnit tmp=searchNode(graph, u);
 		LinkedList<UnitDef> res=new LinkedList<UnitDef>();
-		for (int i=0; i<tmp.getBacklink().size(); i++){
-			res.add(tmp.getBacklink().get(i).getUnit());
+		for (int i=0; i<unitList.size(); i++){
+			IBuildTreeUnit tmp=searchNode(unitList.get(i), u);
+			if (tmp!=null)
+				for (int j=0; j<tmp.getBacklink().size(); j++){
+					res.add(tmp.getBacklink().get(j).getUnit());
+				}
 		}
+		if (res.size()==0)
+			return null;
 		return res;
 	}
 
@@ -331,15 +311,23 @@ public class IBuildTree {
 		LinkedList<IBuildTreeUnit> queue = new LinkedList<IBuildTreeUnit>();
 		IBuildTreeUnit tmp;
 		IBuildTreeUnit root = searchNode(unit);
-		queue.add(root);
+		if (root!=null)
+			queue.add(root);
 		mark++;
+		root.setMark(mark);
 		while (queue.size() > 0) {
 			tmp = queue.removeFirst();
-			if ((tmp.getPlannedunits()>0) || (tmp.getUnitcount()>0)) { // node found, return path
+			if ((tmp.getPlannedunits()>0) || (tmp.getUnitcount()>0)) { // node found, where unit is available return path
 				List <UnitDef> res=new LinkedList<UnitDef>();
-				while(tmp.getParent()!=null){
-					if (!((tmp.getPlannedunits()>0) || (tmp.getUnitcount()>0)))
-						res.add(tmp.getUnit());
+				tmp=tmp.getParent(); //don't add available builder
+				mark++;
+				while(tmp!=null){
+					if ((tmp.getMark()==mark) || 
+							(tmp.getPlannedunits()>0) || (tmp.getUnitcount()>0)) //go back until available builder
+						return res;
+					tmp.setMark(mark); //mark to avoid loops
+					res.add(tmp.getUnit());
+					ai.msg(tmp.getUnit().getName());
 					tmp=tmp.getParent();
 				}
 				if (res.size()==0)
@@ -350,10 +338,7 @@ public class IBuildTree {
 			for (int i = 0; i < tmp.getBacklink().size(); i++) {
 				if (tmp.getBacklink().get(i).getMark() != mark) {
 					queue.add(tmp.getBacklink().get(i));
-					tmp.getBacklink().get(i).setParent(tmp); // set backlink to
-															// recognize later
-															// the path we
-															// wentso
+					tmp.getBacklink().get(i).setParent(tmp); // set backlink to recognize later the path we went so
 				}
 			}
 		}

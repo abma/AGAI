@@ -231,16 +231,20 @@ public class MResource extends Manager {
 
 	@Override
 	public boolean assignTask(AGUnit unit){
-		if (unit.getDef().getBuildOptions().size()<=0)
-			return false;
 		Resource r=decide();
 		ai.msg("Building "+r.getName());
-		TBuild task=tryTobuild(r);
+		TBuild task=tryTobuild(r); //FIXME: should check which units the builder can built!
 		if (task!=null){
 			unit.setTask(task);
 			return true;
 		}
 		return false; //this manager doesn't assign directly
+	}
+	@Override
+	public boolean canSolve(AGUnit unit){ 
+		if (unit.getDef().getBuildOptions().size()<=0)
+			return false;
+		return true;
 	}
 	
 }

@@ -23,7 +23,6 @@ import java.util.List;
 import agai.AGAI;
 import agai.info.IBuildTreeUnit;
 import agai.info.IResource;
-import agai.task.Task;
 import agai.unit.AGUnit;
 
 /**
@@ -84,7 +83,14 @@ public abstract class Manager {
 		return false;
 	}
     
-	public boolean canSolve(Task task, AGUnit unit){
+	/**
+	 * Check if a Unit can help a Manager to solve a Task
+	 * 
+	 * @param unit the unit
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean canSolve(AGUnit unit){
     	for (int i=0; i<list.size(); i++)
     		if (unit.getDef().getUnitDefId()==list.get(i).getUnit().getUnitDefId())
     			return true;

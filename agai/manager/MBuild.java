@@ -46,8 +46,6 @@ public class MBuild extends Manager {
 	}
 	@Override
 	public boolean assignTask(AGUnit unit){
-		if (unit.getDef().getBuildOptions().size()<=0)
-			return false;
 		if (buildtasks.size()>0){
 			for (int i=0; i<buildtasks.size(); i++){
 				if (unit.canBuildAt(buildtasks.get(i).getPos(), buildtasks.get(i).getUnitDef(), buildtasks.get(i).getRadius(), buildtasks.get(i).getMinDistance())!=null){
@@ -57,5 +55,12 @@ public class MBuild extends Manager {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean canSolve(AGUnit unit){
+		if (unit.getDef().getBuildOptions().size()<=0)
+			return false;
+		return true;
 	}
 }

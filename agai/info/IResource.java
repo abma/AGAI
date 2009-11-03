@@ -257,6 +257,7 @@ public class IResource{
 	public boolean lessOrEqual(IResource resource, int time) {
 		for (int i=0; i<resources.size(); i++){
 			if (getTotal(i, time)<resource.getTotal(i, time)){
+				ai.msg("" +resources.get(i).getName()+" is missing: " + (getTotal(i, time)-resource.getTotal(i, time)));
 				return false;
 			}
 		}

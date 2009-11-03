@@ -90,14 +90,11 @@ public class MAttack extends Manager {
 	}
 	@Override
 	public boolean assignTask(AGUnit unit){
-		for(int i=0; i<list.size(); i++){
-			if (list.get(i).getUnit().getUnitDefId()==unit.getUnit().getDef().getUnitDefId()){
-				ISector target = ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0);
-					if (target!=null){
-						unit.setTask(new TAttack(ai, this, null));
-					}
+		ISector target = ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0);
+			if (target!=null){
+				unit.setTask(new TAttack(ai, this, null));
+				return true;
 			}
-		}
 		return false;
 	}
 }

@@ -173,6 +173,7 @@ public abstract class Task implements Comparable<Object> {
 	 */
 	public void unitCommandFinished(AGUnit unit) {
 		ai.msg(unit.getDef().getName());
+		execute(unit);
 	}
 
 	/**
@@ -234,6 +235,7 @@ public abstract class Task implements Comparable<Object> {
 	 */
 	public void unitFinished(AGUnit builder, AGUnit unit) {
 		ai.msg(this.getClass().getName());
+		execute(unit);
 	}
 
 	/**
@@ -249,7 +251,8 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unitIdle(AGUnit unit) {
-		ai.msg(this.getClass().getName()); 
+		ai.msg(this.getClass().getName());
+		execute(unit);
 	}
 
 	/**
@@ -259,6 +262,7 @@ public abstract class Task implements Comparable<Object> {
 	 */
 	public void unitMoveFailed(AGUnit unit) {
 		ai.msg(this.getClass().getName());
+		execute(unit);
 	}
 
 	/**

@@ -222,4 +222,7 @@ public class IBuildTreeUnit {
 		res = unit.getName() +"\t" +unitcount +"\t" + plannedunits;  
 		return res;
 	}
+	public int getId(){
+		return unit.getUnitDefId();
+	}
 }

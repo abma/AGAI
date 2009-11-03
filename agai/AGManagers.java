@@ -115,7 +115,7 @@ public class AGManagers {
 
 	public boolean assignTask(AGUnit unit) {
 		for (int i=0; i<list.size(); i++){
-			if (list.get(i).assignTask(unit))
+			if ((list.get(i).canSolve(unit)) && (list.get(i).assignTask(unit)))
 				return true;
 		}
 		return false;

@@ -69,11 +69,17 @@ public class ISectors {
 		avgLos = Math.round((tmp * 8) / list.size());
 		secWidth = Math.round((ai.getClb().getMap().getWidth() * 8) / avgLos);
 		secHeight = Math.round((ai.getClb().getMap().getHeight() * 8) / avgLos);
+		if ((secWidth == 0) || (secHeight == 0) ||
+				(secWidth >= ai.getClb().getMap().getWidth()) ||
+				(secHeight >= ai.getClb().getMap().getHeight())){ //avgLos couldn't be calculated
+			ai.msg("Error calculating avgLos, using default");
+			secWidth=ai.getClb().getMap().getWidth();
+			secHeight=ai.getClb().getMap().getHeight();
+			avgLos=1;
+		}
 		ai.msg(secWidth + " x " + secHeight + "real map size"
 				+ ai.getClb().getMap().getWidth() * 8 + "x"
 				+ ai.getClb().getMap().getHeight() * 8);
-		if ((secWidth == 0) || (secHeight == 0))
-			ai.msg("Fatal: Couldn't create sector map!");
 		map = new ISector[secWidth][secHeight];
 		for (int i = 0; i < secWidth; i++) {
 			for (int j = 0; j < secHeight; j++) {

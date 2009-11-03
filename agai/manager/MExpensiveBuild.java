@@ -40,8 +40,6 @@ public class MExpensiveBuild extends Manager{
 
 	@Override
 	public boolean assignTask(AGUnit unit){
-		if (unit.getDef().getBuildOptions().size()<=0) //unit can't build anything
-			return false;
 		Collections.sort(buildtasks);
 		for(int i=0; i<buildtasks.size(); i++){
 			AGUnit builder = ai.getUnits().getBuilder(buildtasks.get(i).getUnitDef());
@@ -66,6 +64,13 @@ public class MExpensiveBuild extends Manager{
 		//assign all unused resources to new resources
 		ai.getManagers().get(MResource.class).incResToUse(resToUse);
 		return false; //this manager doesn't assign directly
+	}
+
+	@Override
+	public boolean canSolve(AGUnit unit){
+		if (unit.getDef().getBuildOptions().size()<=0)
+			return false;
+		return true;
 	}
 
 }

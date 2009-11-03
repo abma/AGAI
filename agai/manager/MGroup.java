@@ -20,6 +20,7 @@ import java.util.LinkedList;
 
 import agai.AGAI;
 import agai.task.TGroup;
+import agai.unit.AGUnit;
 
 /**
  * The Class AGTGroupManager.
@@ -72,4 +73,8 @@ public class MGroup extends Manager {
 		list.remove(taskGroup);
 	}
 
+	@Override
+	public boolean canSolve(AGUnit unit){
+		return true;
+	}
 }

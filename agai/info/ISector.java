@@ -41,18 +41,21 @@ public class ISector {
 	}
 
 	private ISector parent;
-	private AIFloat3 pos;
 	private int unitsDied;
 
 	private int x;
 
 	private int z;
+	
+	private float realx;
+	private float realz;
 
 	ISector(AGAI ai, int x, int z, AIFloat3 pos) {
 		this.ai = ai;
 		this.x = x;
 		this.z = z;
-		this.pos = pos;
+		this.realx=pos.x;
+		this.realz=pos.z;
 	}
 
 	public float getMaxslope() {
@@ -79,7 +82,7 @@ public class ISector {
 	 * @return the distance
 	 */
 	public double getDistance(AIFloat3 pos) {
-		return ai.getInfos().getDistance(this.pos, pos);
+		return ai.getInfos().getDistance(this.getPos(), pos);
 	}
 
 	public int getEnemy() {
@@ -111,7 +114,7 @@ public class ISector {
 	}
 
 	public AIFloat3 getPos() {
-		return pos;
+		return new AIFloat3(realx, ai.getClb().getMap().getElevationAt(realx, realz), realz);
 	}
 
 	public int getUnitsDied() {

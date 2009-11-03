@@ -18,7 +18,6 @@
 package agai.manager;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import com.springrts.ai.oo.UnitDef;
 
@@ -34,9 +33,6 @@ import agai.unit.AGUnit;
  * The Class AGTScout.
  */
 public class MScout extends Manager {
-
-	/** The list. */
-	protected List<IBuildTreeUnit> list;
 
 	/** The count of all scouts */
 	private int scouts = 0;
@@ -74,8 +70,6 @@ public class MScout extends Manager {
 
 	@Override
 	public boolean assignTask(AGUnit unit){
-		if (unit.getDef().getSpeed()<=0)
-			return false;
 		for (int i=0; i<list.size(); i++){
 			if (unit.getDef().equals(list.get(i).getUnit())){
 				unit.setTask(new TScout(ai, this));
@@ -105,8 +99,10 @@ public class MScout extends Manager {
 		//no factory, build factory!
 		ai.msg("Giving all resources to build factory");
 		MExpensiveBuild m= (MExpensiveBuild) ai.getManagers().get(MExpensiveBuild.class);
-		LinkedList<UnitDef> tmp = ai.getInfos().getAGB().getAllBuilders(list.get(list.size()-1).getUnit()); //FIXME: could be null if no builder is avaiable
-		m.add(tmp.get(0));
+		if (list.size()>0){
+			LinkedList<UnitDef> tmp = ai.getInfos().getAGB().getAllBuilders(list.get(list.size()-1).getUnit()); //FIXME: could be null if no builder is avaiable
+			m.add(tmp.get(0));
+		}
 		m.incResToUse(resToUse);
 		resToUse.zero();
 	}

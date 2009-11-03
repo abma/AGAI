@@ -93,6 +93,10 @@ public class AGUnits {
 	/** The units. */
 	private List<AGUnit> units = null;
 
+	public List<AGUnit> getUnits() {
+		return units;
+	}
+
 	/**
 	 * Instantiates a new aG units.
 	 * 
@@ -103,6 +107,10 @@ public class AGUnits {
 		units = new ArrayList<AGUnit>();
 		unitDefs = ai.getClb().getUnitDefs();
 		this.ai = ai;
+		List<Unit> list = ai.getClb().getTeamUnits();
+		for (int i = 0; i < list.size(); i++) {
+			add(list.get(i));
+		}
 	}
 
 	/**
@@ -119,8 +127,10 @@ public class AGUnits {
 			return null;
 		}
 		AGUnit u=new AGUnit(ai, unit);
-		ai.getInfos().UnitCreated(u);
 		units.add(u);
+		AGInfos info=ai.getInfos();
+		if (info!=null) //avoid null reference on init
+			info.UnitCreated(u);
 		return units.get(units.size() - 1);
 	}
 
@@ -206,8 +216,13 @@ public class AGUnits {
 	 * @return the builder
 	 */
 	public AGUnit getBuilder(UnitDef type) { // FIXME: this function is really slow!
-		for (int i = 0; i < units.size(); i++) { // walk through all units, and check if they can buildtype
-			List<UnitDef> buildOptions = units.get(i).getUnit().getDef().getBuildOptions();
+		for (int i = units.size()-1; i>=0; i-- ){ // walk through all units, and check if they can buildtype
+			Unit u=units.get(i).getUnit();
+			if ((u==null)||(u.getDef()==null)){//should not happen!
+				ai.msg("Error, unit was in unitlist, but seems to be dead!");
+				units.remove(i);
+			}
+			List<UnitDef> buildOptions = u.getDef().getBuildOptions();
 			int j;
 			for (j = 0; j < buildOptions.size(); j++) {
 				if (buildOptions.get(j).getUnitDefId() == type.getUnitDefId()) {

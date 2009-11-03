@@ -437,10 +437,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		managers = new AGManagers(this);
 
 
-		List<Unit> list = clb.getTeamUnits();
-		for (int i = 0; i < list.size(); i++) {
-			units.add(list.get(i));
-		}
 		msg("");
 		units.employIdle();
 		return 0;
@@ -471,7 +467,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			} else if (argv[0].equalsIgnoreCase("clear")) {
 				clear();
 			} else if (argv[0].equalsIgnoreCase("dumpgraph")) {
-				msg(infos.getAGB().toString());
+				infos.getAGB().dumpGraph();
 			}
 		}
 		return 0;
