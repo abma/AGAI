@@ -257,7 +257,6 @@ public class IResource{
 	public boolean lessOrEqual(IResource resource, int time) {
 		for (int i=0; i<resources.size(); i++){
 			if (getTotal(i, time)<resource.getTotal(i, time)){
-				ai.msg("Resource is to few: " +  resources.get(i).getName() +" " + getTotal(i, time) +" " + resource.getTotal(i, time));
 				return false;
 			}
 		}
@@ -304,5 +303,13 @@ public class IResource{
 	 */
 	public int size(){
 		return resources.size();
+	}
+	
+	public void setFrom(IResource ress){
+		for (int i=0; i<res.length; i++){
+			for (int j=0; j<res[i].length; j++){
+				res[i][j]=ress.get(i,j);
+			}
+		}
 	}
 }

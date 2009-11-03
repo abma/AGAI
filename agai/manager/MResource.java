@@ -26,7 +26,7 @@ import agai.info.IPoI;
 import agai.info.IResource;
 import agai.info.ISearchUnitResource;
 import agai.task.TBuild;
-import agai.task.Task;
+import agai.task.TProduce;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
@@ -109,7 +109,7 @@ public class MResource extends Manager {
 		}
 	}
 
-	public void tryTobuild(Resource resource) {
+	private TBuild tryTobuild(Resource resource) {
 		UnitDef unit = null;
 		AGUnit builder = null;
 		IPoI poi = null;
@@ -163,30 +163,37 @@ public class MResource extends Manager {
 		if ((unit != null) && (builder != null)) { // unit with builder found,
 													// build it!
 			if (!builder.isIdle())
-				return;
+				return null;
 			if (poi != null) { // build only one time at a spot
 				poi.setBuilt(true);
 			}
-			ai.msg("Adding Task to queue");
-			Task buildtask = new TBuild(ai, ai.getManagers().get(MBuild.class),
-					unit, pos, radius, 2, null);
+			ai.msg("Creating Task for Unit!");
+			MBuild b=(MBuild) ai.getManagers().get(MBuild.class);
+			TBuild buildtask = new TBuild(ai, b,
+					unit, pos, radius, 2, new TProduce(ai, b));
 			buildtask.setPoi(poi);
-			ai.getTasks().add(buildtask);
+			return buildtask;
 		} else {
 			if (builder == null)
 				ai.msg("No builder found ");
 			if (unit == null)
 				ai.msg("No resource producing unit found");
 		}
+		return null;
 	}
-	@Override
-	public void setResToUse(IResource res, int timetonextchange){
-		resToUse=res;
+	
+	
+	/**
+	 * Decide which resource to built
+	 * 
+	 * @return the resource
+	 */
+	private Resource decide(){
 		float maxpercent=0;
 		int pos=0;;
 		ai.msg("");
 		IResource cur=ai.getInfos().getResources().get();
-		
+		ai.msg(""+cur);
 		for (int i=0; i<ai.getResourcecount(); i++){ //build resource whos usage has most percent
 			float income=cur.getIncome(i);
 			float usage=cur.getUseage(i);
@@ -199,7 +206,6 @@ public class MResource extends Manager {
 				maxpercent=percent;
 			}
 		}
-
 		for (int i=0; i<ai.getResourcecount(); i++){ //or build resource whos storage is maxpercent
 			float current=cur.getCurrent(i);
 			float storage=cur.getStorage(i);
@@ -213,8 +219,28 @@ public class MResource extends Manager {
 				maxpercent=percent;
 			}
 		}
-
-		Resource r=ai.getClb().getResources().get(pos);
-		tryTobuild(r);
+		ai.msg(""+pos);
+		return ai.getClb().getResources().get(pos);
 	}
+	
+	
+	@Override
+	public void setResToUse(IResource res, int timetonextchange){
+		resToUse.setFrom(res);
+	}
+
+	@Override
+	public boolean assignTask(AGUnit unit){
+		if (unit.getDef().getBuildOptions().size()<=0)
+			return false;
+		Resource r=decide();
+		ai.msg("Building "+r.getName());
+		TBuild task=tryTobuild(r);
+		if (task!=null){
+			unit.setTask(task);
+			return true;
+		}
+		return false; //this manager doesn't assign directly
+	}
+	
 }

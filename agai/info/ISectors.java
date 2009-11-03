@@ -318,7 +318,7 @@ public class ISectors {
 	}
 
 	public boolean isPosInSec(AIFloat3 pos, ISector destination) {
-		return (destination.getDistance(pos)<=this.avgLos);
+		return (destination.getDistance(pos)-(this.avgLos/2)<=this.avgLos);
 	}
 
 	public void unitDamaged(Unit unit, Unit attacker, float damage) {

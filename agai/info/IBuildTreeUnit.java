@@ -100,7 +100,8 @@ public class IBuildTreeUnit {
 	 * Dec unit count.
 	 */
 	public void decUnitCount() {
-		unitcount--;
+		if (unitcount>0)
+			unitcount--;
 	}
 
 	/**
@@ -201,7 +202,10 @@ public class IBuildTreeUnit {
 	 *            the new plannedunits
 	 */
 	public void setPlannedunits(int plannedunits) {
-		this.plannedunits = plannedunits;
+		if (plannedunits<0)
+			this.plannedunits = 0;
+		else
+			this.plannedunits = plannedunits;
 	}
 
 	/**
@@ -211,5 +215,11 @@ public class IBuildTreeUnit {
 	 */
 	public boolean canBuild() {
 		return (ai.getInfos().getAGB().getBuilder(unit)!=null);
+	}
+	
+	public String toString(){
+		String res="";
+		res = unit.getName() +"\t" +unitcount +"\t" + plannedunits;  
+		return res;
 	}
 }

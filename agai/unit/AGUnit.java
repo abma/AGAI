@@ -32,6 +32,7 @@ import com.springrts.ai.command.AttackAreaUnitAICommand;
 import com.springrts.ai.command.AttackUnitAICommand;
 import com.springrts.ai.command.BuildUnitAICommand;
 import com.springrts.ai.command.MoveUnitAICommand;
+import com.springrts.ai.command.PatrolUnitAICommand;
 import com.springrts.ai.command.SetOnOffUnitAICommand;
 import com.springrts.ai.command.StopUnitAICommand;
 import com.springrts.ai.oo.Unit;
@@ -118,30 +119,39 @@ public class AGUnit {
 	/**
 	 * Can build at.
 	 * 
-	 * @param pos
-	 *            the pos
-	 * @param unit
-	 *            the unit to build
-	 * @param radius
-	 *            the radius
-	 * @param minDistance
-	 *            the min distance
+	 * @param pos the pos
+	 * @param radius the radius
+	 * @param minDistance the min distance
+	 * @param tobuilt the tobuilt
 	 * 
-	 * @return true, if successful
+	 * @return position, if successful, null if can't built there
 	 */
-	public AIFloat3 canBuildAt(AIFloat3 pos, UnitDef unit, int radius,
-			int minDistance) {
-		if ((pos == null) || ((pos.x == -1) && (pos.y == 0) && (pos.z == 0)))
-			pos = this.unit.getPos();
-		AIFloat3 tmp = ai.getClb().getMap().findClosestBuildSite(unit, pos,
-				radius, minDistance, 0);
-		if ((tmp.x == -1) && (tmp.y == 0) && (tmp.z == 0)) {
-			ai.msg("Can't build here: " + unit.getName() + " radius " + radius
-					+ " x " + pos.x + " y " + pos.y + " z " + pos.z);
+	public AIFloat3 canBuildAt(AIFloat3 pos, UnitDef tobuilt, int radius, int minDistance) {
+		if (!isAbleToBuilt(tobuilt)){
 			return null;
 		}
-		ai.msg("Can build at " + tmp.x + " " + tmp.y + " " + tmp.z);
-		return tmp;
+		if ((tobuilt.getSpeed()>0) && (tobuilt.getSpeed()>0)){ //unit to be built can move, build here!
+			pos=unit.getPos();
+			return pos;
+		}
+		if ((unit.getSpeed()>0) && (canMoveTo(pos))){ //builder can move to buildpos, build at buildpos
+			if (pos==null)
+				pos=unit.getPos();
+			AIFloat3 tmp = ai.getClb().getMap().findClosestBuildSite(tobuilt, pos, radius, minDistance, 0);
+			if ((tmp.x == -1) && (tmp.y == 0) && (tmp.z == 0)) {
+				ai.msg(tobuilt.getName());
+				if (pos==null)
+					pos=new AIFloat3();
+				ai.msg("Can't build here: " + tobuilt.getName() + " radius " + radius
+						+ " x " + pos.x + " y " + pos.y + " z " + pos.z);
+				return null;
+			}
+			return tmp;
+		}
+		if (canMoveTo(pos))
+			return pos;
+		ai.msg("Can't build at " + pos.x + " " + pos.y + " " + pos.z);
+		return null;
 	}
 
 	/**
@@ -151,13 +161,6 @@ public class AGUnit {
 		if (task != null) { // if unit had task, redo the task
 			task.setRepeat(Task.defaultRepeatTime);
 		}
-	}
-
-	public void fetchTask() {
-		Task task=ai.getTasks().getTask(this);
-		if (task!=null)
-			setTask(task);
-		
 	}
 
 	public AGUnit getBuilder() {
@@ -273,6 +276,8 @@ public class AGUnit {
 		this.task = task;
 		if (task != null)
 			task.assign(this);
+		else
+			fetchTask(); //always try to keep a task
 	}
 
 	/*
@@ -292,7 +297,6 @@ public class AGUnit {
 		List<UnitDef> buildOptions = unit.getDef().getBuildOptions();
 		for (int i = 0; i < buildOptions.size(); i++) {
 			if (buildOptions.get(i).getUnitDefId() == type.getUnitDefId()) {
-				ai.msg("Builder found to build " + type.getName());
 				return true;
 			}
 		}
@@ -321,15 +325,29 @@ public class AGUnit {
 	public float getMaxWaterDepth() {
 		return unit.getDef().getMaxWaterDepth();
 	}
-	public boolean canMoveTo(AIFloat3 Pos){
-		ISector to=ai.getInfos().getSectors().getSector(Pos);
+	public boolean canMoveTo(AIFloat3 pos){
+		if (pos==null) //null means unit pos, so it is already there!
+			return true;
 		ISector from=ai.getInfos().getSectors().getSector(unit.getPos());
+		if (ai.getInfos().getSectors().isPosInSec(pos,from)) //unit is already in sector!
+			return true;
+		ISector to=ai.getInfos().getSectors().getSector(pos);
 		LinkedList<ISector> path = ai.getInfos().getSectors().getSecurePath(from,to, getMaxSlope(), getMinWaterDepth(), getMaxWaterDepth());
 		return (path!=null);
 	}
 
 	public int getBuildSpeed() {
 		return Math.round(unit.getDef().getBuildSpeed());
+	}
+
+	public void fetchTask() {
+		ai.getManagers().assignTask(this);
+	}
+
+	public int patrolTo(AIFloat3 pos) {
+		AICommand command = new PatrolUnitAICommand(unit, -1,
+				new ArrayList<AICommand.Option>(), 10000, pos);
+		return ai.handleEngineCommand(command);
 	}
 	
 }

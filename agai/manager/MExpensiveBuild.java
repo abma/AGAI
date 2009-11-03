@@ -7,48 +7,65 @@ import agai.unit.AGUnit;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.springrts.ai.oo.UnitDef;
 
 public class MExpensiveBuild extends Manager{
-	LinkedList <TBuild> list;
+	private LinkedList <TBuild> buildtasks;
 	public MExpensiveBuild(AGAI ai) {
 		super(ai);
-		list=new LinkedList<TBuild>();
+		buildtasks = new LinkedList <TBuild>();
 	}
 	
 	public void add(UnitDef unitDef){
 		ai.msg(""+unitDef.getName()+" "+unitDef.getHumanName());
-		if (ai.getInfos().getAGB().searchNode(unitDef).getPlannedunits()>0) //unit will already be built
+		if (ai.getInfos().getAGB().isUnitAvailableOrPlaned(unitDef))//unit already exists or is planed to be built
 			return;
-		for(int i=0; i<list.size(); i++){
-			if (list.get(i).getUnitDef()==unitDef){
-				list.get(i).incPriority();
+		for(int i=0; i<buildtasks.size(); i++){
+			if (buildtasks.get(i).getUnitDef().getUnitDefId()==unitDef.getUnitDefId()){
+				buildtasks.get(i).incPriority();
 				return;
 			}
 		}
+		ai.getInfos().IncPlannedUnit(unitDef);
 		TBuild b=new TBuild(ai, this, unitDef, null, AGAI.searchDistance, AGAI.minDistance, null);
-		list.add(b);
+		buildtasks.add(b);
 	}
 
 	@Override
 	public void setResToUse(IResource res, int timetonextchange){
-		Collections.sort(list);
-		for(int i=0; i<list.size(); i++){
-			AGUnit builder = ai.getUnits().getBuilder(list.get(i).getUnitDef());
+		resToUse.setFrom(res);
+	}
+
+	@Override
+	public boolean assignTask(AGUnit unit){
+		if (unit.getDef().getBuildOptions().size()<=0) //unit can't build anything
+			return false;
+		Collections.sort(buildtasks);
+		for(int i=0; i<buildtasks.size(); i++){
+			AGUnit builder = ai.getUnits().getBuilder(buildtasks.get(i).getUnitDef());
 			if (builder!=null){
-				ai.msg("");
-				if (res.lessOrEqual(list.get(i).getPrice(), builder.getBuildSpeed())){
+				if (resToUse.lessOrEqual(buildtasks.get(i).getPrice(), builder.getBuildSpeed())){
 					ai.msg("");
-					ai.getTasks().add(list.get(i));
-					ai.getInfos().IncPlannedUnit(list.get(i).getUnitDef());
-					res.sub(list.get(i).getPrice());
+					resToUse.sub(buildtasks.get(i).getPrice());
+					unit.setTask(buildtasks.remove(i));
+					return true;
 				}else
-					ai.msg("To few resources to build "+list.get(i).getUnitDef().getName());
-			}else
-				ai.msg("Found no builder to build "+ list.get(i).getUnitDef().getName());
+					ai.msg("To few resources to build "+buildtasks.get(i).getUnitDef().getName());
+			}else{ //solve dependencies!
+				ai.msg("Found no builder to build, adding dependencies to list "+ buildtasks.get(i).getUnitDef().getName());
+				List<UnitDef> units = ai.getInfos().getAGB().getBuildPath(buildtasks.get(i).getUnitDef());
+				if (units!=null){
+					for(int j=0; j<units.size(); j++){
+						add(units.get(j));
+					}
+				}
+			}
 		}
 		//assign all unused resources to new resources
-		ai.getManagers().get(MResource.class).incResToUse(res);
+		ai.getManagers().get(MResource.class).incResToUse(resToUse);
+		return false; //this manager doesn't assign directly
 	}
+
 }

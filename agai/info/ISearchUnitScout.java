@@ -29,7 +29,7 @@ public class ISearchUnitScout extends IUnitProperty {
 																						// commander
 																						// out
 			return false;
-		if ((unit.getSpeed() > 0) && (unit.getLosRadius() > 0)
+		if ((unit.getSpeed() > 0) && (properties.get(2).getAverageComp(unit) < 0)
 				&& (properties.get(1).getAverageComp(unit) > 0) /*
 																 * && //faster
 																 * than average

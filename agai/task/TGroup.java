@@ -53,17 +53,7 @@ public class TGroup extends Task {
 
 	@Override
 	public void unitCommandFinished(AGUnit unit) {
-		ai.msg(""); // wait until enough units have finished...
-		group.getPos();
-		if (!go)
-			return;
-		if (lastFrame + 3 > ai.getFrame()) // FIXME: there should be a better
-											// solution?: avoid mass-unit
-											// finished events
-			return;
-		lastFrame = ai.getFrame();
-		if (task != null)
-			task.unitCommandFinished(group);
+		execute(unit);
 	}
 
 	@Override
@@ -90,6 +80,21 @@ public class TGroup extends Task {
 			ai.msg("clear to start!");
 			go = true;
 		}
+	}
+
+	@Override
+	public void execute(AGUnit unit) {
+		ai.msg(""); // wait until enough units have finished...
+		group.getPos();
+		if (!go)
+			return;
+		if (lastFrame + 3 > ai.getFrame()) // FIXME: there should be a better
+											// solution?: avoid mass-unit
+											// finished events
+			return;
+		lastFrame = ai.getFrame();
+		if (task != null)
+			task.unitCommandFinished(group);
 	}
 
 }

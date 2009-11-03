@@ -119,6 +119,7 @@ public class AGUnits {
 			return null;
 		}
 		AGUnit u=new AGUnit(ai, unit);
+		ai.getInfos().UnitCreated(u);
 		units.add(u);
 		return units.get(units.size() - 1);
 	}
@@ -190,7 +191,6 @@ public class AGUnits {
 	 * Employ idle.
 	 */
 	public void employIdle() {
-		ai.msg("");
 		for (int i = 0; i < units.size(); i++) {
 			if (units.get(i).isIdle())
 				units.get(i).fetchTask();
@@ -205,13 +205,9 @@ public class AGUnits {
 	 * 
 	 * @return the builder
 	 */
-	public AGUnit getBuilder(UnitDef type) { // FIXME: this function is really
-		// slow!
-		for (int i = 0; i < units.size(); i++) { // walk through all units, and
-			// check if they can build
-			// type
-			List<UnitDef> buildOptions = units.get(i).getUnit().getDef()
-					.getBuildOptions();
+	public AGUnit getBuilder(UnitDef type) { // FIXME: this function is really slow!
+		for (int i = 0; i < units.size(); i++) { // walk through all units, and check if they can buildtype
+			List<UnitDef> buildOptions = units.get(i).getUnit().getDef().getBuildOptions();
 			int j;
 			for (j = 0; j < buildOptions.size(); j++) {
 				if (buildOptions.get(j).getUnitDefId() == type.getUnitDefId()) {

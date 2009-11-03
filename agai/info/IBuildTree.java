@@ -105,7 +105,17 @@ public class IBuildTree {
 		}
 		System.out.println("}");
 	}
-
+	
+	public String toString(){
+		String res="";
+		for (int i = 0; i < unitList.size(); i++) {
+			IBuildTreeUnit u = unitList.get(i);
+			res=res + u.toString();
+			if (i+1<unitList.size());
+				res=res+"\n";
+		}
+		return res;
+	}
 	/**
 	 * Dump units.
 	 */
@@ -178,7 +188,7 @@ public class IBuildTree {
 		LinkedList<IBuildTreeUnit> list = node.getBacklink();
 		LinkedList<AGUnit> res = new LinkedList<AGUnit>();
 		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getUnitcount() > 0) { // search only for units avaiable
+			if (list.get(i).getUnitcount() > 0) { // search only for units available
 				List<AGUnit> units = ai.getUnits().getUnits(list.get(i).getUnit());
 				for (int j = 0; j < units.size(); j++) {
 					res.add(units.get(j));
@@ -186,12 +196,22 @@ public class IBuildTree {
 			}
 		}
 		if (res.size() == 0){
-			ai.msg("found no builder to build unit: " + unit.getName());
 			return null;
 		}
 		return res;
 	}
-
+	
+	/**
+	 * Checks if is unit available or planed.
+	 * 
+	 * @param unit the unit
+	 * 
+	 * @return true, if is unit available or planed
+	 */
+	public boolean isUnitAvailableOrPlaned(UnitDef unit){
+		IBuildTreeUnit u = searchNode(unit);
+		return ((u.getPlannedunits()>0) || (u.getUnitcount()>0));
+	}
 	/**
 	 * Gets the builds the time.
 	 * 
@@ -247,7 +267,7 @@ public class IBuildTree {
 		mark++;
 		while (queue.size() > 0) {
 			tmp = queue.removeFirst();
-			if (tmp.getUnit() == search) { // node found, return path
+			if (tmp.getUnit().getUnitDefId() == search.getUnitDefId()) { // node found, return path
 				return tmp;
 			}
 			tmp.setMark(mark);
@@ -305,5 +325,38 @@ public class IBuildTree {
 			res.add(tmp.getBacklink().get(i).getUnit());
 		}
 		return res;
+	}
+
+	public List<UnitDef> getBuildPath(UnitDef unit) {
+		LinkedList<IBuildTreeUnit> queue = new LinkedList<IBuildTreeUnit>();
+		IBuildTreeUnit tmp;
+		IBuildTreeUnit root = searchNode(unit);
+		queue.add(root);
+		mark++;
+		while (queue.size() > 0) {
+			tmp = queue.removeFirst();
+			if ((tmp.getPlannedunits()>0) || (tmp.getUnitcount()>0)) { // node found, return path
+				List <UnitDef> res=new LinkedList<UnitDef>();
+				while(tmp.getParent()!=null){
+					if (!((tmp.getPlannedunits()>0) || (tmp.getUnitcount()>0)))
+						res.add(tmp.getUnit());
+					tmp=tmp.getParent();
+				}
+				if (res.size()==0)
+					return null;
+				return res;
+			}
+			tmp.setMark(mark);
+			for (int i = 0; i < tmp.getBacklink().size(); i++) {
+				if (tmp.getBacklink().get(i).getMark() != mark) {
+					queue.add(tmp.getBacklink().get(i));
+					tmp.getBacklink().get(i).setParent(tmp); // set backlink to
+															// recognize later
+															// the path we
+															// wentso
+				}
+			}
+		}
+		return null;
 	}
 }

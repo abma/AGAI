@@ -31,10 +31,14 @@ import com.springrts.ai.oo.WeaponDef;
  * The Class AGTask.
  */
 public abstract class Task implements Comparable<Object> {
+	
+	/** The default repeat time. */
 	public static int defaultRepeatTime = 100;
+	
 	/** The ai. */
 	protected AGAI ai;
 
+	/** The manager. */
 	protected Manager manager;
 
 	/** The poi where the task refers to. */
@@ -43,29 +47,37 @@ public abstract class Task implements Comparable<Object> {
 	/** The priority. */
 	private int priority = 0;
 
-	/** The time in frames the task is repeated, <=0 means no repeat */
+	/** The time in frames the task is repeated, <=0 means no repeat. */
 	private int repeat;
 
 	/**
 	 * Instantiates a new task.
 	 * 
-	 * @param ai
-	 *            the ai
+	 * @param ai the ai
+	 * @param manager the manager
 	 */
 	protected Task(AGAI ai, Manager manager) {
 		this.ai = ai;
 		this.manager = manager;
 		this.repeat = defaultRepeatTime;
 	}
+	
+	
+	/**
+	 * Execute the task! (just do it!)
+	 * 
+	 * @param unit the unit
+	 */
+	public abstract void execute(AGUnit unit);
 
 	/**
-	 * Task is assigned
+	 * Task is assigned.
 	 * 
-	 * @param unit
-	 *            the unit
+	 * @param unit the unit
 	 */
 	public void assign(AGUnit unit) {
 		ai.msg(this.getClass().getName());
+		execute(unit);
 	}
 
 	/**
@@ -93,6 +105,11 @@ public abstract class Task implements Comparable<Object> {
 		return priority;
 	}
 
+	/**
+	 * Gets the repeat.
+	 * 
+	 * @return the repeat
+	 */
 	public int getRepeat() {
 		return repeat;
 	}
@@ -107,13 +124,17 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Sets the poi.
 	 * 
-	 * @param poi
-	 *            the new poi
+	 * @param poi the new poi
 	 */
 	public void setPoi(IPoI poi) {
 		this.poi = poi;
 	}
 
+	/**
+	 * Sets the repeat.
+	 * 
+	 * @param repeat the new repeat
+	 */
 	public void setRepeat(int repeat) {
 		this.repeat = repeat;
 	}
@@ -132,8 +153,7 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Task is Unassigned.
 	 * 
-	 * @param unit
-	 *            the unit
+	 * @param unit the unit
 	 */
 	public void unassign(AGUnit unit) {
 		ai.msg(this.getClass().getName());
@@ -149,8 +169,7 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Unit command finished.
 	 * 
-	 * @param unit
-	 *            the unit
+	 * @param unit the unit
 	 */
 	public void unitCommandFinished(AGUnit unit) {
 		ai.msg(unit.getDef().getName());
@@ -159,10 +178,8 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Unit created.
 	 * 
-	 * @param builder
-	 *            the builder
-	 * @param unit
-	 *            the unit
+	 * @param builder the builder
+	 * @param unit the unit
 	 */
 	public void unitCreated(AGUnit builder, AGUnit unit) {
 		ai.msg(this.getClass().getName() + " " + builder.getDef().getName()
@@ -172,16 +189,11 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Unit damaged.
 	 * 
-	 * @param unit
-	 *            the unit
-	 * @param damage
-	 *            the damage
-	 * @param direction
-	 *            the direction
-	 * @param weaponDef
-	 *            the weapon def
-	 * @param paralyzer
-	 *            the paralyzer
+	 * @param unit the unit
+	 * @param damage the damage
+	 * @param direction the direction
+	 * @param weaponDef the weapon def
+	 * @param paralyzer the paralyzer
 	 */
 	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction,
 			WeaponDef weaponDef, boolean paralyzer) {
@@ -191,8 +203,7 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Unit destroyed.
 	 * 
-	 * @param unit
-	 *            the unit
+	 * @param unit the unit
 	 */
 	public void unitDestroyed(AGUnit unit) {
 		ai.msg(this.getClass().getName());
@@ -201,10 +212,8 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Unit enemy damaged.
 	 * 
-	 * @param u
-	 *            the u
-	 * @param enemy
-	 *            the enemy
+	 * @param u the u
+	 * @param enemy the enemy
 	 */
 	public void unitEnemyDamaged(AGUnit u, Unit enemy) {
 		ai.msg(this.getClass().getName());
@@ -220,10 +229,8 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Unit finished.
 	 * 
-	 * @param builder
-	 *            the builder
-	 * @param unit
-	 *            the unit
+	 * @param builder the builder
+	 * @param unit the unit
 	 */
 	public void unitFinished(AGUnit builder, AGUnit unit) {
 		ai.msg(this.getClass().getName());
@@ -239,8 +246,7 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Unit idle.
 	 * 
-	 * @param unit
-	 *            the unit
+	 * @param unit the unit
 	 */
 	public void unitIdle(AGUnit unit) {
 		ai.msg(this.getClass().getName()); 
@@ -249,8 +255,7 @@ public abstract class Task implements Comparable<Object> {
 	/**
 	 * Unit move failed.
 	 * 
-	 * @param unit
-	 *            the unit
+	 * @param unit the unit
 	 */
 	public void unitMoveFailed(AGUnit unit) {
 		ai.msg(this.getClass().getName());
@@ -263,11 +268,14 @@ public abstract class Task implements Comparable<Object> {
 		ai.msg(this.getClass().getName());
 	}
 	
-	public boolean canBeDone(AGUnit unit){
-		ai.msg("Warning: this task shouldn't be in the task list!");
-		return false;
-	}
-
+	/**
+	 * Compare.
+	 * 
+	 * @param o1 the o1
+	 * @param o2 the o2
+	 * 
+	 * @return the int
+	 */
 	public int compare(Object o1, Object o2) {
 		Task t1=(Task) o1;
 		Task t2=(Task) o2;
@@ -278,6 +286,9 @@ public abstract class Task implements Comparable<Object> {
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	public int compareTo(Object o){
 		return compare(this,o);
 	}

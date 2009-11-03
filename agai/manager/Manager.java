@@ -17,7 +17,11 @@
 
 package agai.manager;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import agai.AGAI;
+import agai.info.IBuildTreeUnit;
 import agai.info.IResource;
 import agai.task.Task;
 import agai.unit.AGUnit;
@@ -31,7 +35,7 @@ public abstract class Manager {
 	protected AGAI ai;
 	protected IResource resToUse; 
 	private int idleTasks;
-
+	protected List <IBuildTreeUnit> list;
 	public int getIdleTasks() {
 		return idleTasks;
 	}
@@ -45,7 +49,7 @@ public abstract class Manager {
 	}
 
 	public void setResToUse(IResource res, int timetonextchange) {
-		this.resToUse = res;
+		resToUse.setFrom(res);
 	}
 	
 	public void incResToUse(IResource res){
@@ -65,11 +69,26 @@ public abstract class Manager {
 		this.ai = ai;
 		this.resToUse = new IResource(ai);
 		this.idleTasks=0;
-	}
-
-	public boolean canSolve(Task task, AGUnit unit){
-		ai.msg(this.getClass().getName()+ " Warning: canSolve() needs to be implemented!");
-		return false;
+		this.list = new LinkedList<IBuildTreeUnit>();
 	}
 	
+	/**
+	 * Assign task to unit
+	 * 
+	 * @param unit the unit
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean assignTask(AGUnit unit){
+		ai.msg(this.getClass().getName()+ " Warning: assignTask() needs to be implemented!");
+		return false;
+	}
+    
+	public boolean canSolve(Task task, AGUnit unit){
+    	for (int i=0; i<list.size(); i++)
+    		if (unit.getDef().getUnitDefId()==list.get(i).getUnit().getUnitDefId())
+    			return true;
+    	return false;
+    }
+
 }

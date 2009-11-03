@@ -28,6 +28,7 @@ import agai.manager.MResource;
 import agai.manager.MScout;
 import agai.manager.Manager;
 import agai.task.Task;
+import agai.unit.AGUnit;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -56,11 +57,11 @@ public class AGManagers {
 		tasks = new LinkedList<Task>();
 		list = new LinkedList<Manager>();
 
-		list.add(new MResource(ai));
+		list.add(new MAttack(ai)); //ordered by priority!
 		list.add(new MScout(ai));
-		list.add(new MAttack(ai));
-		list.add(new MBuild(ai));
 		list.add(new MExpensiveBuild(ai));
+		list.add(new MBuild(ai));
+		list.add(new MResource(ai));
 	}
 
 	/**
@@ -107,9 +108,16 @@ public class AGManagers {
 	}
 	
 	public void update(IResource res, int timetonextchange){
-		ai.getTasks().clear();
 		res.divide(list.size());
 		for (int i=0; i<list.size(); i++)
 			list.get(i).setResToUse(res, timetonextchange);
+	}
+
+	public boolean assignTask(AGUnit unit) {
+		for (int i=0; i<list.size(); i++){
+			if (list.get(i).assignTask(unit))
+				return true;
+		}
+		return false;
 	}
 }

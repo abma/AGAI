@@ -21,8 +21,6 @@ import java.util.List;
 import agai.AGAI;
 import agai.AGUnits;
 import agai.info.ISector;
-import agai.manager.MAttack;
-import agai.manager.MScout;
 import agai.manager.Manager;
 import agai.unit.AGUnit;
 
@@ -56,17 +54,6 @@ public class TAttack extends Task {
 		this.type = type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see agai.task.Task#assign(agai.unit.AGUnit)
-	 */
-	@Override
-	public void assign(AGUnit unit) {
-		ai.msg("unit assigned");
-		unit.setIdle();
-	}
-
 	/**
 	 * Gets the type.
 	 * 
@@ -84,6 +71,11 @@ public class TAttack extends Task {
 	@Override
 	public void unitCommandFinished(AGUnit unit) {
 		ai.msg("" + unit);
+		execute(unit);
+	}
+
+	@Override
+	public void execute(AGUnit unit) {
 		if (currentsec != null) {// unit reached sec, cleaned?
 			List<Unit> list = ai.getClb().getEnemyUnitsIn(currentsec.getPos(),
 					ai.getInfos().getSectors().getSectorSize());
@@ -94,25 +86,18 @@ public class TAttack extends Task {
 				currentsec.setClean(); // sector is clean
 			}
 		}
-		ISector sec = ai.getInfos().getSectors().getNextEnemyTarget(unit.getPos(),
-				0);
+		ISector sec = ai.getInfos().getSectors().getNextEnemyTarget(unit.getPos(),0);
 		if (sec != null) {
-			unit.setTask(new TSecureMove(ai, ai.getManagers()
-					.get(MAttack.class), this, sec));
+/*			unit.setTask(new TSecureMove(ai, ai.getManagers()
+					.get(MAttack.class), this, sec));*/
+			unit.patrolTo(sec.getPos());
 			ai.msg("attacking at " + sec.getPos().x + " " + sec.getPos().y
 					+ " " + sec.getPos().z);
 			this.currentsec = sec;
 			return;
 		}
-		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MScout.class)));
-		setRepeat(0);
 		unit.setTask(null);
 		ai.msg("nothing to attack found!");
 	}
 
-	@Override
-	public boolean canBeDone(AGUnit unit) {
-		Manager m=ai.getManagers().get(MAttack.class);
-		return m.canSolve(this, unit);
-	}
 }

@@ -46,29 +46,13 @@ public class TSecureMove extends Task {
 	@Override
 	public void assign(AGUnit unit) {
 		ai.msg("");
-		unit.setIdle();
+		ISector cursec = ai.getInfos().getSectors().getSector(unit.getPos());
+		path = ai.getInfos().getSectors().getSecurePath(cursec, destination, unit.getMaxSlope(), unit.getMinWaterDepth(), unit.getMaxWaterDepth());
 	}
 
 	@Override
 	public void unitCommandFinished(AGUnit unit) {
-		if (ai.getInfos().getSectors().isPosInSec(unit.getPos(), destination)) {
-			ai.msg("Destination reached, back to the old task!");
-			setRepeat(0);
-			unit.setTask(taskWhenReached);
-		} else { // when moving, try to avoid danger sectors
-			if (path == null) {
-				ISector cursec = ai.getInfos().getSectors()
-						.getSector(unit.getPos());
-				path = ai.getInfos().getSectors().getSecurePath(cursec, destination, unit.getMaxSlope(), unit.getMinWaterDepth(), unit.getMaxWaterDepth());
-			}
-			if ((path!=null) &&  (path.size() > 0)){
-				ai.msg("Time left: "+ai.getInfos().getTime().getMoveTime(unit, path));
-				unit.moveTo(path.remove(0).getPos());
-			}else{
-				ai.msg("can't move to pos");
-				ai.drawPoint(destination.getPos(), "cant' move here");
-			}
-		}
+		execute(unit);
 	}
 
 	@Override
@@ -89,11 +73,23 @@ public class TSecureMove extends Task {
 	}
 
 	@Override
-	public boolean canBeDone(AGUnit unit) {
-		ai.msg("Warning: this task shouldn't be in the task list!");
-		return false;
-	}
-	@Override
 	public void unitIdle(AGUnit unit){
+		execute(unit);
+	}
+
+	@Override
+	public void execute(AGUnit unit) {
+		if (ai.getInfos().getSectors().isPosInSec(unit.getPos(), destination)) {
+			ai.msg("Destination reached, back to the old task!");
+			unit.setTask(taskWhenReached);
+		} else { // when moving, try to avoid danger sectors
+			if ((path!=null) &&  (path.size() > 0)){
+				ai.msg("Time left: "+ai.getInfos().getTime().getMoveTime(unit, path));
+				unit.moveTo(path.remove(0).getPos());
+			}else{
+				ai.msg("can't move to pos"+unit);
+				ai.drawPoint(destination.getPos(), "cant' move here "+unit.getDef().getName());
+			}
+		}
 	}
 }

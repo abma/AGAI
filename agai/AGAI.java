@@ -21,12 +21,6 @@ import java.util.List;
 
 import agai.info.IResource;
 import agai.loader.IAGAI;
-import agai.manager.MAttack;
-import agai.manager.MBuild;
-import agai.manager.MScout;
-import agai.task.TAttack;
-import agai.task.TBuild;
-import agai.task.TScout;
 import agai.task.Task;
 import agai.unit.AGUnit;
 
@@ -91,9 +85,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	public int getResourcecount() {
 		return resourcecount;
 	}
-
-	/** The tasks. */
-	private AGTasks tasks = null;
 
 	/** Log properties. */
 	/** The team id. */
@@ -373,15 +364,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	}
 
 	/**
-	 * Gets the Tasks Manager.
-	 * 
-	 * @return the tasks
-	 */
-	public AGTasks getTasks() {
-		return tasks;
-	}
-
-	/**
 	 * Gets the team id.
 	 * 
 	 * @return the team id
@@ -453,7 +435,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		infos = new AGInfos(this);
 		controller = new AGController(this);
 		managers = new AGManagers(this);
-		tasks = new AGTasks(this);
 
 
 		List<Unit> list = clb.getTeamUnits();
@@ -461,6 +442,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			units.add(list.get(i));
 		}
 		msg("");
+		units.employIdle();
 		return 0;
 	}
 
@@ -478,19 +460,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	public int message(int player, String message) {
 		String[] argv = message.split(" ");
 		if (argv.length > 0) {
-			if (argv[0].equalsIgnoreCase("buildunit")) {
-				if (argv.length == 2) {
-					UnitDef u = units.getUnitDef(argv[1]);
-					if (u != null) {
-						tasks.add(new TBuild(this, managers.get(MBuild.class),
-								u, null, 100, 2, null));
-					}
-				}
-			} else if (argv[0].equalsIgnoreCase("dump")) {
-				tasks.dump();
-			} else if (argv[0].equalsIgnoreCase("scout")) {
-				tasks.add(new TScout(this, managers.get(MScout.class)));
-			} else if (argv[0].equalsIgnoreCase("dumpunits")) {
+			if (argv[0].equalsIgnoreCase("dumpunits")) {
 				units.dump();
 			} else if (argv[0].equalsIgnoreCase("dumpunitdefs")) {
 				units.dumpUnitDefs();
@@ -498,22 +468,16 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				infos.getAGB().dumpUnits();
 			} else if (argv[0].equalsIgnoreCase("dumpmap")) {
 				infos.getSectors().dump();
-			} else if (argv[0].equalsIgnoreCase("attack")) {
-				tasks.add(new TAttack(this, managers.get(MAttack.class),
-						AGUnits.ElementType.unitLand));
 			} else if (argv[0].equalsIgnoreCase("clear")) {
 				clear();
-			} else if (argv[0].equalsIgnoreCase("start")) {
-				controller.start();
-			} else if (argv[0].equalsIgnoreCase("stop")) {
-				controller.stop();
 			} else if (argv[0].equalsIgnoreCase("dumpgraph")) {
-				infos.getAGB().dumpGraph();
+				msg(infos.getAGB().toString());
 			}
 		}
 		return 0;
 	}
 	private String lastclass="";
+	private int lastframe=-1;
 	/**
 	 * Print a debug message on console.
 	 * 
@@ -536,7 +500,19 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 					+ e.getStackTrace()[1].getMethodName() + ":"
 					+ e.getStackTrace()[1].getLineNumber() + " " + str;
 		}
-		System.out.println(frame+" "+str);
+		String fstr="";
+		if (lastframe==frame){
+			int tmp=frame;
+			while(tmp>0){
+				fstr=fstr+" ";
+				tmp=tmp/10;
+			}
+		}else{
+			lastframe=frame;
+			fstr=""+frame;
+		}
+			
+		System.out.println(fstr+" "+str);
 	}
 
 	/**
@@ -755,9 +731,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	public int unitIdle(Unit unit) {
 		AGUnit u = units.getUnit(unit);
 		Task t = u.getTask();
-		if ((u != null) && (t != null))
+		if ((u != null) && (t != null)){
 			t.unitIdle(u);
-		else{
+		}else{
 			u.fetchTask();
 		}
 		return 0;

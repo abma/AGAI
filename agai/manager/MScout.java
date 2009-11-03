@@ -20,17 +20,14 @@ package agai.manager;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.springrts.ai.oo.Resource;
 import com.springrts.ai.oo.UnitDef;
 
 import agai.AGAI;
-import agai.AGUnits;
 import agai.info.IBuildTreeUnit;
 import agai.info.IResource;
 import agai.info.ISearchUnitScout;
 import agai.task.TBuild;
 import agai.task.TScout;
-import agai.task.Task;
 import agai.unit.AGUnit;
 
 /**
@@ -75,40 +72,32 @@ public class MScout extends Manager {
 		ai.msg("" + scouts);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see agai.AGTaskManager#solve(agai.AGTask)
-	 */
-	public void solve(Task task) {
-		if (scouts < 10) {
-			Resource res=((MBuild) ai.getManagers().get(MBuild.class)).buildUnit(task, list,
-					task, AGUnits.ElementType.unitAny, getResToUse());
-			if (res!=null){
-				ai.getManagers().get(MResource.class).setResToUse(getResToUse(), 1000);
-				//FIXME: clear used resources
+	@Override
+	public boolean assignTask(AGUnit unit){
+		if (unit.getDef().getSpeed()<=0)
+			return false;
+		for (int i=0; i<list.size(); i++){
+			if (unit.getDef().equals(list.get(i).getUnit())){
+				unit.setTask(new TScout(ai, this));
+				return true;
 			}
 		}
-	}
-	@Override
-	public boolean canSolve(Task task, AGUnit unit){
-		for (int i=0; i<list.size(); i++)
-			if (unit.getDef().equals(list.get(i).getUnit()))
-				return true;
 		return false;
 	}
 
 	@Override
-	public void setResToUse(IResource res, int timetonextchange) {
+	public void setResToUse(final IResource res, int timetonextchange) {
+		resToUse.setFrom(res);
 		ai.msg(""+res);
 		int i=0;
 		for(i=0; i<list.size();i++){
-			 IBuildTreeUnit u = list.get(i); 
+			IBuildTreeUnit u = list.get(i); 
 			if (u.getCost().lessOrEqual(res, timetonextchange)){
-				if (ai.getUnits().getBuilder(u.getUnit())!=null){ //factory is avaiable
-					ai.msg("building ");
+				if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is avaiable
+					ai.msg("building scout");
 					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
-					ai.getTasks().add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TScout(ai, this)));
+					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TScout(ai, this)));
+					res.sub(u.getCost());
 					return;
 				}
 			}
@@ -116,9 +105,10 @@ public class MScout extends Manager {
 		//no factory, build factory!
 		ai.msg("Giving all resources to build factory");
 		MExpensiveBuild m= (MExpensiveBuild) ai.getManagers().get(MExpensiveBuild.class);
-		LinkedList<UnitDef> tmp = ai.getInfos().getAGB().getAllBuilders(list.get(list.size()-1).getUnit());
+		LinkedList<UnitDef> tmp = ai.getInfos().getAGB().getAllBuilders(list.get(list.size()-1).getUnit()); //FIXME: could be null if no builder is avaiable
 		m.add(tmp.get(0));
-		m.incResToUse(res);
+		m.incResToUse(resToUse);
+		resToUse.zero();
 	}
 
 }

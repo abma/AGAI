@@ -31,8 +31,8 @@ public class TScout extends Task {
 
 	@Override
 	public void assign(AGUnit unit) {
-		unit.setIdle();
 		((MScout) ai.getManagers().get(MScout.class)).incScouts();
+		execute(unit);
 	}
 
 	@Override
@@ -47,28 +47,29 @@ public class TScout extends Task {
 
 	@Override
 	public void unitCommandFinished(AGUnit unit) {
-		IPoI p = ai.getInfos().getAGP().getNearestPoi(unit.getPos(),
-				IPoIs.PoIAny, true, true);
-		if ((p != null) && (unit.canMoveTo(p.getPos()))) {
-			ISector destination=ai.getInfos().getSectors().getSector(p.getPos());
-			ai.msg("moving to " + p.getPos().x + " " + p.getPos().z);
-			unit.setTask(new TSecureMove(ai, null, this, destination));
-			p.setVisited(true);
-		} else {
-			ai.msg("No point to scout found!");
-		}
+		execute(unit);
 	}
 
 	@Override
 	public void unitDestroyed(AGUnit unit) {
 		ai.msg("");
-		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MScout.class)));
 		setRepeat(0);
 	}
-
 	@Override
-	public boolean canBeDone(AGUnit unit) {
-		Manager m=ai.getManagers().get(MScout.class);
-		return m.canSolve(this, unit);
+	public void execute(AGUnit unit) {
+		IPoI p = ai.getInfos().getAGP().getNearestPoi(unit.getPos(),
+				IPoIs.PoIAny, true, true);
+		if (p == null) {
+			ai.msg("No point to scout found!");
+			return;
+		}
+		if (unit.canMoveTo(p.getPos())){
+			ISector destination=ai.getInfos().getSectors().getSector(p.getPos());
+			unit.setTask(new TSecureMove(ai, null, this, destination));
+			p.setVisited(true);
+		}else{
+			ai.msg("Unit can't move to PoI");
+		}
 	}
+
 }

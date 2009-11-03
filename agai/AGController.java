@@ -16,9 +16,6 @@
  */
 package agai;
 
-import agai.manager.MAttack;
-import agai.task.TAttack;
-import agai.task.TScout;
 
 // TODO: Auto-generated Javadoc
 /*
@@ -143,23 +140,6 @@ public class AGController {
 		this.ai = ai;
 	}
 
-	/**
-	 * Start.
-	 */
-	public void start() {
-		ai.getTasks().add(new TScout(ai, ai.getManagers().get(MAttack.class)));
-		ai.getTasks().add(
-				new TAttack(ai, ai.getManagers().get(MAttack.class),
-						AGUnits.ElementType.unitLand));
-	}
-
-	/**
-	 * Stop.
-	 */
-	public void stop() {
-		ai.getTasks().clear();
-	}
-
 	int lastupdate=-1;
 	/**
 	 * Update.
@@ -168,7 +148,7 @@ public class AGController {
 	 *            the frame
 	 */
 	public void update(int frame) {
-		int i=frame % 100;
+		int i=frame % 1000;
 		switch (i){
 			case 0:
 				ai.msg("");
@@ -177,7 +157,7 @@ public class AGController {
 					lastupdate=ai.getInfos().getResources().getLastchanged();
 				}
 				break;
-			case 50:
+			case 500:
 				ai.getUnits().employIdle();
 				break;
 		}

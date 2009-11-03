@@ -17,13 +17,14 @@
 
 package agai.manager;
 
-import java.util.List;
-
 import agai.AGAI;
+import agai.AGUnits;
 import agai.info.IBuildTreeUnit;
 import agai.info.IResource;
 import agai.info.ISearchUnitAttacker;
-import agai.task.Task;
+import agai.info.ISector;
+import agai.task.TAttack;
+import agai.task.TBuild;
 import agai.unit.AGUnit;
 
 /**
@@ -33,8 +34,6 @@ import agai.unit.AGUnit;
  */
 public class MAttack extends Manager {
 	private int groups = 0;
-
-	protected List<IBuildTreeUnit> list;
 
 	/**
 	 * Instantiates a new aG task attack.
@@ -65,19 +64,40 @@ public class MAttack extends Manager {
 	public void setGroups(int groups) {
 		this.groups = groups;
 	}
-	public boolean canSolve(Task task, AGUnit unit){
-		for (int i=0; i<list.size(); i++)
-			if (unit.getDef().equals(list.get(i).getUnit()))
-				return true;
-		return false;
-	}
+
 	@Override
-	public void setResToUse(IResource res, int timetonextchange) {
-		if (ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0)==null){ //no targets, build scouts
+	public void setResToUse(IResource res, int timetonextchange){
+		resToUse.setFrom(res);
+		ISector target = ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0);
+		if (target==null){ //no targets, build scouts
 			ai.msg("Giving all resources to scouts, because no target exists");
 			MScout scout=(MScout) ai.getManagers().get(MScout.class);
 			scout.incResToUse(res);
+			return;
 		}
+		for(int i = 0; i<list.size();i++){
+			IBuildTreeUnit u = list.get(i); 
+			if (u.getCost().lessOrEqual(res, timetonextchange)){
+				if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is avaiable
+					ai.msg("building ");
+					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
+					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TAttack(ai, this, AGUnits.ElementType.unitAny)));
+					return;
+				}
+			}
+		}
+		
 	}
-	
+	@Override
+	public boolean assignTask(AGUnit unit){
+		for(int i=0; i<list.size(); i++){
+			if (list.get(i).getUnit().getUnitDefId()==unit.getUnit().getDef().getUnitDefId()){
+				ISector target = ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0);
+					if (target!=null){
+						unit.setTask(new TAttack(ai, this, null));
+					}
+			}
+		}
+		return false;
+	}
 }

@@ -120,8 +120,7 @@ public class IPoIs {
 	 * 
 	 * @return the nearest poi
 	 */
-	public IPoI getNearestPoi(AIFloat3 curpos, int type, boolean free,
-			boolean visited) {
+	private IPoI getNearestPoi(AIFloat3 curpos, int type, boolean free, boolean visited, boolean recursion) {
 		double mindistance = Double.MAX_VALUE;
 		double tmp;
 		IPoI ret = null;
@@ -140,16 +139,14 @@ public class IPoIs {
 				}
 			}
 		}
-		if ((free) && (ret == null)) { // all points visited.. start from
-										// beginning
+		if ((free) && (ret == null)) { // all points visited.. start from beginning
+			if (recursion)
+				return null;
 			ai.msg("no valid point found, clearing visited flag");
 			for (int i = 0; i < poi.size(); i++) {
-				if (!poi.get(i).isVisited()) // FIXME? we missed a point in
-												// search func, no recursive
-					return ret;
 				poi.get(i).setVisited(false);
 			}
-			return getNearestPoi(curpos, type, free, visited);
+			return getNearestPoi(curpos, type, free, visited, true);
 		}
 		return ret;
 	}
@@ -171,5 +168,7 @@ public class IPoIs {
 		return count;
 
 	}
-
+	public IPoI getNearestPoi(AIFloat3 curpos, int type, boolean free, boolean visited) {
+		return getNearestPoi( curpos,  type,  free,  visited, false);
+	}
 }

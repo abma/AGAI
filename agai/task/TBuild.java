@@ -19,7 +19,6 @@ package agai.task;
 import agai.AGAI;
 import agai.info.IResource;
 import agai.info.ISector;
-import agai.manager.MBuild;
 import agai.manager.Manager;
 import agai.unit.AGUnit;
 
@@ -69,25 +68,7 @@ public class TBuild extends Task {
 		this.tasktoassign = tasktoassign;
 		solved = false;
 	}
-	private void build(AGUnit unit){
-		if (pos==null){ //task has no buildpos, assign one!
-			pos=unit.getPos();
-			if (unitdef.getSpeed()<=0) //unit to build can move itself, ignore position
-				pos=unit.canBuildAt(pos , unitdef, this.radius, this.mindistance);
-			if (pos==null)//empty buildpos
-				pos=new AIFloat3();
-		}
-		ISector target=ai.getInfos().getSectors().getSector(pos);
-		if (!ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)){
-			unit.setTask(new TSecureMove(ai, null, this, target));
-		}else
-			unit.buildUnit(unitdef, pos, AGAI.defaultFacing);
-	}
-	@Override
-	public void assign(AGUnit unit) {
-		ai.msg("");
-		build(unit);
-	}
+
 	public int getMinDistance() {
 		return this.mindistance;
 	}
@@ -187,17 +168,22 @@ public class TBuild extends Task {
 		ai.msg("");
 	}
 
-	@Override
-	public boolean canBeDone(AGUnit unit) {
-		Manager m=ai.getManagers().get(MBuild.class);
-		return m.canSolve(this, unit);
-	}
-	@Override
-	public void unitIdle(AGUnit unit){
-		ai.msg("");
-		build(unit);
-	}
 	public IResource getPrice(){
 		return ai.getUnits().getPrice(unitdef);
+	}
+	@Override
+	public void execute(AGUnit unit) {
+		if (pos==null){ //task has no buildpos, assign one!
+			pos=unit.getPos();
+			if (unitdef.getSpeed()<=0) //unit to build can move itself, ignore position
+				pos=unit.canBuildAt(pos , unitdef, this.radius, this.mindistance);
+			if (pos==null)//empty buildpos
+				pos=new AIFloat3();
+		}
+		ISector target=ai.getInfos().getSectors().getSector(pos);
+		if (!ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)){
+			unit.setTask(new TSecureMove(ai, null, this, target));
+		}else
+			unit.buildUnit(unitdef, pos, AGAI.defaultFacing);
 	}
 }
