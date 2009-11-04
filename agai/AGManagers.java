@@ -120,4 +120,10 @@ public class AGManagers {
 		}
 		return false;
 	}
+
+	public void check() {
+		for (int i=0; i<list.size(); i++){
+			list.get(i).check();
+		}
+	}
 }

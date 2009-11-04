@@ -221,13 +221,14 @@ public class AGUnits {
 			if ((u==null)||(u.getDef()==null)){//should not happen!
 				ai.msg("Error, unit was in unitlist, but seems to be dead!");
 				units.remove(i);
-			}
-			List<UnitDef> buildOptions = u.getDef().getBuildOptions();
-			int j;
-			for (j = 0; j < buildOptions.size(); j++) {
-				if (buildOptions.get(j).getUnitDefId() == type.getUnitDefId()) {
-					ai.msg("Builder found to build " + type.getName());
-					return units.get(i);
+			}else{
+				List<UnitDef> buildOptions = u.getDef().getBuildOptions();
+				int j;
+				for (j = 0; j < buildOptions.size(); j++) {
+					if (buildOptions.get(j).getUnitDefId() == type.getUnitDefId()) {
+						ai.msg("Builder found to build " + type.getName());
+						return units.get(i);
+					}
 				}
 			}
 		}

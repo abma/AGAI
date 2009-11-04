@@ -26,7 +26,6 @@ import agai.info.IPoI;
 import agai.info.IResource;
 import agai.info.ISearchUnitResource;
 import agai.task.TBuild;
-import agai.task.TProduce;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
@@ -109,9 +108,8 @@ public class MResource extends Manager {
 		}
 	}
 
-	private TBuild tryTobuild(Resource resource) {
+	private TBuild tryTobuild(AGUnit builder, Resource resource) {
 		UnitDef unit = null;
-		AGUnit builder = null;
 		IPoI poi = null;
 		AIFloat3 pos = null;
 		int min = AGAI.minDistance;
@@ -121,8 +119,7 @@ public class MResource extends Manager {
 												// best to the worst.. skip when
 												// unit can be built and enough
 												// resources found
-			builder = ai.getUnits().getBuilder(tmp.get(i).getUnit());
-			if (builder != null) { // unit can be built! :-)
+			if (builder.isAbleToBuilt(tmp.get(i).getUnit())) { // unit can be built! :-)
 				poi = ai.getInfos().getAGP().getNearestFreePoi(
 						builder.getPos(), resource.getResourceId());
 				unit = tmp.get(i).getUnit();
@@ -160,17 +157,14 @@ public class MResource extends Manager {
 				}
 			}
 		}
-		if ((unit != null) && (builder != null)) { // unit with builder found,
-													// build it!
-			if (!builder.isIdle())
-				return null;
+		if (unit != null) { // unit with builder found, build it!
 			if (poi != null) { // build only one time at a spot
 				poi.setBuilt(true);
 			}
 			ai.msg("Creating Task for Unit!");
 			MBuild b=(MBuild) ai.getManagers().get(MBuild.class);
 			TBuild buildtask = new TBuild(ai, b,
-					unit, pos, radius, 2, new TProduce(ai, b));
+					unit, pos, radius, min, null);
 			buildtask.setPoi(poi);
 			return buildtask;
 		} else {
@@ -233,12 +227,12 @@ public class MResource extends Manager {
 	public boolean assignTask(AGUnit unit){
 		Resource r=decide();
 		ai.msg("Building "+r.getName());
-		TBuild task=tryTobuild(r); //FIXME: should check which units the builder can built!
+		TBuild task=tryTobuild(unit, r);
 		if (task!=null){
 			unit.setTask(task);
 			return true;
 		}
-		return false; //this manager doesn't assign directly
+		return false;
 	}
 	@Override
 	public boolean canSolve(AGUnit unit){ 

@@ -160,6 +160,9 @@ public class AGController {
 			case 500:
 				ai.getUnits().employIdle();
 				break;
+			case 700:
+				ai.getManagers().check();
+				break;
 		}
 	}
 

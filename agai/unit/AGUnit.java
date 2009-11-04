@@ -110,7 +110,7 @@ public class AGUnit {
 	 * @return the int
 	 */
 	public int buildUnit(UnitDef type, AIFloat3 pos, int facing) {
-		ai.msg(""+type + pos + facing);
+		ai.msg(""+unit.getDef().getName() +" builds " + type.getName() + pos + facing);
 		AICommand command = new BuildUnitAICommand(unit, -1,
 				new ArrayList<AICommand.Option>(), 10000, type, pos, facing);
 		return ai.handleEngineCommand(command);

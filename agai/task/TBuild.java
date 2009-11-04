@@ -181,10 +181,10 @@ public class TBuild extends Task {
 				pos=new AIFloat3();
 		}
 		ISector target=ai.getInfos().getSectors().getSector(pos);
-		if (!ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)){
-			unit.setTask(new TSecureMove(ai, null, this, target));
-		}else
+		if ((ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)) || (unit.getDef().getSpeed()<=0)){
 			unit.buildUnit(unitdef, pos, AGAI.defaultFacing);
+		}else
+			unit.setTask(new TSecureMove(ai, null, this, target));
+			
 	}
-	
 }

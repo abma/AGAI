@@ -96,5 +96,12 @@ public abstract class Manager {
     			return true;
     	return false;
     }
+	
+	/**
+	 * This function is called regulary to do some checks
+	 */
+	public void check() {
+		ai.msg("");
+	}
 
 }

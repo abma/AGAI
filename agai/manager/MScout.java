@@ -80,7 +80,7 @@ public class MScout extends Manager {
 	}
 
 	@Override
-	public void setResToUse(final IResource res, int timetonextchange) {
+	public void setResToUse(IResource res, int timetonextchange) {
 		resToUse.setFrom(res);
 		ai.msg(""+res);
 		int i=0;
@@ -106,5 +106,4 @@ public class MScout extends Manager {
 		m.incResToUse(resToUse);
 		resToUse.zero();
 	}
-
 }

@@ -47,6 +47,10 @@ public abstract class Task implements Comparable<Object> {
 	/** The priority. */
 	private int priority = 0;
 
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
 	/** The time in frames the task is repeated, <=0 means no repeat. */
 	private int repeat;
 

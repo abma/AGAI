@@ -42,23 +42,16 @@ public class MExpensiveBuild extends Manager{
 	public boolean assignTask(AGUnit unit){
 		Collections.sort(buildtasks);
 		for(int i=0; i<buildtasks.size(); i++){
-			AGUnit builder = ai.getUnits().getBuilder(buildtasks.get(i).getUnitDef());
-			if (builder!=null){
-				if (resToUse.lessOrEqual(buildtasks.get(i).getPrice(), builder.getBuildSpeed())){
+			TBuild t=buildtasks.get(i);
+			if (unit.canBuildAt(t.getPos(), t.getUnitDef(), t.getRadius(), t.getMinDistance())!=null){
+				if (resToUse.lessOrEqual(buildtasks.get(i).getPrice(), unit.getBuildSpeed())){
 					ai.msg("");
 					resToUse.sub(buildtasks.get(i).getPrice());
-					unit.setTask(buildtasks.remove(i));
+					unit.setTask(buildtasks.get(i));
+					buildtasks.get(i).setPriority(-1); //set lowest priority, because it will be built!
 					return true;
 				}else
 					ai.msg("To few resources to build "+buildtasks.get(i).getUnitDef().getName());
-			}else{ //solve dependencies!
-				ai.msg("Found no builder to build, adding dependencies to list "+ buildtasks.get(i).getUnitDef().getName());
-				List<UnitDef> units = ai.getInfos().getAGB().getBuildPath(buildtasks.get(i).getUnitDef());
-				if (units!=null){
-					for(int j=0; j<units.size(); j++){
-						add(units.get(j));
-					}
-				}
 			}
 		}
 		//assign all unused resources to new resources
@@ -71,6 +64,21 @@ public class MExpensiveBuild extends Manager{
 		if (unit.getDef().getBuildOptions().size()<=0)
 			return false;
 		return true;
+	}
+	
+	@Override
+	public void check(){
+		ai.msg("");
+		for (int i=0; i<buildtasks.size(); i++)
+		if (ai.getInfos().getAGB().getBuilder(buildtasks.get(i).getUnitDef())==null){//solve dependencies!
+			ai.msg("Found no builder to build, adding dependencies to list "+ buildtasks.get(i).getUnitDef().getName());
+			List<UnitDef> units = ai.getInfos().getAGB().getBuildPath(buildtasks.get(i).getUnitDef());
+			if (units!=null){
+				for(int j=0; j<units.size(); j++){
+					add(units.get(j));
+				}
+			}
+		}
 	}
 
 }
