@@ -87,8 +87,7 @@ public class TSecureMove extends Task {
 				ai.msg("Time left: "+ai.getInfos().getTime().getMoveTime(unit, path));
 				unit.moveTo(path.remove(0).getPos());
 			}else{
-				ai.msg("can't move to pos"+unit);
-				ai.drawPoint(destination.getPos(), "cant' move here "+unit.getDef().getName());
+				ai.msg("move to pos, but unit isn't in sec?"+unit);
 			}
 		}
 	}

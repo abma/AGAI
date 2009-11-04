@@ -605,6 +605,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		if (builder != null) {
 			AGUnit b = units.getUnit(builder);
 			if (b != null) {
+				u.setBuilder(b);
 				Task t = b.getTask();
 				if (t != null) {
 					t.unitCreated(b, u);

@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.UnitDef;
 
 public class MExpensiveBuild extends Manager{
@@ -43,11 +44,13 @@ public class MExpensiveBuild extends Manager{
 		Collections.sort(buildtasks);
 		for(int i=0; i<buildtasks.size(); i++){
 			TBuild t=buildtasks.get(i);
-			if (unit.canBuildAt(t.getPos(), t.getUnitDef(), t.getRadius(), t.getMinDistance())!=null){
+			AIFloat3 pos=unit.getBuildPos(t.getPos(), t.getUnitDef(), t.getRadius(), t.getMinDistance());
+			if (pos!=null){
 				if (resToUse.lessOrEqual(buildtasks.get(i).getPrice(), unit.getBuildSpeed())){
 					ai.msg("");
-					resToUse.sub(buildtasks.get(i).getPrice());
-					unit.setTask(buildtasks.get(i));
+					t.setPos(pos);
+					resToUse.sub(t.getPrice());
+					unit.setTask(t);
 					buildtasks.get(i).setPriority(-1); //set lowest priority, because it will be built!
 					return true;
 				}else

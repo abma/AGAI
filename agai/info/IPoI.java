@@ -16,15 +16,18 @@
  */
 package agai.info;
 
+import java.util.List;
+
+import agai.AGAI;
+
 import com.springrts.ai.AIFloat3;
+import com.springrts.ai.oo.Resource;
+import com.springrts.ai.oo.Unit;
 
 /**
  * The Class PoIMap.
  */
 public class IPoI { // Point of Interest
-	/** The built. */
-	private boolean built;
-
 	/** The pos. */
 	private AIFloat3 pos;
 
@@ -34,6 +37,8 @@ public class IPoI { // Point of Interest
 	/** The visited. */
 	private boolean visited;
 
+	private AGAI ai;
+
 	/**
 	 * Instantiates a new po i map.
 	 * 
@@ -42,10 +47,10 @@ public class IPoI { // Point of Interest
 	 * @param type
 	 *            the type
 	 */
-	IPoI(AIFloat3 pos, int type) {
+	IPoI(AGAI ai, AIFloat3 pos, int type) {
 		this.pos = pos;
 		this.type = type;
-		built = false;
+		this.ai=ai;
 		visited = false;
 	}
 
@@ -73,7 +78,19 @@ public class IPoI { // Point of Interest
 	 * @return true, if is built
 	 */
 	public boolean isBuilt() {
-		return built;
+		Resource res = ai.getClb().getResources().get(type);
+		float radius;
+		if (res!=null)
+			radius=ai.getClb().getMap().getExtractorRadius(res);
+		else
+			radius=ai.getInfos().getSectors().getSectorSize();
+		List<Unit> units = ai.getClb().getFriendlyUnitsIn(pos, radius);
+		for(int j=0; j<units.size(); j++){
+			if (units.get(j).getDef().getExtractsResource(res)>0){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -84,16 +101,6 @@ public class IPoI { // Point of Interest
 	 */
 	public boolean isVisited() {
 		return visited;
-	}
-
-	/**
-	 * Sets the built.
-	 * 
-	 * @param built
-	 *            the new built
-	 */
-	public void setBuilt(boolean built) {
-		this.built = built;
 	}
 
 	/**

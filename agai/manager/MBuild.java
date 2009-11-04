@@ -48,7 +48,7 @@ public class MBuild extends Manager {
 	public boolean assignTask(AGUnit unit){
 		if (buildtasks.size()>0){
 			for (int i=0; i<buildtasks.size(); i++){
-				if (unit.canBuildAt(buildtasks.get(i).getPos(), buildtasks.get(i).getUnitDef(), buildtasks.get(i).getRadius(), buildtasks.get(i).getMinDistance())!=null){
+				if (unit.getBuildPos(buildtasks.get(i).getPos(), buildtasks.get(i).getUnitDef(), buildtasks.get(i).getRadius(), buildtasks.get(i).getMinDistance())!=null){
 					unit.setTask(buildtasks.remove(i));
 					return true;
 				}

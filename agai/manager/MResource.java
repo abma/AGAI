@@ -32,7 +32,6 @@ import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Feature;
 import com.springrts.ai.oo.Map;
 import com.springrts.ai.oo.Resource;
-import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
 /**
@@ -96,22 +95,8 @@ public class MResource extends Manager {
 		ai.msg("initializeSpots Function " + ai);
 		List<AIFloat3> spots = map.getResourceMapSpotsPositions(res);
 		for (int i = 0; i < spots.size(); i++) {
-			spots.get(i).y = map.getElevationAt(spots.get(i).x, spots.get(i).z); // FIXME
-																					// this
-																					// is
-																					// a
-																					// engine
-																					// -
-																					// bug
-																					// workaround
-			IPoI poi=ai.getInfos().getAGP().add(spots.get(i), res.getResourceId()); //now check if units are already existing extractors
-			List<Unit> units = ai.getClb().getFriendlyUnitsIn(spots.get(i), ai.getClb().getMap().getExtractorRadius(res));
-			for(int j=0; j<units.size(); j++){
-				if (units.get(j).getDef().getExtractsResource(res)>0){
-					poi.setVisited(true);
-					ai.drawPoint(poi.getPos(), "already resource extractor here!");
-				}
-			}
+			spots.get(i).y = map.getElevationAt(spots.get(i).x, spots.get(i).z);
+			ai.getInfos().getAGP().add(spots.get(i), res.getResourceId());
 		}
 	}
 
@@ -126,23 +111,22 @@ public class MResource extends Manager {
 												// best to the worst.. skip when
 												// unit can be built and enough
 												// resources found
-			if (builder.isAbleToBuilt(tmp.get(i).getUnit())) { // unit can be built! :-)
-				poi = ai.getInfos().getAGP().getNearestFreePoi(
-						builder.getPos(), resource.getResourceId());
-				unit = tmp.get(i).getUnit();
-				if ((unit.getExtractsResource(resource) > 0)
-						|| unit.isNeedGeo()) { // unit needs spot to be built
-					if (poi == null) // no point found to build, next building
+			unit = tmp.get(i).getUnit();
+			if (builder.isAbleToBuilt(unit)) { // unit can be built! :-)
+				if ((unit.getExtractsResource(resource) > 0)|| unit.isNeedGeo()) { // unit needs spot to be built
+					poi = ai.getInfos().getAGP().getNearestFreePoi(builder.getPos(), resource.getResourceId());
+					if (poi == null){ // no point found to build, next building
+						ai.msg("No spot found to build " + unit.getName());
 						continue;
+					}
 					pos = poi.getPos();
-					radius = Math.round(ai.getClb().getMap()
-							.getExtractorRadius(resource));
+					radius = Math.round(ai.getClb().getMap().getExtractorRadius(resource));
 					if (unit.isNeedGeo()) {
 						if (radius == 0)
 							radius = AGAI.searchDistance;
 						min = 0; // the only way to build on geo spots (?)
 					}
-					pos = builder.canBuildAt(pos, unit, radius, min);
+					pos = builder.getBuildPos(pos, unit, radius, min);
 					if (pos == null) {
 						ai.msg("Can't build here!");
 						continue;
@@ -152,7 +136,7 @@ public class MResource extends Manager {
 					}
 				} else { // doesn't need spot, build at next point to builder
 					ai.msg("No spot needed");
-					pos = builder.canBuildAt(pos, unit, radius, min);
+					pos = builder.getBuildPos(pos, unit, radius, min);
 					if (pos == null) // can't build, next unit
 						continue;
 					pos = null; // delete pos, because builder could have
@@ -163,11 +147,9 @@ public class MResource extends Manager {
 					break;
 				}
 			}
+			unit=null;
 		}
 		if (unit != null) { // unit with builder found, build it!
-			if (poi != null) { // build only one time at a spot
-				poi.setBuilt(true);
-			}
 			ai.msg("Creating Task for Unit!");
 			MBuild b=(MBuild) ai.getManagers().get(MBuild.class);
 			TBuild buildtask = new TBuild(ai, b,

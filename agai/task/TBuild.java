@@ -131,13 +131,7 @@ public class TBuild extends Task {
 	@Override
 	public String toString() {
 		return "AGTaskBuildUnit " + unitdef.getName() + " "
-				+ unitdef.getHumanName();
-	}
-
-	@Override
-	public void unitCreated(AGUnit builder, AGUnit unit) {
-		ai.msg("Setting LastUnitCreated");
-		unit.setBuilder(builder);
+				+ unitdef.getHumanName() + manager.getClass().getSimpleName();
 	}
 
 	@Override
@@ -176,7 +170,7 @@ public class TBuild extends Task {
 		if (pos==null){ //task has no buildpos, assign one!
 			pos=unit.getPos();
 			if (unitdef.getSpeed()<=0) //unit to build can move itself, ignore position
-				pos=unit.canBuildAt(pos , unitdef, this.radius, this.mindistance);
+				pos=unit.getBuildPos(pos , unitdef, this.radius, this.mindistance);
 			if (pos==null)//empty buildpos
 				pos=new AIFloat3();
 		}

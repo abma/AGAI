@@ -126,7 +126,7 @@ public class AGUnit {
 	 * 
 	 * @return position, if successful, null if can't built there
 	 */
-	public AIFloat3 canBuildAt(AIFloat3 pos, UnitDef tobuilt, int radius, int minDistance) {
+	public AIFloat3 getBuildPos	(AIFloat3 pos, UnitDef tobuilt, int radius, int minDistance) {
 		if (!isAbleToBuilt(tobuilt)){
 			return null;
 		}
