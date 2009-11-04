@@ -106,4 +106,8 @@ public class MScout extends Manager {
 		m.incResToUse(resToUse);
 		resToUse.zero();
 	}
+	@Override
+	public boolean needsResources() {
+		return true;
+	}
 }

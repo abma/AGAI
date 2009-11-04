@@ -104,4 +104,8 @@ public abstract class Manager {
 		ai.msg("");
 	}
 
+	public boolean needsResources() {
+		return false;
+	}
+
 }

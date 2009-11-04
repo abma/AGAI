@@ -83,5 +83,8 @@ public class MExpensiveBuild extends Manager{
 			}
 		}
 	}
-
+	@Override
+	public boolean needsResources() {
+		return true;
+	}
 }

@@ -97,4 +97,8 @@ public class MAttack extends Manager {
 			}
 		return false;
 	}
+	@Override
+	public boolean needsResources() {
+		return true;
+	}
 }

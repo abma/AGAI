@@ -226,5 +226,9 @@ public class MResource extends Manager {
 			return false;
 		return true;
 	}
+	@Override
+	public boolean needsResources() {
+		return true;
+	}
 	
 }

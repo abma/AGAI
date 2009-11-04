@@ -108,9 +108,16 @@ public class AGManagers {
 	}
 	
 	public void update(IResource res, int timetonextchange){
-		res.divide(list.size());
-		for (int i=0; i<list.size(); i++)
-			list.get(i).setResToUse(res, timetonextchange);
+		LinkedList<Manager> ms=new LinkedList<Manager>();
+		for (int i=0; i<list.size(); i++){
+			if (list.get(i).needsResources()){
+				ms.add(list.get(i));
+			}
+		}
+		ai.msg("Good: "+ms.size() + " Managers need resources!");
+		for (int i=0; i<ms.size(); i++){
+			ms.get(i).setResToUse(res, timetonextchange);
+		}
 	}
 
 	public boolean assignTask(AGUnit unit) {
