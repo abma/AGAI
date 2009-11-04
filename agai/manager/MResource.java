@@ -32,6 +32,7 @@ import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Feature;
 import com.springrts.ai.oo.Map;
 import com.springrts.ai.oo.Resource;
+import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
 /**
@@ -103,8 +104,14 @@ public class MResource extends Manager {
 																					// -
 																					// bug
 																					// workaround
-			// ai.drawPoint(spots.get(i),"Pos " + i + res.getName());
-			ai.getInfos().getAGP().add(spots.get(i), res.getResourceId());
+			IPoI poi=ai.getInfos().getAGP().add(spots.get(i), res.getResourceId()); //now check if units are already existing extractors
+			List<Unit> units = ai.getClb().getFriendlyUnitsIn(spots.get(i), ai.getClb().getMap().getExtractorRadius(res));
+			for(int j=0; j<units.size(); j++){
+				if (units.get(j).getDef().getExtractsResource(res)>0){
+					poi.setVisited(true);
+					ai.drawPoint(poi.getPos(), "already resource extractor here!");
+				}
+			}
 		}
 	}
 

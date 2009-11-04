@@ -61,13 +61,15 @@ public class IPoIs {
 	/**
 	 * Adds the Point to the list of PoIs.
 	 * 
-	 * @param pos
-	 *            the pos
-	 * @param type
-	 *            the type
+	 * @param pos the pos
+	 * @param type the type
+	 * 
+	 * @return the i po i
 	 */
-	public void add(AIFloat3 pos, int type) {
-		poi.add(new IPoI(pos, type));
+	public IPoI add(AIFloat3 pos, int type) {
+		IPoI p=new IPoI(pos, type);
+		poi.add(p);
+		return p;
 	}
 
 	/**
