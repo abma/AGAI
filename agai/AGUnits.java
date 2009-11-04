@@ -20,7 +20,6 @@ package agai;
 import java.util.ArrayList;
 import java.util.List;
 
-import agai.info.IBuildTreeUnit;
 import agai.info.IResource;
 import agai.unit.AGUnit;
 
@@ -162,39 +161,6 @@ public class AGUnits {
 					+ units.get(i).toString());
 		}
 
-	}
-
-	/**
-	 * Dump unit defs.
-	 */
-	public void dumpUnitDefs() {
-		List<IBuildTreeUnit> list = ai.getInfos().getAGB().getUnitList();
-		for (int i = 0; i < list.size(); i++) {
-			UnitDef u = list.get(i).getUnit();
-			System.out.print(u.getName());
-			System.out.print("\t" + u.getHumanName());
-
-			System.out.print("\t" + u.getUpkeep(ai.getEnergy()));
-			System.out.print("\t" + u.getUpkeep(ai.getMetal()));
-
-			System.out.print("\t" + u.getCost(ai.getEnergy()));
-			System.out.print("\t" + u.getCost(ai.getMetal()));
-
-			System.out
-					.print("\t" + u.getTidalResourceGenerator(ai.getEnergy()));
-			System.out.print("\t" + u.getTidalResourceGenerator(ai.getMetal()));
-
-			System.out.print("\t" + u.getResourceMake(ai.getEnergy()));
-			System.out.print("\t" + u.getResourceMake(ai.getMetal()));
-
-			System.out.print("\t" + u.getMakesResource(ai.getEnergy()));
-			System.out.print("\t" + u.getMakesResource(ai.getMetal()));
-
-			System.out.print("\t" + u.getWindResourceGenerator(ai.getEnergy()));
-			System.out.print("\t" + u.getWindResourceGenerator(ai.getMetal()));
-
-			System.out.println();
-		}
 	}
 
 	/**

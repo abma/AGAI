@@ -141,6 +141,7 @@ public class AGController {
 	}
 
 	int lastupdate=-1;
+
 	/**
 	 * Update.
 	 * 
@@ -150,17 +151,17 @@ public class AGController {
 	public void update(int frame) {
 		int i=frame % 1000;
 		switch (i){
-			case 0:
+			case 1:
 				ai.msg("");
 				if (lastupdate!=ai.getInfos().getResources().getLastchanged()){
 					ai.getManagers().update(ai.getInfos().getResources().update(), 1000);
 					lastupdate=ai.getInfos().getResources().getLastchanged();
 				}
 				break;
-			case 500:
+			case 60:
 				ai.getUnits().employIdle();
 				break;
-			case 700:
+			case 120:
 				ai.getManagers().check();
 				break;
 		}

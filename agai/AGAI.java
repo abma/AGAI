@@ -430,15 +430,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		resourcecount = res.size(); 
 		metal = res.get(0);
 		energy = res.get(1);
-
 		units = new AGUnits(this);
 		infos = new AGInfos(this);
 		controller = new AGController(this);
 		managers = new AGManagers(this);
-
-
-		msg("");
-		units.employIdle();
 		return 0;
 	}
 
@@ -458,8 +453,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		if (argv.length > 0) {
 			if (argv[0].equalsIgnoreCase("dumpunits")) {
 				units.dump();
-			} else if (argv[0].equalsIgnoreCase("dumpunitdefs")) {
-				units.dumpUnitDefs();
 			} else if (argv[0].equalsIgnoreCase("dumpbuildtree")) {
 				infos.getAGB().dumpUnits();
 			} else if (argv[0].equalsIgnoreCase("dumpmap")) {

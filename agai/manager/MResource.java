@@ -68,10 +68,7 @@ public class MResource extends Manager {
 		for (int i = 0; i < f.size(); i++) { // FIXME: Engine issue, adds
 												// geothermal spots to PoI
 			if (f.get(i).getDef().isGeoThermal()) {
-				ai.getInfos().getAGP().add(f.get(i).getPosition(),
-						ai.getEnergy().getResourceId());
-				// ai.drawPoint(f.get(i).getPosition(),"Pos " + i +
-				// ai.getEnergy().getName());
+				ai.getInfos().getAGP().add(f.get(i).getPosition(),ai.getEnergy().getResourceId());
 			}
 		}
 		for (int i = 0; i < list.size(); i++) {
