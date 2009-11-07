@@ -49,6 +49,7 @@ public abstract class Manager {
 
 	public void setResToUse(IResource res, int timetonextchange) {
 		resToUse.setFrom(res);
+		check();
 	}
 	
 	public void incResToUse(IResource res){
@@ -100,9 +101,7 @@ public abstract class Manager {
 	/**
 	 * This function is called regulary to do some checks
 	 */
-	public void check() {
-		ai.msg("");
-	}
+	public abstract void check();
 
 	public boolean needsResources() {
 		return false;

@@ -42,7 +42,7 @@ public class MExpensiveBuild extends Manager{
 	@Override
 	public boolean assignTask(AGUnit unit){
 		Collections.sort(buildtasks);
-		for(int i=0; i<buildtasks.size(); i++){
+		for(int i=buildtasks.size()-1; i>=0; i--){
 			TBuild t=buildtasks.get(i);
 			AIFloat3 pos=unit.getBuildPos(t.getPos(), t.getUnitDef(), t.getRadius(), t.getMinDistance());
 			if (pos!=null){
@@ -51,7 +51,7 @@ public class MExpensiveBuild extends Manager{
 					t.setPos(pos);
 					resToUse.sub(t.getPrice());
 					unit.setTask(t);
-					buildtasks.get(i).setPriority(-1); //set lowest priority, because it will be built!
+					buildtasks.remove(i);
 					return true;
 				}else
 					ai.msg("To few resources to build "+buildtasks.get(i).getUnitDef().getName());
@@ -72,13 +72,14 @@ public class MExpensiveBuild extends Manager{
 	@Override
 	public void check(){
 		ai.msg("");
-		for (int i=0; i<buildtasks.size(); i++)
-		if (ai.getInfos().getAGB().getBuilder(buildtasks.get(i).getUnitDef())==null){//solve dependencies!
-			ai.msg("Found no builder to build, adding dependencies to list "+ buildtasks.get(i).getUnitDef().getName());
-			List<UnitDef> units = ai.getInfos().getAGB().getBuildPath(buildtasks.get(i).getUnitDef());
-			if (units!=null){
-				for(int j=0; j<units.size(); j++){
-					add(units.get(j));
+		for (int i=0; i<buildtasks.size(); i++){
+			if (ai.getInfos().getAGB().getBuilder(buildtasks.get(i).getUnitDef())==null){//solve dependencies!
+				List<UnitDef> units = ai.getInfos().getAGB().getBuildPath(buildtasks.get(i).getUnitDef());
+				if (units!=null){
+					for(int j=0; j<units.size(); j++){
+						ai.msg("Depend add: "+ units.get(j).getName() + " for " + buildtasks.get(i).getUnitDef().getName());
+						add(units.get(j));
+					}
 				}
 			}
 		}

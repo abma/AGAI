@@ -22,6 +22,7 @@ import java.util.List;
 
 import agai.AGAI;
 import agai.AGInfos;
+import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
 
@@ -99,8 +100,8 @@ public class IPoIs {
 	 * 
 	 * @param curpos position to search the nearest point from
 	 * @param type the type
-	 * @param ignorefree the ignorefree
-	 * @param ignorevisited the ignorevisited
+	 * @param ignorefree return only free?
+	 * @param ignorevisited the only not visited?
 	 * @param recursion the recursion
 	 * 
 	 * @return the nearest poi
@@ -113,7 +114,7 @@ public class IPoIs {
 			ai.msg("No PoI found, list is empty!");
 			return ret;
 		}
-		ai.msg(" "+ type +ignorefree + ignorevisited);
+		ai.msg(" "+ type +" "+ignorefree + ignorevisited);
 		for (int i = 0; i < poi.size(); i++) {
 			if (((type == PoIAny) || (poi.get(i).getType() == type))
 					&& (ignorevisited || !poi.get(i).isVisited())
@@ -125,7 +126,7 @@ public class IPoIs {
 				}
 			}
 		}
-		if ((ignorefree) && (ret == null)) { // all points visited.. start from beginning
+		if ((!ignorefree) && (ret == null)) { // all points visited.. start from beginning
 			if (recursion){
 				return null;
 			}
@@ -133,7 +134,7 @@ public class IPoIs {
 			for (int i = 0; i < poi.size(); i++) {
 				poi.get(i).setVisited(false);
 			}
-			return getNearestPoi(curpos, type, ignorefree, ignorevisited, true);
+			ret=getNearestPoi(curpos, type, ignorefree, ignorevisited, true);
 		}
 		if (ret==null)
 			ai.msg("no poi found");
@@ -170,9 +171,12 @@ public class IPoIs {
 	 * 
 	 * @return the nearest free poi
 	 */
-	public IPoI getNearestFreePoi(AIFloat3 curpos, int type) {
-		return getNearestPoi(curpos, type, false, true);
+	public IPoI getNearestFreeBuildPoi(AIFloat3 curpos, int type) {
+		return getNearestPoi(curpos, type, false, true, false);
 	}
 
+	public IPoI getNearestFreeScoutPoi(AGUnit unit) {
+		return getNearestPoi(unit.getPos(), PoIAny, false, false, false);
+	}
 
 }

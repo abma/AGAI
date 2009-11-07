@@ -426,14 +426,11 @@ public class AGUnits {
 		return type == type1;
 	}
 
-	private IResource price=null;
 	public IResource getPrice(UnitDef unit){
-		if (price==null){
-			price=new IResource(ai);
-			for (int i=0; i<price.size(); i++){
-				Resource r=ai.getClb().getResources().get(i);
-				price.setCurrent(i, unit.getCost(r));
-			}
+		IResource price=new IResource(ai);
+		for (int i=0; i<price.size(); i++){
+			Resource r=ai.getClb().getResources().get(i);
+			price.setCurrent(i, unit.getCost(r));
 		}
 		return price;
 	}

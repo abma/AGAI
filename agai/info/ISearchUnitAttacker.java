@@ -8,9 +8,8 @@ public class ISearchUnitAttacker extends IUnitProperty {
 
 	public ISearchUnitAttacker(AGAI ai) {
 		super(ai);
-		properties.add(new IUnitPropertyEvaluatorLosRadius(ai, 0.01f, this));
-		properties.add(new IUnitPropertyEvaluatorSpeed(ai, 0.03f, this));
-		properties.add(new IUnitPropertyEvaluatorPrice(ai, 0.99f, this));
+		properties.add(new IUnitPropertyEvaluatorSpeed(ai, 1, this));
+		properties.add(new IUnitPropertyEvaluatorPrice(ai, 1, this));
 	}
 
 	public int compare(IBuildTreeUnit o1, IBuildTreeUnit o2) {
@@ -33,12 +32,9 @@ public class ISearchUnitAttacker extends IUnitProperty {
 	public boolean isInlist(UnitDef unit) {
 		IBuildTreeUnit tree = ai.getInfos().getAGB().searchNode(unit);
 		if ((tree != null)
-				&& ((tree.getBacklink() == null) || (tree.getBacklink().size() == 0))) // filter
-																						// commander
-																						// out
+				&& ((tree.getBacklink() == null) || (tree.getBacklink().size() == 0))) // filter commander out
 			return false;
-		if (((unit.getSpeed() > 0) && (unit.getLosRadius() > 0) && (ai
-				.getWeaponDamage(unit) > 0))) {
+		if (((unit.getSpeed() > 0) && (ai.getWeaponDamage(unit) > 0))) {
 			return true;
 		}
 		return false;

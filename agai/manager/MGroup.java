@@ -77,4 +77,7 @@ public class MGroup extends Manager {
 	public boolean canSolve(AGUnit unit){
 		return true;
 	}
+	@Override
+	public void check(){
+	}
 }

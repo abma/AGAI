@@ -197,15 +197,10 @@ public class IBuildTreeUnit {
 
 	/**
 	 * Sets the plannedunits.
-	 * 
-	 * @param plannedunits
-	 *            the new plannedunits
 	 */
-	public void setPlannedunits(int plannedunits) {
-		if (plannedunits<0)
-			this.plannedunits = 0;
-		else
-			this.plannedunits = plannedunits;
+	public void decPlannedunits() {
+		if (plannedunits>0)
+			plannedunits--;
 	}
 
 	/**
@@ -224,5 +219,9 @@ public class IBuildTreeUnit {
 	}
 	public int getId(){
 		return unit.getUnitDefId();
+	}
+
+	public void incPlannedUnits() {
+		plannedunits++;
 	}
 }

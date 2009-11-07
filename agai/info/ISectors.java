@@ -21,6 +21,7 @@ import java.util.List;
 
 import agai.AGAI;
 import agai.AGInfos;
+import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Unit;
@@ -234,6 +235,12 @@ public class ISectors {
 		}
 		float min = Float.MAX_VALUE;
 		int p = 0;
+		if (pos==null){
+			if (secs.size()>0)
+				return secs.remove();
+			else
+				return null;
+		}
 		for (int i = 0; i < secs.size(); i++) {
 			double diff = secs.get(i).getDistance(pos);
 			if (diff < min) {
@@ -267,7 +274,6 @@ public class ISectors {
 			x=secWidth-1;
 		return map[x][y];
 	}
-
 	public float getSectorSize() {
 		return avgLos;
 	}
@@ -283,13 +289,13 @@ public class ISectors {
 	 * 
 	 * @return the secure path
 	 */
-	public LinkedList<ISector> getSecurePath(ISector from, ISector to, float MaxSlope, float MinWaterDepth, float MaxWaterDepth) {
+	private LinkedList<ISector> getSecurePath(ISector from, ISector to, float MaxSlope, float MinWaterDepth, float MaxWaterDepth) {
 		LinkedList<ISector> queue = new LinkedList<ISector>();
 		mark++;
 		queue.clear();
 		queue.add(from);
 		from.setParent(null);
-		ai.msg(""+MaxSlope+" "+MinWaterDepth+" "+MaxWaterDepth);
+		ai.msg(""+MaxSlope+" "+MinWaterDepth+" "+MaxWaterDepth + " " + -1.0);
 		while (queue.size() > 0) {
 			ISector cur = queue.remove(extractMin(queue));
 			if (cur == to) { // target reached
@@ -322,9 +328,21 @@ public class ISectors {
 		}
 		return null;
 	}
+	public LinkedList<ISector> getSecurePath(ISector from, ISector to, AGUnit unit){
+		float min=unit.getMinWaterDepth();
+		float max=unit.getMaxWaterDepth();
+		float slope=unit.getMaxSlope();
+		if (slope<=0)
+			slope=255;
+		return getSecurePath(from, to, slope, min, max);
+	}
 
 	public boolean isPosInSec(AIFloat3 pos, ISector destination) {
-		return ((destination.getDistance(pos))<=1.5*avgLos);
+		return isPosInSec( pos,  destination,  (float) (1.5*avgLos));
+	}
+
+	public boolean isPosInSec(AIFloat3 pos, ISector destination, float radius) {
+		return ((destination.getDistance(pos))<=radius);
 	}
 
 	public void unitDamaged(Unit unit, Unit attacker, float damage) {
@@ -337,6 +355,35 @@ public class ISectors {
 	public void unitDestroyed(Unit unit) {
 		ISector tmp = getSector(unit.getPos());
 		tmp.setUnitsDied(tmp.getUnitsDied() + 1);
+	}
+
+	/**
+	 * Gets the next secure sector.
+	 *
+	 * @param pos the pos
+	 * @param danger the danger
+	 *
+	 * @return the secure sector
+	 */
+	public ISector getSecureSector(AIFloat3 pos, int danger) {
+		LinkedList<ISector> secs = new LinkedList<ISector>();
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[i].length; j++) {
+				if (map[i][j].getEnemy() <= danger)
+					secs.add(map[i][j]);
+			}
+		}
+		float min = Float.MAX_VALUE;
+		int p = 0;
+		for (int i = 0; i < secs.size(); i++) {
+			double diff = secs.get(i).getDistance(pos);
+			if (diff < min) {
+				p = i;
+			}
+		}
+		if (secs.size() > 0)
+			return secs.get(p);
+		return null;
 	}
 
 }

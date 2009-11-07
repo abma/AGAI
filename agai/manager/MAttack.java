@@ -20,7 +20,6 @@ package agai.manager;
 import agai.AGAI;
 import agai.AGUnits;
 import agai.info.IBuildTreeUnit;
-import agai.info.IResource;
 import agai.info.ISearchUnitAttacker;
 import agai.info.ISector;
 import agai.task.TAttack;
@@ -66,29 +65,6 @@ public class MAttack extends Manager {
 	}
 
 	@Override
-	public void setResToUse(IResource res, int timetonextchange){
-		resToUse.setFrom(res);
-		ISector target = ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0);
-		if (target==null){ //no targets, build scouts
-			ai.msg("Giving all resources to scouts, because no target exists");
-			MScout scout=(MScout) ai.getManagers().get(MScout.class);
-			scout.incResToUse(res);
-			return;
-		}
-		for(int i = 0; i<list.size();i++){
-			IBuildTreeUnit u = list.get(i); 
-			if (u.getCost().lessOrEqual(res, timetonextchange)){
-				if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is avaiable
-					ai.msg("building ");
-					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
-					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TAttack(ai, this, AGUnits.ElementType.unitAny)));
-					return;
-				}
-			}
-		}
-		
-	}
-	@Override
 	public boolean assignTask(AGUnit unit){
 		ISector target = ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0);
 			if (target!=null){
@@ -101,4 +77,32 @@ public class MAttack extends Manager {
 	public boolean needsResources() {
 		return true;
 	}
+	@Override
+	public void check(){
+		ISector target = ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0);
+		if (target==null){ //no targets, build scouts
+			ai.msg("Giving all resources to scouts, because no target exists");
+			MScout scout=(MScout) ai.getManagers().get(MScout.class);
+			scout.incResToUse(resToUse);
+			resToUse.zero();
+			return;
+		}
+		for(int i = 0; i<list.size();i++){
+			IBuildTreeUnit u = list.get(i); 
+			if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is available
+				if (u.getCost().lessOrEqual(resToUse, 1000)){
+					ai.msg("building "+u.getUnit().getName());
+					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
+					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TAttack(ai, this, AGUnits.ElementType.unitAny)));
+					resToUse.sub(u.getCost());
+					return;
+				}else{
+					ai.msg("to few resources to build "+u.getUnit().getName());
+				}
+			}
+		}
+		MResource resource=(MResource) ai.getManagers().get(MResource.class); //add all unneeded resources to resource-manager
+		resource.incResToUse(resToUse);
+	}
+
 }

@@ -147,7 +147,6 @@ public class TBuild extends Task {
 		unit.setTask(tmp);
 		if (tmp != null)
 			tmp.unitFinished(builder, unit); // call unitfinished event
-		setRepeat(0);
 		builder.setTask(null); // mark unit as idle, because unit was built
 		ai.getInfos().UnitCreated(unit);
 	}
@@ -178,7 +177,12 @@ public class TBuild extends Task {
 		if ((ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)) || (unit.getDef().getSpeed()<=0)){
 			unit.buildUnit(unitdef, pos, AGAI.defaultFacing);
 		}else
-			unit.setTask(new TSecureMove(ai, null, this, target));
+			unit.setTask(new TSecureMove(ai, null, this, target, true));
 			
+	}
+	@Override
+	public void assign(AGUnit unit){
+		ai.getInfos().IncPlannedUnit(unitdef);
+		execute(unit);
 	}
 }

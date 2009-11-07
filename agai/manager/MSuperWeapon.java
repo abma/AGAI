@@ -50,5 +50,8 @@ public class MSuperWeapon extends Manager {
 		// TODO Auto-generated method stub
 
 	}
+	@Override
+	public void check(){
+	}
 
 }

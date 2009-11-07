@@ -88,8 +88,6 @@ public class TAttack extends Task {
 		}
 		ISector sec = ai.getInfos().getSectors().getNextEnemyTarget(unit.getPos(),0);
 		if (sec != null) {
-/*			unit.setTask(new TSecureMove(ai, ai.getManagers()
-					.get(MAttack.class), this, sec));*/
 			unit.patrolTo(sec.getPos());
 			ai.msg("attacking at " + sec.getPos().x + " " + sec.getPos().y
 					+ " " + sec.getPos().z);

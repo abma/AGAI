@@ -97,7 +97,7 @@ public class MResource extends Manager {
 		}
 	}
 
-	private TBuild tryTobuild(AGUnit builder, Resource resource) {
+	private TBuild tryTobuild(AGUnit builder, Resource resource, int time) {
 		UnitDef unit = null;
 		IPoI poi = null;
 		AIFloat3 pos = null;
@@ -108,10 +108,10 @@ public class MResource extends Manager {
 												// best to the worst.. skip when
 												// unit can be built and enough
 												// resources found
-			unit = tmp.get(i).getUnit();
-			if (builder.isAbleToBuilt(unit)) { // unit can be built! :-)
+			if (builder.isAbleToBuilt(tmp.get(i).getUnit())) { // unit can be built! :-)
+				unit = tmp.get(i).getUnit();
 				if ((unit.getExtractsResource(resource) > 0)|| unit.isNeedGeo()) { // unit needs spot to be built
-					poi = ai.getInfos().getAGP().getNearestFreePoi(builder.getPos(), resource.getResourceId());
+					poi = ai.getInfos().getAGP().getNearestFreeBuildPoi(builder.getPos(), resource.getResourceId());
 					if (poi == null){ // no point found to build, next building
 						ai.msg("No spot found to build " + unit.getName());
 						continue;
@@ -139,8 +139,7 @@ public class MResource extends Manager {
 					pos = null; // delete pos, because builder could have
 								// already a task and is moving
 				}
-				Resource res = ai.enoughResourcesToBuild(unit, getResToUse());
-				if (res == null) { // no resource is missing, building is ok!
+				if (ai.getUnits().getPrice(unit).lessOrEqual(getResToUse(), time)){
 					break;
 				}
 			}
@@ -149,15 +148,11 @@ public class MResource extends Manager {
 		if (unit != null) { // unit with builder found, build it!
 			ai.msg("Creating Task for Unit!");
 			MBuild b=(MBuild) ai.getManagers().get(MBuild.class);
-			TBuild buildtask = new TBuild(ai, b,
-					unit, pos, radius, min, null);
+			TBuild buildtask = new TBuild(ai, b, unit, pos, radius, min, null);
 			buildtask.setPoi(poi);
 			return buildtask;
 		} else {
-			if (builder == null)
-				ai.msg("No builder found ");
-			if (unit == null)
-				ai.msg("No resource producing unit found");
+			ai.msg("No resource producing unit found for "+builder.getUnit().getDef().getName());
 		}
 		return null;
 	}
@@ -213,7 +208,7 @@ public class MResource extends Manager {
 	public boolean assignTask(AGUnit unit){
 		Resource r=decide();
 		ai.msg("Building "+r.getName());
-		TBuild task=tryTobuild(unit, r);
+		TBuild task=tryTobuild(unit, r, 1000);
 		if (task!=null){
 			unit.setTask(task);
 			return true;
@@ -228,7 +223,10 @@ public class MResource extends Manager {
 	}
 	@Override
 	public boolean needsResources() {
-		return true;
+		return false;
+	}
+	@Override
+	public void check(){
 	}
 	
 }

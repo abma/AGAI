@@ -23,7 +23,6 @@ import com.springrts.ai.oo.UnitDef;
 
 import agai.AGAI;
 import agai.info.IBuildTreeUnit;
-import agai.info.IResource;
 import agai.info.ISearchUnitScout;
 import agai.task.TBuild;
 import agai.task.TScout;
@@ -48,7 +47,7 @@ public class MScout extends Manager {
 		list = ai.getInfos().getSearch().Filter(new ISearchUnitScout(ai));
 		for (int i = 0; i < list.size(); i++) {
 			ai.msg(list.get(i).getUnit().getName() + "\t"
-					+ ai.getUnits().getTotalPrice(list.get(i).getUnit()));
+					+ ai.getUnits().getTotalPrice(list.get(i).getUnit()) + " "+list.get(i).getUnit().getHumanName());
 		}
 	}
 
@@ -80,19 +79,24 @@ public class MScout extends Manager {
 	}
 
 	@Override
-	public void setResToUse(IResource res, int timetonextchange) {
-		resToUse.setFrom(res);
-		ai.msg(""+res);
+	public boolean needsResources() {
+		return true;
+	}
+	@Override
+	public void check(){
+		ai.msg(""+resToUse);
 		int i=0;
 		for(i=0; i<list.size();i++){
 			IBuildTreeUnit u = list.get(i); 
-			if (u.getCost().lessOrEqual(res, timetonextchange)){
-				if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is avaiable
+			if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is avaiable
+				if (u.getCost().lessOrEqual(resToUse, 1000)){
 					ai.msg("building scout");
 					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
 					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TScout(ai, this)));
-					res.sub(u.getCost());
+					resToUse.sub(u.getCost());
 					return;
+				}else{
+					ai.msg("to few resources to built "+u.getUnit().getName());
 				}
 			}
 		}
@@ -105,9 +109,5 @@ public class MScout extends Manager {
 		}
 		m.incResToUse(resToUse);
 		resToUse.zero();
-	}
-	@Override
-	public boolean needsResources() {
-		return true;
 	}
 }

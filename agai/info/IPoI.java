@@ -100,7 +100,7 @@ public class IPoI { // Point of Interest
 	 * @return the visited
 	 */
 	public boolean isVisited() {
-		return visited;
+		return visited || isBuilt();
 	}
 
 	/**
@@ -112,4 +112,12 @@ public class IPoI { // Point of Interest
 	public void setVisited(boolean visited) {
 		this.visited = visited;
 	}
+
+	private ISector sec=null;
+	public ISector getSector(){
+		if (sec==null)
+			sec=ai.getInfos().getSectors().getSector(this.pos);
+		return sec;
+	}
+
 }

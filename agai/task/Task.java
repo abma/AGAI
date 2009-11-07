@@ -32,9 +32,6 @@ import com.springrts.ai.oo.WeaponDef;
  */
 public abstract class Task implements Comparable<Object> {
 	
-	/** The default repeat time. */
-	public static int defaultRepeatTime = 100;
-	
 	/** The ai. */
 	protected AGAI ai;
 
@@ -51,9 +48,6 @@ public abstract class Task implements Comparable<Object> {
 		this.priority = priority;
 	}
 
-	/** The time in frames the task is repeated, <=0 means no repeat. */
-	private int repeat;
-
 	/**
 	 * Instantiates a new task.
 	 * 
@@ -63,7 +57,6 @@ public abstract class Task implements Comparable<Object> {
 	protected Task(AGAI ai, Manager manager) {
 		this.ai = ai;
 		this.manager = manager;
-		this.repeat = defaultRepeatTime;
 	}
 	
 	
@@ -110,15 +103,6 @@ public abstract class Task implements Comparable<Object> {
 	}
 
 	/**
-	 * Gets the repeat.
-	 * 
-	 * @return the repeat
-	 */
-	public int getRepeat() {
-		return repeat;
-	}
-
-	/**
 	 * Inc priority of this task.
 	 */
 	public void incPriority() {
@@ -132,15 +116,6 @@ public abstract class Task implements Comparable<Object> {
 	 */
 	public void setPoi(IPoI poi) {
 		this.poi = poi;
-	}
-
-	/**
-	 * Sets the repeat.
-	 * 
-	 * @param repeat the new repeat
-	 */
-	public void setRepeat(int repeat) {
-		this.repeat = repeat;
 	}
 
 	/**
@@ -176,8 +151,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unitCommandFinished(AGUnit unit) {
-		ai.msg(unit.getDef().getName());
-		execute(unit);
+		ai.msg(unit.getDef().getName() + " "+this.getClass().getSimpleName());
 	}
 
 	/**

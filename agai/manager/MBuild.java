@@ -63,4 +63,7 @@ public class MBuild extends Manager {
 			return false;
 		return true;
 	}
+	@Override
+	public void check(){
+	}
 }

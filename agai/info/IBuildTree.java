@@ -25,6 +25,7 @@ import agai.AGInfos;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.oo.Resource;
+import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
 /**
@@ -142,6 +143,10 @@ public class IBuildTree {
 		unitList = new LinkedList<IBuildTreeUnit>();
 		for (int i=0; i<list.size(); i++){
 			unitList.add(new IBuildTreeUnit(ai, list.get(i)));
+		}
+		List<Unit> units = ai.getClb().getFriendlyUnits();
+		for (int i=0; i<units.size(); i++){
+			this.searchNode(units.get(i).getDef()).incUnitcount();
 		}
 	}
 

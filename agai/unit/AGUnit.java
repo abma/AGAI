@@ -158,9 +158,6 @@ public class AGUnit {
 	 * called if a unit is destroyed.
 	 */
 	public void destroyed() {
-		if (task != null) { // if unit had task, redo the task
-			task.setRepeat(Task.defaultRepeatTime);
-		}
 	}
 
 	public AGUnit getBuilder() {
@@ -332,7 +329,7 @@ public class AGUnit {
 		if (ai.getInfos().getSectors().isPosInSec(pos,from)) //unit is already in sector!
 			return true;
 		ISector to=ai.getInfos().getSectors().getSector(pos);
-		LinkedList<ISector> path = ai.getInfos().getSectors().getSecurePath(from,to, getMaxSlope(), getMinWaterDepth(), getMaxWaterDepth());
+		LinkedList<ISector> path = ai.getInfos().getSectors().getSecurePath(from,to, this);
 		return (path!=null);
 	}
 
@@ -348,6 +345,23 @@ public class AGUnit {
 		AICommand command = new PatrolUnitAICommand(unit, -1,
 				new ArrayList<AICommand.Option>(), 10000, pos);
 		return ai.handleEngineCommand(command);
+	}
+
+	/**
+	 * Gets the lOS.
+	 *
+	 * @return the lOS
+	 */
+	public float getLOS() {
+		float ret, tmp;
+		ret=unit.getDef().getLosRadius();
+		tmp=unit.getDef().getRadarRadius();
+		if (tmp>ret)
+			ret=tmp;
+		tmp=unit.getDef().getSonarRadius();
+		if (tmp>ret)
+			ret=tmp;
+		return ret;
 	}
 	
 }

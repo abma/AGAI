@@ -157,8 +157,8 @@ public class IResource{
 	 * 
 	 * @return the float
 	 */
-	public float get(int type, int resource){
-		return res[type][resource];
+	public float get(int resource, int type){
+		return res[resource][type];
 	}
 
 	/**
@@ -256,11 +256,15 @@ public class IResource{
 	 */
 	public boolean lessOrEqual(IResource resource, int time) {
 		for (int i=0; i<resources.size(); i++){
-			if (getTotal(i, time)<resource.getTotal(i, time)){
-				ai.msg("" +resources.get(i).getName()+" is missing: " + (getTotal(i, time)-resource.getTotal(i, time)));
+			float r1, r2;
+			r1=getTotal(i, time);
+			r2=resource.getTotal(i, time);
+			if (r1<r2){
+				ai.msg("" +resources.get(i).getName()+" is missing: " + (r1-r2));
 				return false;
 			}
 		}
+		ai.msg("Enough resources!");
 		return true;
 	}
 	

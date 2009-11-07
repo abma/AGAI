@@ -35,19 +35,21 @@ public class TSecureMove extends Task {
 	private ISector destination;
 	private List<ISector> path;
 	private Task taskWhenReached;
+	private boolean retreat;
 
-	public TSecureMove(AGAI ai, Manager manager, Task taskWhenReached,
-			ISector destination) {
+	public TSecureMove(AGAI ai, Manager manager, Task taskWhenReached, ISector destination, boolean retreat) {
 		super(ai, manager);
 		this.taskWhenReached = taskWhenReached;
 		this.destination = destination;
+		this.retreat=retreat;
 	}
 
 	@Override
 	public void assign(AGUnit unit) {
 		ai.msg("");
 		ISector cursec = ai.getInfos().getSectors().getSector(unit.getPos());
-		path = ai.getInfos().getSectors().getSecurePath(cursec, destination, unit.getMaxSlope(), unit.getMinWaterDepth(), unit.getMaxWaterDepth());
+		path = ai.getInfos().getSectors().getSecurePath(cursec, destination, unit);
+		execute(unit);
 	}
 
 	@Override
@@ -56,20 +58,25 @@ public class TSecureMove extends Task {
 	}
 
 	@Override
-	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction,
-			WeaponDef weaponDef, boolean paralyzer) {
-		ai.msg("");
-		setRepeat(0);
+	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction,WeaponDef weaponDef, boolean paralyzer) {
+		ai.msg(""+unit);
+		if (retreat==true){
+			ISector sec=ai.getInfos().getSectors().getSecureSector(unit.getPos(), 0);
+			if (destination.getDanger()<=0){ //unit is already retreating
+				return;
+			}
+			destination=sec;
+			unit.moveTo(destination.getPos());
+		}
 		unit.setTask(taskWhenReached);
-		unit.setIdle();
+		taskWhenReached.unitDamaged(unit, damage, direction, weaponDef, paralyzer);
 	}
 
 	@Override
 	public void unitEnemyDamaged(AGUnit u, Unit enemy) {
 		ai.msg("");
-		setRepeat(0);
 		u.setTask(taskWhenReached);
-		u.setIdle();
+		this.taskWhenReached.unitEnemyDamaged(u, enemy);
 	}
 
 	@Override
@@ -87,8 +94,15 @@ public class TSecureMove extends Task {
 				ai.msg("Time left: "+ai.getInfos().getTime().getMoveTime(unit, path));
 				unit.moveTo(path.remove(0).getPos());
 			}else{
-				ai.msg("move to pos, but unit isn't in sec?"+unit);
+				ai.msg("move to pos, but unit isn't in sec? "+unit);
 			}
 		}
+	}
+	@Override
+	public String toString(){
+		String res = "SecureMove ";
+		if (taskWhenReached!=null)
+			res=res+ taskWhenReached.toString();
+		return res;
 	}
 }

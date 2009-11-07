@@ -48,7 +48,6 @@ public class AGInfos {
 	private ISectors sectors;
 
 	private ITime time;
-	private AGAI ai;
 
 	public ISectors getSectors() {
 		return sectors;
@@ -71,7 +70,6 @@ public class AGInfos {
 		this.sectors = new ISectors(ai, this);
 		this.resources = new IResources(ai);
 		this.time = new ITime(ai);
-		this.ai=ai;
 	}
 
 	public ITime getTime() {
@@ -117,24 +115,19 @@ public class AGInfos {
 
 	public void UnitCreated(AGUnit u) {
 		IBuildTreeUnit info =  aGB.searchNode(u.getDef());
-		if (info==null){ //rebuild graph because we have a unit that isn't in the buildgraph!
-			ai.msg("Got unit not in buildgraph! Rebulding it...");
-			aGB.updateGraph();
-			info = aGB.searchNode(u.getDef());
-		}
 		info.incUnitcount();
-		info.setPlannedunits(info.getPlannedunits()-1);
 		resources.UnitCreated(u);
 	}
 	
 	public void UnitDestroyed(AGUnit u){
-		aGB.searchNode(u.getDef()).decUnitCount();
+		IBuildTreeUnit info =  aGB.searchNode(u.getDef());
+		info.decUnitCount();
 		resources.UnitDestroyed(u);
 	}
 
 	public void IncPlannedUnit(UnitDef unitDef) {
 		IBuildTreeUnit info = aGB.searchNode(unitDef);
-		info.setPlannedunits(info.getPlannedunits()+1);
+		info.incPlannedUnits();
 	}
 
 }

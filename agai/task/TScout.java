@@ -18,8 +18,6 @@ package agai.task;
 
 import agai.AGAI;
 import agai.info.IPoI;
-import agai.info.IPoIs;
-import agai.info.ISector;
 import agai.manager.MScout;
 import agai.manager.Manager;
 import agai.unit.AGUnit;
@@ -31,44 +29,68 @@ public class TScout extends Task {
 
 	@Override
 	public void assign(AGUnit unit) {
+		ai.msg("");
 		((MScout) ai.getManagers().get(MScout.class)).incScouts();
 		execute(unit);
 	}
 
 	@Override
 	public String toString() {
-		return "";
+		return "TScout";
 	}
 
 	@Override
 	public void unassign(AGUnit unit) {
+		ai.msg("");
 		((MScout) ai.getManagers().get(MScout.class)).decScouts();
 	}
 
 	@Override
 	public void unitCommandFinished(AGUnit unit) {
+		ai.msg("");
 		execute(unit);
 	}
 
 	@Override
 	public void unitDestroyed(AGUnit unit) {
 		ai.msg("");
-		setRepeat(0);
+		unassign(unit);
 	}
+	private IPoI destination=null;
+
 	@Override
 	public void execute(AGUnit unit) {
-		IPoI p = ai.getInfos().getAGP().getNearestPoi(unit.getPos(),
-				IPoIs.PoIAny, true, true);
-		if (p == null) {
+		if (destination==null){
+			ai.msg("");
+			destination = ai.getInfos().getAGP().getNearestFreeScoutPoi(unit);
+			destination.setVisited(true);
+		}
+		if (ai.getInfos().getSectors().isPosInSec(unit.getPos(), destination.getSector())){ //unit is in sec, new destination!
+			ai.msg("");
+			destination.setVisited(true);
+			destination = ai.getInfos().getAGP().getNearestFreeScoutPoi(unit);
+		}
+
+/*		List<Unit> units = ai.getClb().getEnemyUnitsIn(unit.getPos(), unit.getLOS());
+		if (units.size()>=0){ //enemy units in LOS, move to secure pos
+			ai.msg("");
+			for (int i=0; i<units.size(); i++){
+				ai.getInfos().getSectors().addDanger(units.get(i));
+			}
+			ISector sec=ai.getInfos().getSectors().getSecureSector(unit.getPos(), 0);
+			unit.moveTo(sec.getPos());
+			return;
+		}*/
+		if (destination == null) {
 			ai.msg("No point to scout found!");
 			return;
 		}
-		if (unit.canMoveTo(p.getPos())){
-			ISector destination=ai.getInfos().getSectors().getSector(p.getPos());
-			unit.setTask(new TSecureMove(ai, null, this, destination));
-			p.setVisited(true);
+		if (unit.canMoveTo(destination.getPos())){
+			ai.msg("moving to "+destination.getPos());
+			unit.setTask(new TSecureMove(ai, null, this, destination.getSector(), true));
 		}else{
 			ai.msg("Unit can't move to PoI");
+			ai.drawPoint(destination.getPos(), "");
 		}
 	}
 

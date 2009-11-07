@@ -21,6 +21,7 @@ import java.util.List;
 
 import agai.info.IResource;
 import agai.loader.IAGAI;
+import agai.task.TScout;
 import agai.task.Task;
 import agai.unit.AGUnit;
 
@@ -393,7 +394,8 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		List<WeaponMount> w = unit.getWeaponMounts();
 		float ret = 0;
 		for (int i = 0; i < w.size(); i++) {
-			ret = ret + w.get(i).getWeaponDef().getDamage().getImpulseBoost();
+			if (!w.get(i).getWeaponDef().isNoAutoTarget()) //filter anti-nuke...
+				ret = ret + w.get(i).getWeaponDef().getDamage().getTypes().get(i);
 		}
 		return ret;
 	}
@@ -460,7 +462,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			} else if (argv[0].equalsIgnoreCase("clear")) {
 				clear();
 			} else if (argv[0].equalsIgnoreCase("dumpgraph")) {
-				infos.getAGB().dumpGraph();
+				msg(infos.getAGB().toString());
+			}else if (argv[0].equalsIgnoreCase("test")) {
+				new TScout(this, null).execute(units.getUnits().get(0));
 			}
 		}
 		return 0;
