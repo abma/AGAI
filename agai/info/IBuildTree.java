@@ -17,6 +17,9 @@
 
 package agai.info;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,7 +46,7 @@ public class IBuildTree {
 	private List<Resource> ress;
 
 	/** The unit list. */
-	private LinkedList<IBuildTreeUnit> unitList;
+	private HashMap<Integer, IBuildTreeUnit> unitList;
 
 	/**
 	 * Instantiates a new aG build tree.
@@ -126,8 +129,9 @@ public class IBuildTree {
 	 */
 	private void generateGraph() {
 		ai.msg("Initializing Build Graph....");
-		for (int i=0; i<unitList.size(); i++){
-			IBuildTreeUnit cur = unitList.get(i);
+		Iterator<IBuildTreeUnit> it = unitList.values().iterator();
+		while (it.hasNext()){
+			IBuildTreeUnit cur = it.next();
 			List<UnitDef> buildopts = cur.getUnit().getBuildOptions();
 			for (int j=0; j<buildopts.size(); j++){
 				linkNode(buildopts.get(j), cur.getUnit());
@@ -140,9 +144,9 @@ public class IBuildTree {
 	 * @param list 
 	 */
 	private void generateList(List<UnitDef> list) {
-		unitList = new LinkedList<IBuildTreeUnit>();
+		unitList = new HashMap<Integer, IBuildTreeUnit>();
 		for (int i=0; i<list.size(); i++){
-			unitList.add(new IBuildTreeUnit(ai, list.get(i)));
+			unitList.put(list.get(i).getUnitDefId(), new IBuildTreeUnit(ai, list.get(i)));
 		}
 		List<Unit> units = ai.getClb().getFriendlyUnits();
 		for (int i=0; i<units.size(); i++){
@@ -222,8 +226,8 @@ public class IBuildTree {
 	 * 
 	 * @return the unit list
 	 */
-	public LinkedList<IBuildTreeUnit> getUnitList() {
-		return unitList;
+	public Collection<IBuildTreeUnit> getUnitList() {
+		return unitList.values();
 	}
 
 	/**
@@ -269,11 +273,7 @@ public class IBuildTree {
 	public IBuildTreeUnit searchNode(UnitDef node) {
 		if (node==null)
 			return null;
-		for (int i=0; i<unitList.size(); i++){
-			if (unitList.get(i).getUnit().getUnitDefId()==node.getUnitDefId())
-				return unitList.get(i);
-		}
-		return null;
+		return unitList.get(node.getUnitDefId());
 	}
 
 	/**
@@ -300,8 +300,9 @@ public class IBuildTree {
 	 */
 	public LinkedList <UnitDef>getAllBuilders(UnitDef u){
 		LinkedList<UnitDef> res=new LinkedList<UnitDef>();
-		for (int i=0; i<unitList.size(); i++){
-			IBuildTreeUnit tmp=searchNode(unitList.get(i), u);
+		Iterator<IBuildTreeUnit> it = unitList.values().iterator();
+		while (it.hasNext()){
+			IBuildTreeUnit tmp=searchNode(it.next(), u);
 			if (tmp!=null)
 				for (int j=0; j<tmp.getBacklink().size(); j++){
 					res.add(tmp.getBacklink().get(j).getUnit());

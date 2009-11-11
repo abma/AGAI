@@ -114,7 +114,7 @@ public class AGManagers {
 				ms.add(list.get(i));
 			}
 		}
-		ai.msg("Good: "+ms.size() + " Managers need resources!");
+		ai.msg("Good: "+ms.size() + " Managers need resources:" + res);
 		for (int i=0; i<ms.size(); i++){
 			ms.get(i).setResToUse(res, timetonextchange);
 		}

@@ -1,6 +1,7 @@
 package agai.info;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 import agai.AGAI;
 
@@ -86,10 +87,12 @@ abstract class IUnitPropertyEvaluator {
 	}
 
 	private void updateAverageValue() {
-		List<IBuildTreeUnit> list = ai.getInfos().getAGB().getUnitList();
+		Collection<IBuildTreeUnit> list = ai.getInfos().getAGB().getUnitList();
 		float tmp = 0;
-		for (int i = 0; i < list.size(); i++) {
-			tmp = tmp + getValue(list.get(i).getUnit());
+		Iterator<IBuildTreeUnit> it = list.iterator();
+		while(it.hasNext()){
+			IBuildTreeUnit u = it.next();
+			tmp = tmp + getValue(u.getUnit());
 		}
 		this.average = tmp / list.size();
 	}
@@ -101,9 +104,11 @@ abstract class IUnitPropertyEvaluator {
 	 *            the unit
 	 */
 	private void updateMinMax() {
-		List<IBuildTreeUnit> list = ai.getInfos().getAGB().getUnitList();
-		for (int i = 0; i < list.size(); i++) {
-			float tmp = getValue(list.get(i).getUnit());
+		Collection<IBuildTreeUnit> list = ai.getInfos().getAGB().getUnitList();
+		Iterator<IBuildTreeUnit> it = list.iterator();
+		while(it.hasNext()){
+			IBuildTreeUnit u = it.next();
+			float tmp = getValue(u.getUnit());
 			if (tmp > max)
 				max = tmp;
 			else if (tmp < min)

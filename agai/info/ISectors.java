@@ -16,6 +16,8 @@
  */
 package agai.info;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,10 +64,12 @@ public class ISectors {
 	public ISectors(AGAI ai, AGInfos infos) {
 		this.ai = ai;
 		this.mark = 1;
-		LinkedList<IBuildTreeUnit> list = infos.getAGB().getUnitList();
+		Collection<IBuildTreeUnit> list = infos.getAGB().getUnitList();
 		float tmp = 0;
-		for (int i = 0; i < list.size(); i++) {
-			tmp = tmp + list.get(i).getUnit().getLosRadius();
+		Iterator<IBuildTreeUnit> it = list.iterator();
+		while(it.hasNext()){
+			IBuildTreeUnit u = it.next();
+			tmp = tmp + u.getUnit().getLosRadius();
 		}
 		avgLos = Math.round((tmp * 8) / list.size());
 		secWidth = Math.round((ai.getClb().getMap().getWidth() * 8) / avgLos);

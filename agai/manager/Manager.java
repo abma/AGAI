@@ -49,6 +49,7 @@ public abstract class Manager {
 
 	public void setResToUse(IResource res, int timetonextchange) {
 		resToUse.setFrom(res);
+		ai.msg("Resources to be used: "+res);
 		check();
 	}
 	

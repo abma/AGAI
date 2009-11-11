@@ -17,7 +17,9 @@
 
 package agai.info;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,15 +54,16 @@ public class ISearchUnit {
 	 * @return the list< ag build tree unit>
 	 */
 	public List<IBuildTreeUnit> Filter(IUnitProperty props) {
-		LinkedList<IBuildTreeUnit> list= ai.getInfos().getAGB().getUnitList();
-		if (props == null)
-			return list;
+		Collection<IBuildTreeUnit> list= ai.getInfos().getAGB().getUnitList();
 		LinkedList<IBuildTreeUnit> res = new LinkedList<IBuildTreeUnit>();
-		for (int i = 0; i < list.size(); i++) {
-			if (props.isInlist(list.get(i).getUnit())) {
-				res.add(list.get(i));
-			}
+		Iterator<IBuildTreeUnit> i = list.iterator();
+		while(i.hasNext()){
+			IBuildTreeUnit unit=i.next();
+			if((props==null) || (props.isInlist(unit.getUnit())))
+				res.add(unit);
 		}
+		if (props == null)
+			return res;
 		props.update();
 		if (res.size() > 0) {
 			if (props.sort()) {

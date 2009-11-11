@@ -52,7 +52,7 @@ public class IBuildTreeUnit {
 	/** The unitcount. */
 	private int unitcount;
 	
-	private IResource cost;
+	private IResource cost=null;
 	private AGAI ai;
 
 	public IResource getCost() {

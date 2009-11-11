@@ -43,7 +43,7 @@ public class MResource extends Manager {
 	 * The list with units to build resource, the first id is the resid, the
 	 * secound for the units sorted by priority to built (best units first)
 	 */
-	protected List<List<IBuildTreeUnit>> list;
+	protected ArrayList<List<IBuildTreeUnit>> list;
 
 	/** The map. */
 	private Map map = null;
@@ -61,8 +61,7 @@ public class MResource extends Manager {
 		list = new ArrayList<List<IBuildTreeUnit>>();
 		for (int i = 0; i < res.size(); i++) {
 			initializeSpots(res.get(i));
-			list.add(i, ai.getInfos().getSearch().Filter(
-					new ISearchUnitResource(ai, res.get(i))));
+			list.add(i, ai.getInfos().getSearch().Filter(new ISearchUnitResource(ai, res.get(i))));
 		}
 		List<Feature> f = ai.getClb().getFeatures();
 		for (int i = 0; i < f.size(); i++) { // FIXME: Engine issue, adds
