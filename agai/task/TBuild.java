@@ -135,8 +135,7 @@ public class TBuild extends Task {
 	}
 
 	@Override
-	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction,
-			WeaponDef weaponDef, boolean paralyzer) {
+	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer) {
 		ai.msg("");
 	}
 
@@ -177,7 +176,7 @@ public class TBuild extends Task {
 		if ((ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)) || (unit.getDef().getSpeed()<=0)){
 			unit.buildUnit(unitdef, pos, AGAI.defaultFacing);
 		}else
-			unit.setTask(new TSecureMove(ai, null, this, target, true));
+			unit.setTask(new TSecureMove(ai, null, this, target, true, unit.getPos()));
 			
 	}
 	@Override

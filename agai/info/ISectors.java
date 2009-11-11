@@ -361,29 +361,31 @@ public class ISectors {
 	 * Gets the next secure sector.
 	 *
 	 * @param pos the pos
-	 * @param danger the danger
+	 * @param maxdanger the danger
+	 * @param minDistance the min distance
 	 *
 	 * @return the secure sector
 	 */
-	public ISector getSecureSector(AIFloat3 pos, int danger) {
-		LinkedList<ISector> secs = new LinkedList<ISector>();
+	public ISector getSecureSector(AIFloat3 pos, int maxdanger, int minDistance) {
+		List<Unit> enemys = ai.getClb().getEnemyUnitsIn(pos, minDistance+1);
+/*		AIFloat3 avgPos;
+		for (int i=0; i<enemys.size(); i++){
+			enemys.get(i).getPos()
+		}
+//TODO
+*/
+
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
-				if (map[i][j].getEnemy() <= danger)
-					secs.add(map[i][j]);
+				if (map[i][j].getDanger() <= maxdanger){
+					double diff = map[i][j].getDistance(pos);
+					if (diff > minDistance) {
+						return map[i][j];
+					}
+				}
 			}
 		}
-		float min = Float.MAX_VALUE;
-		int p = 0;
-		for (int i = 0; i < secs.size(); i++) {
-			double diff = secs.get(i).getDistance(pos);
-			if (diff < min) {
-				p = i;
-			}
-		}
-		if (secs.size() > 0)
-			return secs.get(p);
-		return null;
+		return getSector(ai.getStartpos());
 	}
 
 }

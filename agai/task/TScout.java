@@ -69,6 +69,7 @@ public class TScout extends Task {
 			ai.msg("");
 			destination.setVisited(true);
 			destination = ai.getInfos().getAGP().getNearestFreeScoutPoi(unit);
+			destination.setVisited(true);
 		}
 
 /*		List<Unit> units = ai.getClb().getEnemyUnitsIn(unit.getPos(), unit.getLOS());
@@ -87,7 +88,7 @@ public class TScout extends Task {
 		}
 		if (unit.canMoveTo(destination.getPos())){
 			ai.msg("moving to "+destination.getPos());
-			unit.setTask(new TSecureMove(ai, null, this, destination.getSector(), true));
+			unit.setTask(new TSecureMove(ai, null, this, destination.getSector(), true, unit.getPos()));
 		}else{
 			ai.msg("Unit can't move to PoI");
 			ai.drawPoint(destination.getPos(), "");

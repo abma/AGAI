@@ -36,12 +36,17 @@ public class TSecureMove extends Task {
 	private List<ISector> path;
 	private Task taskWhenReached;
 	private boolean retreat;
+	private boolean retreating;
+	private float minDistance;
+	private AIFloat3 retreatpos;
 
-	public TSecureMove(AGAI ai, Manager manager, Task taskWhenReached, ISector destination, boolean retreat) {
+	public TSecureMove(AGAI ai, Manager manager, Task taskWhenReached, ISector destination, boolean retreat, AIFloat3 retreatpos){
 		super(ai, manager);
 		this.taskWhenReached = taskWhenReached;
 		this.destination = destination;
 		this.retreat=retreat;
+		this.retreating=false;
+		this.retreatpos=retreatpos;
 	}
 
 	@Override
@@ -56,20 +61,32 @@ public class TSecureMove extends Task {
 	public void unitCommandFinished(AGUnit unit) {
 		execute(unit);
 	}
-
+	private void retreat(AGUnit unit){
+		if (!retreat)
+			return;
+		if (retreating==true){
+			ai.msg("unit already retreats!");
+			return;
+		}
+		destination=ai.getInfos().getSectors().getSector(retreatpos);
+		retreating=true;
+		ai.msg("retreating!");
+		ai.drawPoint(retreatpos, "safe area");
+		unit.moveTo(destination.getPos());
+	}
 	@Override
 	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction,WeaponDef weaponDef, boolean paralyzer) {
-		ai.msg(""+unit);
-		if (retreat==true){
-			ISector sec=ai.getInfos().getSectors().getSecureSector(unit.getPos(), 0);
-			if (destination.getDanger()<=0){ //unit is already retreating
-				return;
-			}
-			destination=sec;
-			unit.moveTo(destination.getPos());
-		}
-		unit.setTask(taskWhenReached);
-		taskWhenReached.unitDamaged(unit, damage, direction, weaponDef, paralyzer);
+		ai.msg("");
+		retreat(unit);
+	}
+
+	@Override
+	public void enemyEnterLOS(AGUnit unit, Unit enemy){
+		ai.msg("");
+		float dist=enemy.getDef().getLosRadius();
+		if (dist>minDistance)
+			minDistance=dist;
+		retreat(unit);
 	}
 
 	@Override
@@ -86,6 +103,11 @@ public class TSecureMove extends Task {
 
 	@Override
 	public void execute(AGUnit unit) {
+		if (retreating){
+			unit.setTask(taskWhenReached);
+			taskWhenReached.unitMoveFailed(unit);
+		}
+
 		if (ai.getInfos().getSectors().isPosInSec(unit.getPos(), destination)) {
 			ai.msg("Destination reached, back to the old task!");
 			unit.setTask(taskWhenReached);
