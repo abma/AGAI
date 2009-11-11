@@ -241,7 +241,7 @@ public class IBuildTree {
 	 * @return the aG build tree unit, tmp.parent.parent.parent ... until root
 	 *         contains the build path
 	 */
-	public IBuildTreeUnit searchNode(IBuildTreeUnit root, UnitDef search) {
+	private IBuildTreeUnit searchNode(IBuildTreeUnit root, UnitDef search) {
 		LinkedList<IBuildTreeUnit> queue = new LinkedList<IBuildTreeUnit>();
 		IBuildTreeUnit tmp;
 		queue.add(root);
@@ -276,21 +276,6 @@ public class IBuildTree {
 		return unitList.get(node.getUnitDefId());
 	}
 
-	/**
-	 * Search node.
-	 * 
-	 * @param root
-	 *            the root
-	 * @param unit
-	 *            the unit
-	 * 
-	 * @return the aG build tree unit
-	 */
-	public IBuildTreeUnit searchNode(UnitDef root, UnitDef unit) {
-		return searchNode(searchNode(root), unit);
-	}
-	
-	
 	/**
 	 * Returns all possible (also non-existing) Units that can build the Unit u 
 	 * 
