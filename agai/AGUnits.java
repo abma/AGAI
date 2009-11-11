@@ -18,6 +18,9 @@
 package agai;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import agai.info.IResource;
@@ -86,14 +89,11 @@ public class AGUnits {
 	/** The averageres. */
 	private float averageres = -1;
 
-	/** Gets the unit def. */
-	private List<UnitDef> unitDefs = null;
-
 	/** The units. */
-	private List<AGUnit> units = null;
+	private HashMap<Integer, AGUnit> units = null;
 
-	public List<AGUnit> getUnits() {
-		return units;
+	public Collection<AGUnit> getUnits() {
+		return units.values();
 	}
 
 	/**
@@ -103,8 +103,7 @@ public class AGUnits {
 	 *            the ai
 	 */
 	public AGUnits(AGAI ai) {
-		units = new ArrayList<AGUnit>();
-		unitDefs = ai.getClb().getUnitDefs();
+		units = new HashMap<Integer, AGUnit> ();
 		this.ai = ai;
 		List<Unit> list = ai.getClb().getTeamUnits();
 		for (int i = 0; i < list.size(); i++) {
@@ -126,11 +125,11 @@ public class AGUnits {
 			return null;
 		}
 		AGUnit u=new AGUnit(ai, unit);
-		units.add(u);
+		units.put(unit.hashCode(), u);
 		AGInfos info=ai.getInfos();
 		if (info!=null) //avoid null reference on init
 			info.UnitCreated(u);
-		return units.get(units.size() - 1);
+		return u;
 	}
 
 	/**
@@ -142,63 +141,34 @@ public class AGUnits {
 	 *            the attacker
 	 */
 	public void destroyed(Unit unit, Unit attacker) {
-		for (int i = units.size() - 1; i >= 0; i--)
-			if (units.get(i).getUnit().equals(unit)) {
-				ai.getInfos().UnitDestroyed(units.get(i));
-				units.get(i).destroyed();
-				units.remove(i);
-				return;
-			}
-		ai.msg("Couldn't find unit which was destroyed");
+		AGUnit u=units.get(unit.hashCode());
+		ai.getInfos().UnitDestroyed(u);
+		units.remove(unit.hashCode());
+		if (u==null)
+			ai.msg("Couldn't find unit which was destroyed");
 	}
 
 	/**
 	 * Dump.
 	 */
 	public void dump() {
-		for (int i = 0; i < units.size(); i++) {
-			ai.msg(units.get(i).getUnit().hashCode() + " "
-					+ units.get(i).toString());
+		Iterator<AGUnit> iterator = units.values().iterator();
+		while (iterator.hasNext()){
+			AGUnit u = iterator.next();
+			ai.msg(u.hashCode() + " "+ u.toString());
 		}
-
 	}
 
 	/**
 	 * Employ idle.
 	 */
 	public void employIdle() {
-		for (int i = 0; i < units.size(); i++) {
-			if (units.get(i).isIdle())
-				units.get(i).fetchTask();
+		Iterator<AGUnit> iterator = units.values().iterator();
+		while (iterator.hasNext()){
+			AGUnit u = iterator.next();
+			if (u.isIdle())
+				u.fetchTask();
 		}
-	}
-
-	/**
-	 * Returns a unit who can build the unitdef type.
-	 * 
-	 * @param type
-	 *            the type
-	 * 
-	 * @return the builder
-	 */
-	public AGUnit getBuilder(UnitDef type) { // FIXME: this function is really slow!
-		for (int i = units.size()-1; i>=0; i-- ){ // walk through all units, and check if they can buildtype
-			Unit u=units.get(i).getUnit();
-			if ((u==null)||(u.getDef()==null)){//should not happen!
-				ai.msg("Error, unit was in unitlist, but seems to be dead!");
-				units.remove(i);
-			}else{
-				List<UnitDef> buildOptions = u.getDef().getBuildOptions();
-				int j;
-				for (j = 0; j < buildOptions.size(); j++) {
-					if (buildOptions.get(j).getUnitDefId() == type.getUnitDefId()) {
-						ai.msg("Builder found to build " + type.getName());
-						return units.get(i);
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -226,46 +196,6 @@ public class AGUnits {
 	}
 
 	/**
-	 * Gets the energy production.
-	 * 
-	 * @param unit
-	 *            the unit
-	 * 
-	 * @return the energy production
-	 */
-	public float getEnergyProduction(UnitDef unit) {
-		return unit.getUpkeep(ai.getEnergy()) * -1
-				+ unit.getResourceMake(ai.getEnergy())
-				+ unit.getWindResourceGenerator(ai.getEnergy())
-				+ unit.getTidalResourceGenerator(ai.getEnergy());
-	}
-
-	/**
-	 * returns Unit of type, any idle type if type==null.
-	 * 
-	 * @param type
-	 *            the type
-	 * 
-	 * @return the idle
-	 */
-	public AGUnit getIdle(UnitDef type) {
-		if (type == null) {
-			ai.msg("Null!");
-			return null;
-		}
-		for (int i = 0; i < units.size(); i++) {
-			if (units.get(i).isIdle()) {
-				if (type == null)
-					return units.get(i);
-				else if ((units.get(i).getDef() != null)
-						&& (units.get(i).getDef().equals(type)))
-					return units.get(i);
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Gets the production of a Unit.
 	 * 
 	 * @param unit
@@ -277,8 +207,7 @@ public class AGUnits {
 	 */
 	public float getProduction(UnitDef unit, Resource res) {
 		if (averageres == -1) {
-			List<AIFloat3> list = ai.getClb().getMap()
-					.getResourceMapSpotsPositions(res);
+			List<AIFloat3> list = ai.getClb().getMap().getResourceMapSpotsPositions(res);
 			float sum = 0;
 			for (int i = 0; i < list.size(); i++) {
 				sum = sum + list.get(i).y;
@@ -287,11 +216,8 @@ public class AGUnits {
 				averageres = sum / list.size();
 		}
 		// TODO: calculate energy a unit produces on map
-
-		float wind = Math.min(unit.getWindResourceGenerator(res), ai.getClb()
-				.getMap().getMinWind()); // worst case
-		float tidal = unit.getTidalResourceGenerator(res)
-				* ai.getClb().getMap().getTidalStrength();
+		float wind = Math.min(unit.getWindResourceGenerator(res), ai.getClb().getMap().getMinWind()); // worst case
+		float tidal = unit.getTidalResourceGenerator(res)* ai.getClb().getMap().getTidalStrength();
 		return (unit.getUpkeep(res) * -1) + unit.getResourceMake(res) + wind
 				+ tidal + unit.getMakesResource(res)
 				+ (unit.getExtractsResource(res) * averageres);
@@ -327,10 +253,10 @@ public class AGUnits {
 			ai.msg("Null requested!");
 			return null;
 		}
-		for (int i = 0; i < units.size(); i++)
-			if (units.get(i).getUnit().equals(unit))
-				return units.get(i);
-		return add(unit);
+		AGUnit ret=units.get(unit.hashCode());
+		if (ret==null)
+			ret=add(unit);
+		return ret;
 	}
 
 	/**
@@ -350,26 +276,6 @@ public class AGUnits {
 	}
 
 	/**
-	 * Gets the unit def.
-	 * 
-	 * @param type
-	 *            the type
-	 * 
-	 * @return the unit def
-	 */
-	public UnitDef getUnitDef(String type) {
-		UnitDef bldunit = null;
-		for (UnitDef def : unitDefs)
-			if (def.getName().equals(type)) {
-				bldunit = def;
-				break;
-			}
-		if (bldunit == null)
-			ai.msg("Warning: Couldn't find unit " + type);
-		return bldunit;
-	}
-
-	/**
 	 * Returns all Units of type unit.
 	 * 
 	 * @param type
@@ -379,11 +285,14 @@ public class AGUnits {
 	 */
 	public List<AGUnit> getUnits(UnitDef type) {
 		List<AGUnit> res = new ArrayList<AGUnit>();
-		for (int i = units.size() - 1; i >= 0; i--) {
-			if (units.get(i).getDef() == null) { // FIXME: unit was killed (?)
-				units.remove(i);
-			} else if (units.get(i).getUnit().getDef().equals(type))
-				res.add(units.get(i));
+		Iterator<AGUnit> iterator = units.values().iterator();
+		while (iterator.hasNext()){
+			AGUnit u=iterator.next();
+			if (u.getDef() == null) { // FIXME: unit was killed (?)
+				units.remove(u.hashCode());
+			} else if (u.getUnit().getDef().equals(type)){
+				res.add(u);
+			}
 		}
 		return res;
 	}
