@@ -21,7 +21,6 @@ import java.util.List;
 
 import agai.info.IResource;
 import agai.loader.IAGAI;
-import agai.task.TScout;
 import agai.task.Task;
 import agai.unit.AGUnit;
 
@@ -226,6 +225,18 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	@Override
 	public int enemyEnterLOS(Unit enemy) {
 		infos.getSectors().addDanger(enemy);
+		float radius=1;
+		List<Unit> units;
+		do{
+			units = clb.getFriendlyUnitsIn(enemy.getPos(), radius);
+			radius++;
+		}while (units.size()<=0);
+		for (int i=0; i<units.size(); i++){
+			AGUnit u=this.units.getUnit(units.get(i));
+			Task t=u.getTask();
+			if (t!=null)
+				t.enemyEnterLOS(u, enemy);
+		}
 		return 0;
 	}
 
@@ -463,8 +474,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				clear();
 			} else if (argv[0].equalsIgnoreCase("dumpgraph")) {
 				msg(infos.getAGB().toString());
-			}else if (argv[0].equalsIgnoreCase("test")) {
-				new TScout(this, null).execute(units.getUnits().get(0));
 			}
 		}
 		return 0;

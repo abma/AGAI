@@ -174,8 +174,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param weaponDef the weapon def
 	 * @param paralyzer the paralyzer
 	 */
-	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction,
-			WeaponDef weaponDef, boolean paralyzer) {
+	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer) {
 		ai.msg(this.getClass().getName());
 	}
 
@@ -273,5 +272,9 @@ public abstract class Task implements Comparable<Object> {
 	 */
 	public int compareTo(Object o){
 		return compare(this,o);
+	}
+
+	public void enemyEnterLOS(AGUnit unit, Unit enemy){
+		ai.msg(this.getClass().getName());
 	}
 }
