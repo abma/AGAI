@@ -53,6 +53,10 @@ public class AGUnit {
 	/** The task. */
 	private Task task = null;
 
+	public boolean isBuilt() {
+		return unit.isBeingBuilt();
+	}
+
 	/** The unit. */
 	protected Unit unit = null;
 
@@ -218,7 +222,9 @@ public class AGUnit {
 	 * @return true, if is idle
 	 */
 	public boolean isIdle() {
-		return task == null;
+		if (unit.isBeingBuilt())
+			return false;
+		return (task == null);
 	}
 
 	/**
