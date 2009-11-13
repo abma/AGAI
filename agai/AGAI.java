@@ -425,6 +425,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				command);
 	}
 
+	public void error(String string) {
+		logger.error(string);
+	}
+
 	/**
 	 * Inits the.
 	 * 
@@ -437,12 +441,14 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int init(int teamId, OOAICallback callback) {
+		System.out.println("Initializing AGAI...");
 		this.clb = callback;
 		this.teamId = teamId;
 		List<Resource> res = this.getClb().getResources();
 		resourcecount = res.size(); 
 		metal = res.get(0);
 		energy = res.get(1);
+		logger = new AGLogger(this);
 		units = new AGUnits(this);
 		infos = new AGInfos(this);
 		controller = new AGController(this);
@@ -478,43 +484,14 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		}
 		return 0;
 	}
-	private String lastclass="";
-	private int lastframe=-1;
-	/**
-	 * Print a debug message on console.
-	 * 
-	 * @param str
-	 *            the str
-	 */
-	public void msg(String str) {
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			String cur=e.getStackTrace()[1].getFileName();
-			cur=cur.substring(0, cur.length()-5); //remove .java
-			if (lastclass.contains(cur)){
-				cur="";
-				for (int i=0; i<lastclass.length(); i++)
-					cur=cur+" ";
-			}else
-				lastclass=cur;
-			str =  cur + "."
-					+ e.getStackTrace()[1].getMethodName() + ":"
-					+ e.getStackTrace()[1].getLineNumber() + " " + str;
-		}
-		String fstr="";
-		if (lastframe==frame){
-			int tmp=frame;
-			while(tmp>0){
-				fstr=fstr+" ";
-				tmp=tmp/10;
-			}
-		}else{
-			lastframe=frame;
-			fstr=""+frame;
-		}
-			
-		System.out.println(fstr+" "+str);
+
+	private AGLogger logger;
+	public void logNormal(String str){
+		logger.normal(str);
+	}
+
+	public void msg(String str){
+		logger.normal(str);
 	}
 
 	/**

@@ -63,7 +63,11 @@
 		Host=2;
 		[Options]
 		{
+			debuginfos=IResource|AGUnit;
+			debuglevel=2;
+			ignoredebugsettings=true;
 		}
+
 	}
 	[AI1]
 	{
