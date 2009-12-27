@@ -15,7 +15,7 @@ local infos = {
 	},
 	{
 		key    = 'name',
-		value  = 'AGAI by abma',
+		value  = 'AGAI by http://abma.de/',
 		desc   = 'human readable name.',
 	},
 	{
