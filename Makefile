@@ -3,7 +3,11 @@ SPRINGINTERFACE=${SPRING}/AI/Interfaces/Java/0.1
 JAVAOTPS=-d classes -classpath ${SPRINGINTERFACE}/AIInterface.jar:${SPRINGINTERFACE}/jlib/vecmath.jar:${SPRINGINTERFACE}/jlib/jna.jar:SkirmishAI.jar:SkirmishAIReal.jar
 JAVASRC=agai/*.java agai/info/*.java agai/manager/*.java agai/task/*.java agai/unit/*.java
 JAVASRCLOADER=agai/loader/*.java
-all: loader ai
+
+all: classes loader ai
+
+classes:
+	mkdir classes
 
 ai:
 	javac ${JAVAOTPS} ${JAVASRC}
