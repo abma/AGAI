@@ -20,3 +20,5 @@ run:
 	cp script.txt ~/.spring/testai.txt
 	nice /usr/bin/spring --window -x 1024 -y 768 testai.txt
 
+test:
+	echo there are currently no tests
