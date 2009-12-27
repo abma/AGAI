@@ -11,3 +11,4 @@ rm -f ${DIR}
 zip -r ${DIR} .
 
 echo ${DIR} is ready!
+
