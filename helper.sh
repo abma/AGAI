@@ -20,7 +20,11 @@ function release(){
 	_c zip -r AGAI.zip .
 	_c cd ..
 	if [ "$1" != "" ]; then
-		_c mv release/AGAI.zip $1/AGAI-`date +"%Y%m%d%H%M%S"`-`git rev-parse HEAD`.zip
+		NEWFILE=AGAI-`date +"%Y%m%d%H%M%S"`-`git rev-parse HEAD`.zip
+		_c mv release/AGAI.zip $1/$NEWFILE
+		cd $1
+		ln -s -f $NEWFILE AGAI-current.zip
+		cd -
 	else
 		_c mv release/AGAI.zip .
 	fi
