@@ -19,7 +19,7 @@ function release(){
 	_c cd release
 	_c zip -r AGAI.zip .
 	_c cd ..
-	if [ -d $1 ]; then
+	if [ "$1" != "" ]; then
 		_c mv release/AGAI.zip $1
 	else
 		_c mv release/AGAI.zip .
@@ -66,4 +66,4 @@ function test(){
 }
 
 echo $@
-$@
+$@ $2 $3 $4
