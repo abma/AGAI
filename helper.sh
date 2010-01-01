@@ -26,6 +26,7 @@ function _c(){
 }
 
 function build(){
+	mkdir classes
 	SPRINGINTERFACEPATHS="$HOME/.spring /usr/share/games/spring"
 	for i in $SPRINGINTERFACEPATHS; do
 		SPRINGINTERFACE=$i/AI/Interfaces/Java/0.1
