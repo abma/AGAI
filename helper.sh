@@ -51,5 +51,9 @@ function clean (){
 	rm -rf $FILES
 }
 
+function test(){
+	echo no tests implemented
+}
+
 echo $@
 $@
