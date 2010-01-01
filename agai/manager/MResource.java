@@ -73,8 +73,8 @@ public class MResource extends Manager {
 		for (int i = 0; i < list.size(); i++) {
 			for (int j = 0; j < list.get(i).size(); j++) {
 				UnitDef u = list.get(i).get(j).getUnit();
-				ai.msg(i + " " + u.getName() + "\tPrice: "
-						+ ai.getUnits().getTotalPrice(u) + "\t"
+				ai.logDebug(i + " " + u.getName() + "\tPrice: "
+						+ list.get(i).get(j).getPrice() + "\t"
 						+ u.getHumanName() + "\t"
 						+ ai.getUnits().getProduction(u, res.get(i)));
 			}
@@ -88,7 +88,7 @@ public class MResource extends Manager {
 	 *            the res
 	 */
 	private void initializeSpots(Resource res) {
-		ai.msg("initializeSpots Function " + ai);
+		ai.logDebug("initializeSpots Function " + ai);
 		List<AIFloat3> spots = map.getResourceMapSpotsPositions(res);
 		for (int i = 0; i < spots.size(); i++) {
 			spots.get(i).y = map.getElevationAt(spots.get(i).x, spots.get(i).z);
@@ -112,7 +112,7 @@ public class MResource extends Manager {
 				if ((unit.getExtractsResource(resource) > 0)|| unit.isNeedGeo()) { // unit needs spot to be built
 					poi = ai.getInfos().getAGP().getNearestFreeBuildPoi(builder.getPos(), resource.getResourceId());
 					if (poi == null){ // no point found to build, next building
-						ai.msg("No spot found to build " + unit.getName());
+						ai.logWarning("No spot found to build " + unit.getName());
 						continue;
 					}
 					pos = poi.getPos();
@@ -124,34 +124,35 @@ public class MResource extends Manager {
 					}
 					pos = builder.getBuildPos(pos, unit, radius, min);
 					if (pos == null) {
-						ai.msg("Can't build here!");
+						ai.logDebug("Can't build here!");
 						continue;
 					} else {
-						ai.msg("Can build here!");
+						ai.logDebug("Can build here!");
 						break;
 					}
 				} else { // doesn't need spot, build at next point to builder
-					ai.msg("No spot needed");
+					ai.logDebug("No spot needed");
 					pos = builder.getBuildPos(pos, unit, radius, min);
 					if (pos == null) // can't build, next unit
 						continue;
 					pos = null; // delete pos, because builder could have
 								// already a task and is moving
 				}
-				if (ai.getUnits().getPrice(unit).lessOrEqual(getResToUse(), time)){
+				if (ai.getInfos().getAGB().getPrice(unit).lessOrEqual(getResToUse(), time)){
+					ai.logDebug("Enough Resources!");
 					break;
 				}
 			}
 			unit=null;
 		}
 		if (unit != null) { // unit with builder found, build it!
-			ai.msg("Creating Task for Unit!");
+			ai.logDebug("Creating Task for Unit!");
 			MBuild b=(MBuild) ai.getManagers().get(MBuild.class);
 			TBuild buildtask = new TBuild(ai, b, unit, pos, radius, min, null);
 			buildtask.setPoi(poi);
 			return buildtask;
 		} else {
-			ai.msg("No resource producing unit found for "+builder.getUnit().getDef().getName());
+			ai.logInfo("No resource producing unit found for "+builder.getUnit().getDef().getName());
 		}
 		return null;
 	}
@@ -165,9 +166,9 @@ public class MResource extends Manager {
 	private Resource decide(){
 		float maxpercent=0;
 		int pos=0;;
-		ai.msg("");
+		ai.logDebug("");
 		IResource cur=ai.getInfos().getResources().get();
-		ai.msg(""+cur);
+		ai.logDebug(""+cur);
 		for (int i=0; i<ai.getResourcecount(); i++){ //build resource whos usage has most percent
 			float income=cur.getIncome(i);
 			float usage=cur.getUseage(i);
@@ -187,13 +188,13 @@ public class MResource extends Manager {
 			if (current!=0){
 				percent=1-storage/current;
 			}
-			ai.msg(""+percent);
+			ai.logDebug(""+percent);
 			if (percent>maxpercent){
 				pos=i;
 				maxpercent=percent;
 			}
 		}
-		ai.msg(""+pos);
+		ai.logDebug(""+pos);
 		return ai.getClb().getResources().get(pos);
 	}
 	
@@ -206,7 +207,7 @@ public class MResource extends Manager {
 	@Override
 	public boolean assignTask(AGUnit unit){
 		Resource r=decide();
-		ai.msg("Building "+r.getName());
+		ai.logInfo("Building "+r.getName());
 		TBuild task=tryTobuild(unit, r, 1000);
 		if (task!=null){
 			unit.setTask(task);

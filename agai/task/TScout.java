@@ -29,7 +29,7 @@ public class TScout extends Task {
 
 	@Override
 	public void assign(AGUnit unit) {
-		ai.msg("");
+		ai.logDebug("");
 		((MScout) ai.getManagers().get(MScout.class)).incScouts();
 		execute(unit);
 	}
@@ -41,19 +41,19 @@ public class TScout extends Task {
 
 	@Override
 	public void unassign(AGUnit unit) {
-		ai.msg("");
+		ai.logDebug("");
 		((MScout) ai.getManagers().get(MScout.class)).decScouts();
 	}
 
 	@Override
 	public void unitCommandFinished(AGUnit unit) {
-		ai.msg("");
+		ai.logDebug("");
 		execute(unit);
 	}
 
 	@Override
 	public void unitDestroyed(AGUnit unit) {
-		ai.msg("");
+		ai.logDebug("");
 		unassign(unit);
 	}
 	private IPoI destination=null;
@@ -61,12 +61,12 @@ public class TScout extends Task {
 	@Override
 	public void execute(AGUnit unit) {
 		if (destination==null){
-			ai.msg("");
+			ai.logDebug("");
 			destination = ai.getInfos().getAGP().getNearestFreeScoutPoi(unit);
 			destination.setVisited(true);
 		}
 		if (ai.getInfos().getSectors().isPosInSec(unit.getPos(), destination.getSector())){ //unit is in sec, new destination!
-			ai.msg("");
+			ai.logDebug("");
 			destination.setVisited(true);
 			destination = ai.getInfos().getAGP().getNearestFreeScoutPoi(unit);
 			destination.setVisited(true);
@@ -83,14 +83,14 @@ public class TScout extends Task {
 			return;
 		}*/
 		if (destination == null) {
-			ai.msg("No point to scout found!");
+			ai.logDebug("No point to scout found!");
 			return;
 		}
 		if (unit.canMoveTo(destination.getPos())){
-			ai.msg("moving to "+destination.getPos());
+			ai.logDebug("moving to "+destination.getPos());
 			unit.setTask(new TSecureMove(ai, null, this, destination.getSector(), true, unit.getPos()));
 		}else{
-			ai.msg("Unit can't move to PoI");
+			ai.logDebug("Unit can't move to PoI");
 			ai.drawPoint(destination.getPos(), "");
 		}
 	}

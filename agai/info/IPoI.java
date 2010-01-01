@@ -120,4 +120,9 @@ public class IPoI { // Point of Interest
 		return sec;
 	}
 
+	public boolean isEnemyStructure() {
+		ISector sec=ai.getInfos().getSectors().getSector(pos);
+		return (sec.getEnemyBuildings()>0);
+	}
+
 }

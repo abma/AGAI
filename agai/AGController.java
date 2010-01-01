@@ -152,7 +152,7 @@ public class AGController {
 		int i=frame % 1000;
 		switch (i){
 			case 1:
-				ai.msg("");
+				ai.logDebug("");
 				if (lastupdate!=ai.getInfos().getResources().getLastchanged()){
 					ai.getManagers().update(ai.getInfos().getResources().update(), 1000);
 					lastupdate=ai.getInfos().getResources().getLastchanged();

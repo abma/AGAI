@@ -23,65 +23,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import agai.info.IResource;
+import agai.info.IElement;
 import agai.unit.AGUnit;
 
 import com.springrts.ai.AIFloat3;
 import com.springrts.ai.oo.Resource;
 import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
+import com.springrts.ai.oo.WeaponDef;
+import com.springrts.ai.oo.WeaponMount;
 
 // TODO: Auto-generated Javadoc
 /**
  * Class with list of all Units (and its tasks/status).
  */
 public class AGUnits {
-
-	/**
-	 * The Enum ElementType.
-	 */
-	public static enum ElementType {
-
-		/** The unit is amphibian. */
-		unitAmphibian(16),
-
-		/** The any unit. */
-		unitAny(0),
-
-		/** The unit can fly. */
-		unitFly(1),
-
-		/** The unit is at land. */
-		unitLand(8),
-
-		/** The unit is sub. */
-		unitSub(4),
-
-		/** The unit can swim. */
-		unitSwim(2);
-
-		/** The type. */
-		private int type;
-
-		/**
-		 * Instantiates a new element type.
-		 * 
-		 * @param type
-		 *            the type
-		 */
-		ElementType(int type) {
-			this.type = type;
-		}
-
-		/**
-		 * Gets the type.
-		 * 
-		 * @return the type
-		 */
-		public int getType() {
-			return type;
-		}
-	}
 
 	/** The ai. */
 	private AGAI ai = null;
@@ -103,7 +59,7 @@ public class AGUnits {
 	 *            the ai
 	 */
 	public AGUnits(AGAI ai) {
-		units = new HashMap<Integer, AGUnit> ();
+		units = new HashMap<Integer, AGUnit>();
 		this.ai = ai;
 		List<Unit> list = ai.getClb().getTeamUnits();
 		for (int i = 0; i < list.size(); i++) {
@@ -121,13 +77,13 @@ public class AGUnits {
 	 */
 	public AGUnit add(Unit unit) {
 		if (unit == null) {
-			ai.msg("Error: tried to add null");
+			ai.logError("Error: tried to add null");
 			return null;
 		}
-		AGUnit u=new AGUnit(ai, unit);
+		AGUnit u = new AGUnit(ai, unit);
 		units.put(unit.hashCode(), u);
-		AGInfos info=ai.getInfos();
-		if (info!=null) //avoid null reference on init
+		AGInfos info = ai.getInfos();
+		if (info != null) // avoid null reference on init
 			info.UnitCreated(u);
 		return u;
 	}
@@ -141,11 +97,11 @@ public class AGUnits {
 	 *            the attacker
 	 */
 	public void destroyed(Unit unit, Unit attacker) {
-		AGUnit u=units.get(unit.hashCode());
+		AGUnit u = units.get(unit.hashCode());
 		ai.getInfos().UnitDestroyed(u);
 		units.remove(unit.hashCode());
-		if (u==null)
-			ai.msg("Couldn't find unit which was destroyed");
+		if (u == null)
+			ai.logWarning("Couldn't find unit which was destroyed");
 	}
 
 	/**
@@ -153,9 +109,9 @@ public class AGUnits {
 	 */
 	public void dump() {
 		Iterator<AGUnit> iterator = units.values().iterator();
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 			AGUnit u = iterator.next();
-			ai.msg(u.hashCode() + " "+ u.toString());
+			ai.logDebug(u.hashCode() + " " + u.toString());
 		}
 	}
 
@@ -164,7 +120,7 @@ public class AGUnits {
 	 */
 	public void employIdle() {
 		Iterator<AGUnit> iterator = units.values().iterator();
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 			AGUnit u = iterator.next();
 			if (u.isIdle())
 				u.fetchTask();
@@ -179,20 +135,20 @@ public class AGUnits {
 	 * 
 	 * @return the element type
 	 */
-	private ElementType getElementType(UnitDef unit) {
+	private int getElementType(UnitDef unit) {
 		if (unit.isAbleToFly())
-			return ElementType.unitFly;
+			return IElement.fly;
 		if (unit.isAbleToHover())
-			return ElementType.unitAmphibian;
+			return IElement.hover;
 		if (unit.isLevelGround())
-			return ElementType.unitLand;
+			return IElement.land;
 		if (unit.getMinWaterDepth() > 0)
 			if (unit.getWaterline() > 0)
-				return ElementType.unitSub;
+				return IElement.sub;
 			else
-				return ElementType.unitSwim;
-		ai.msg("Unknown Unittype: " + unit.getName());
-		return ElementType.unitAny;
+				return IElement.swim;
+		ai.logError("Unknown Unittype: " + unit.getName());
+		return IElement.any;
 	}
 
 	/**
@@ -207,7 +163,8 @@ public class AGUnits {
 	 */
 	public float getProduction(UnitDef unit, Resource res) {
 		if (averageres == -1) {
-			List<AIFloat3> list = ai.getClb().getMap().getResourceMapSpotsPositions(res);
+			List<AIFloat3> list = ai.getClb().getMap()
+					.getResourceMapSpotsPositions(res);
 			float sum = 0;
 			for (int i = 0; i < list.size(); i++) {
 				sum = sum + list.get(i).y;
@@ -216,28 +173,13 @@ public class AGUnits {
 				averageres = sum / list.size();
 		}
 		// TODO: calculate energy a unit produces on map
-		float wind = Math.min(unit.getWindResourceGenerator(res), ai.getClb().getMap().getMinWind()); // worst case
-		float tidal = unit.getTidalResourceGenerator(res)* ai.getClb().getMap().getTidalStrength();
+		float wind = Math.min(unit.getWindResourceGenerator(res), ai.getClb()
+				.getMap().getMinWind()); // worst case
+		float tidal = unit.getTidalResourceGenerator(res)
+				* ai.getClb().getMap().getTidalStrength();
 		return (unit.getUpkeep(res) * -1) + unit.getResourceMake(res) + wind
 				+ tidal + unit.getMakesResource(res)
 				+ (unit.getExtractsResource(res) * averageres);
-	}
-
-	/**
-	 * Gets the total price.
-	 * 
-	 * @param unit
-	 *            the unit
-	 * 
-	 * @return the total price
-	 */
-	public float getTotalPrice(UnitDef unit) {
-		float cost = 0;
-		List<Resource> res = ai.getClb().getResources();
-		for (int i = 0; i < res.size(); i++) {
-			cost = cost + unit.getCost(res.get(i));
-		}
-		return cost;
 	}
 
 	/**
@@ -250,12 +192,18 @@ public class AGUnits {
 	 */
 	public AGUnit getUnit(Unit unit) {
 		if (unit == null) {
-			ai.msg("Null requested!");
+			ai.logError("Null requested!");
 			return null;
 		}
-		AGUnit ret=units.get(unit.hashCode());
-		if (ret==null)
-			ret=add(unit);
+		AGUnit ret = units.get(unit.hashCode());
+		if (ret == null)
+			ret = add(unit);
+		else {
+			if (ret.getDef() == null) {// unit died?!
+				units.remove(unit.hashCode());
+				return null;
+			}
+		}
 		return ret;
 	}
 
@@ -286,11 +234,11 @@ public class AGUnits {
 	public List<AGUnit> getUnits(UnitDef type) {
 		List<AGUnit> res = new ArrayList<AGUnit>();
 		Iterator<AGUnit> iterator = units.values().iterator();
-		while (iterator.hasNext()){
-			AGUnit u=iterator.next();
+		while (iterator.hasNext()) {
+			AGUnit u = iterator.next();
 			if (u.getDef() == null) { // FIXME: unit was killed (?)
 				units.remove(u.hashCode());
-			} else if (u.getUnit().getDef().equals(type)){
+			} else if (u.getUnit().getDef().equals(type)) {
 				res.add(u);
 			}
 		}
@@ -328,19 +276,35 @@ public class AGUnits {
 	 * 
 	 * @return true, if successful
 	 */
-	public boolean UnitInType(UnitDef unit, ElementType type) {
-		if (type == ElementType.unitAny)
+	public boolean UnitInType(UnitDef unit, IElement type) {
+		if (type.isAny())
 			return true;
-		ElementType type1 = getElementType(unit);
-		return type == type1;
+		return ((type.getType() & getElementType(unit)) == 0);
 	}
 
-	public IResource getPrice(UnitDef unit){
-		IResource price=new IResource(ai);
-		for (int i=0; i<price.size(); i++){
-			Resource r=ai.getClb().getResources().get(i);
-			price.setCurrent(i, unit.getCost(r));
-		}
-		return price;
+	private int getWeaponType(WeaponDef wep) {
+		int type = 0;
+		if (wep.isSubMissile())
+			type = type | IElement.sub;
+		if (wep.isAbleToAttackGround())
+			type = type | IElement.land | IElement.swim;
+		if (wep.isWaterWeapon())
+			type = type | IElement.swim;
+		return type;
 	}
+
+	public float getWeaponRange(UnitDef unit, IElement type) {
+		List<WeaponMount> weapons = unit.getWeaponMounts();
+		float range = 0;
+		for (int i = 0; i < weapons.size(); i++) {
+			int target = getWeaponType(weapons.get(i).getWeaponDef());
+			if ((target & type.getType()) != 0) {
+				float tmp = weapons.get(i).getWeaponDef().getRange();
+				if (tmp > range)
+					range = tmp;
+			}
+		}
+		return range;
+	}
+
 }

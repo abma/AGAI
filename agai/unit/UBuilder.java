@@ -36,6 +36,6 @@ public class UBuilder extends AGUnit {
 	 */
 	public UBuilder(AGAI ai, Unit unit) {
 		super(ai, unit);
-		ai.msg("");
+		ai.logDebug("");
 	}
 }

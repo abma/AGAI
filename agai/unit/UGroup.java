@@ -88,7 +88,7 @@ public class UGroup extends AGUnit {
 
 	@Override
 	public void setTask(Task task) {
-		ai.msg("" + task);
+		ai.logDebug("" + task);
 		if (task == null) { // task deleted, delete group
 			for (int i = 0; i < units.size(); i++) {
 				units.get(i).setTask(null);

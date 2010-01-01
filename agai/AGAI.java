@@ -148,7 +148,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * @return the int
 	 */
 	public int drawPoint(AIFloat3 pos, String label) {
-		msg("drawPoint " + label);
+		logDebug("drawPoint " + label);
 		if (pos == null)
 			return -1;
 		AddPointDrawAICommand cmd = new AddPointDrawAICommand();
@@ -179,9 +179,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	public int enemyDamaged(Unit enemy, Unit attacker, float damage,
 			AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
 		if (enemy.getDef() != null)
-			msg(enemy.getDef().getName());
+			logDebug(enemy.getDef().getName());
 		else
-			msg("Unknown");
+			logDebug("Unknown");
 		AGUnit u = units.getUnit(attacker);
 		Task t = u.getTask();
 		if ((u != null) && (t != null))
@@ -202,9 +202,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	@Override
 	public int enemyDestroyed(Unit enemy, Unit attacker) {
 		if (enemy.getDef() != null)
-			msg(enemy.getDef().getName());
+			logDebug(enemy.getDef().getName());
 		else
-			msg("Unknown");
+			logDebug("Unknown");
 		if (attacker != null) {
 			AGUnit u = units.getUnit(attacker);
 			Task t = u.getTask();
@@ -425,10 +425,6 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				command);
 	}
 
-	public void error(String string) {
-		logger.error(string);
-	}
-
 	/**
 	 * Inits the.
 	 * 
@@ -479,20 +475,13 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 			} else if (argv[0].equalsIgnoreCase("clear")) {
 				clear();
 			} else if (argv[0].equalsIgnoreCase("dumpgraph")) {
-				msg(infos.getAGB().toString());
+				logDebug(infos.getAGB().toString());
 			}
 		}
 		return 0;
 	}
 
 	private AGLogger logger;
-	public void logNormal(String str){
-		logger.normal(str);
-	}
-
-	public void msg(String str){
-		logger.normal(str);
-	}
 
 	/**
 	 * Player command.
@@ -508,7 +497,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int playerCommand(List<Unit> units, AICommand command, int playerId) {
-		msg("");
+		logDebug("");
 		return 0;
 	}
 
@@ -524,7 +513,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int seismicPing(AIFloat3 pos, float strength) {
-		msg("");
+		logDebug("");
 		return 0;
 	}
 
@@ -537,8 +526,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * @return the int
 	 */
 	public int sendTextMsg(String msg) {
-		SendTextMessageAICommand msgCmd = new SendTextMessageAICommand(msg,
-				DEFAULT_ZONE);
+		SendTextMessageAICommand msgCmd = new SendTextMessageAICommand(msg,DEFAULT_ZONE);
 		return handleEngineCommand(msgCmd);
 	}
 
@@ -556,7 +544,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitCaptured(Unit unit, int oldTeamId, int newTeamId) {
-		msg(unit.getDef().getName());
+		logDebug(unit.getDef().getName());
 		if (teamId != newTeamId) {
 			units.destroyed(unit, null);
 			return 0;
@@ -580,7 +568,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitCreated(Unit unit, Unit builder) {
-		msg(unit.getDef().getName());
+		logDebug(unit.getDef().getName());
 		// search builder and check if he has a task, when so, add unit to units
 		// and set task from builder (if unit gets destroyed, only re-add to
 		// tasklist...)
@@ -626,7 +614,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		if ((u != null) && (t != null))
 			t.unitDamaged(u, damage, dir, weaponDef, paralyzer);
 		else
-			msg(unit.getDef().getName());
+			logDebug(unit.getDef().getName());
 		infos.getSectors().unitDamaged(unit, attacker, damage);
 		return 0;
 	}
@@ -648,7 +636,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		if ((u != null) && (t != null))
 			t.unitDestroyed(u);
 		else
-			msg(unit.getDef().getName());
+			logDebug(unit.getDef().getName());
 		units.destroyed(unit, attacker);
 		getInfos().getSectors().unitDestroyed(unit);
 		return 0;
@@ -664,7 +652,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitFinished(Unit unit) {
-		msg(unit.getDef().getName());
+		logDebug(unit.getDef().getName());
 		AGUnit u = units.getUnit(unit);
 		AGUnit b = u.getBuilder();
 		if (b != null) {
@@ -689,13 +677,13 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int unitGiven(Unit unit, int oldTeamId, int newTeamId) {
-		msg(unit.getDef().getName());
+		logDebug(unit.getDef().getName());
 		AGUnit u = units.getUnit(unit);
 		Task t = u.getTask();
 		if ((u != null) && (t != null))
 			t.unitGiven();
 		else
-			msg(unit.getDef().getName());
+			logDebug(unit.getDef().getName());
 		return 0;
 	}
 
@@ -734,7 +722,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		if ((u != null) && (t != null))
 			t.unitMoveFailed(u);
 		else
-			msg(unit.getDef().getName());
+			logDebug(unit.getDef().getName());
 		return 0;
 	}
 
@@ -765,11 +753,28 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 */
 	@Override
 	public int weaponFired(Unit unit, WeaponDef weaponDef) {
-		msg(unit.getDef().getName());
+		logDebug(unit.getDef().getName());
 		AGUnit u = units.getUnit(unit);
 		Task t = u.getTask();
 		if ((u != null) && (t != null))
 			t.unitWeaponFired();
 		return 0;
 	}
+
+	public void logError(String string) {
+		logger.error(string);
+	}
+	public void logNormal(String str){
+		logger.normal(str);
+	}
+	public void logInfo(String str){
+		logger.info(str);
+	}
+	public void logWarning(String str){
+		logger.warning(str);
+	}
+	public void logDebug(String str){
+		logger.debug(str);
+	}
+
 }

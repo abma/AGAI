@@ -12,6 +12,6 @@ class IUnitPropertyEvaluatorPrice extends IUnitPropertyEvaluator {
 
 	@Override
 	public float getValue(UnitDef unit) {
-		return ai.getUnits().getTotalPrice(unit) * -1;
+		return ai.getInfos().getAGB().searchNode(unit).getTotalPrice() * -1;
 	}
 }

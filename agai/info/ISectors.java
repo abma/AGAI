@@ -77,12 +77,12 @@ public class ISectors {
 		if ((secWidth == 0) || (secHeight == 0) ||
 				(secWidth >= ai.getClb().getMap().getWidth()) ||
 				(secHeight >= ai.getClb().getMap().getHeight())){ //avgLos couldn't be calculated
-			ai.msg("Error calculating avgLos, using default");
+			ai.logError("Error calculating avgLos, using default");
 			secWidth=ai.getClb().getMap().getWidth();
 			secHeight=ai.getClb().getMap().getHeight();
 			avgLos=1;
 		}
-		ai.msg(secWidth + " x " + secHeight + "real map size"
+		ai.logDebug(secWidth + " x " + secHeight + "real map size"
 				+ ai.getClb().getMap().getWidth() * 8 + "x"
 				+ ai.getClb().getMap().getHeight() * 8);
 		map = new ISector[secWidth][secHeight];
@@ -99,7 +99,7 @@ public class ISectors {
 				pos.y = ai.getClb().getMap().getElevationAt(pos.x, pos.z);
 			}
 		}
-		ai.msg("real map size" + ai.getClb().getMap().getWidth() * 8 + "x"
+		ai.logDebug("real map size" + ai.getClb().getMap().getWidth() * 8 + "x"
 				+ ai.getClb().getMap().getHeight() * 8);
 		updateSlope();
 		updateWaterDepth();
@@ -148,7 +148,7 @@ public class ISectors {
 		ISector tmp = getSector(unit.getPos());
 		UnitDef def = unit.getDef();
 		if (tmp == null) {
-			ai.msg("couldn't find sector!");
+			ai.logError("couldn't find sector!");
 			return;
 		}
 		if ((def != null) && (def.isAbleToMove()))
@@ -161,7 +161,7 @@ public class ISectors {
 	 * Dump.
 	 */
 	public void dump() {
-		ai.msg(""+secWidth +" "+secHeight);
+		ai.logNormal(""+secWidth +" "+secHeight);
 		for (int i = 0; i < map.length; i++) {
 			String line = "";
 			for (int j = 0; j < map[i].length; j++) {
@@ -172,7 +172,7 @@ public class ISectors {
 				if (map[i][j].getWaterdepth()<0)
 					ai.drawPoint(map[i][j].getPos(), ".");
 			}
-			ai.msg(line);
+			ai.logNormal(line);
 		}
 	}
 
@@ -299,11 +299,11 @@ public class ISectors {
 		queue.clear();
 		queue.add(from);
 		from.setParent(null);
-		ai.msg(""+MaxSlope+" "+MinWaterDepth+" "+MaxWaterDepth + " " + -1.0);
+		ai.logDebug(""+MaxSlope+" "+MinWaterDepth+" "+MaxWaterDepth + " " + -1.0);
 		while (queue.size() > 0) {
 			ISector cur = queue.remove(extractMin(queue));
 			if (cur == to) { // target reached
-				ai.msg("found path!");
+				ai.logDebug("found path!");
 				LinkedList<ISector> path = new LinkedList<ISector>();
 				while (cur != null) {
 					path.addFirst(cur);

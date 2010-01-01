@@ -20,7 +20,7 @@ public class MExpensiveBuild extends Manager{
 	}
 	
 	public void add(UnitDef unitDef){
-		ai.msg(""+unitDef.getName()+" "+unitDef.getHumanName());
+		ai.logDebug(""+unitDef.getName()+" "+unitDef.getHumanName());
 		if (ai.getInfos().getAGB().isUnitAvailableOrPlaned(unitDef))//unit already exists or is planed to be built
 			return;
 		for(int i=0; i<buildtasks.size(); i++){
@@ -47,14 +47,14 @@ public class MExpensiveBuild extends Manager{
 			AIFloat3 pos=unit.getBuildPos(t.getPos(), t.getUnitDef(), t.getRadius(), t.getMinDistance());
 			if (pos!=null){
 				if (resToUse.lessOrEqual(buildtasks.get(i).getPrice(), unit.getBuildSpeed())){
-					ai.msg("");
+					ai.logDebug("");
 					t.setPos(pos);
 					resToUse.sub(t.getPrice());
 					unit.setTask(t);
 					buildtasks.remove(i);
 					return true;
 				}else
-					ai.msg("To few resources to build "+buildtasks.get(i).getUnitDef().getName());
+					ai.logWarning("To few resources to build "+buildtasks.get(i).getUnitDef().getName());
 			}
 		}
 		//assign all unused resources to new resources
@@ -71,13 +71,13 @@ public class MExpensiveBuild extends Manager{
 	
 	@Override
 	public void check(){
-		ai.msg("");
+		ai.logDebug("");
 		for (int i=0; i<buildtasks.size(); i++){
 			if (ai.getInfos().getAGB().getBuilder(buildtasks.get(i).getUnitDef())==null){//solve dependencies!
 				List<UnitDef> units = ai.getInfos().getAGB().getBuildPath(buildtasks.get(i).getUnitDef());
 				if (units!=null){
 					for(int j=0; j<units.size(); j++){
-						ai.msg("Depend add: "+ units.get(j).getName() + " for " + buildtasks.get(i).getUnitDef().getName());
+						ai.logDebug("Depend add: "+ units.get(j).getName() + " for " + buildtasks.get(i).getUnitDef().getName());
 						add(units.get(j));
 					}
 				}

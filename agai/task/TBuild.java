@@ -136,12 +136,12 @@ public class TBuild extends Task {
 
 	@Override
 	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer) {
-		ai.msg("");
+		ai.logDebug("");
 	}
 
 	@Override
 	public void unitFinished(AGUnit builder, AGUnit unit) {
-		ai.msg(unit.getDef().getName());
+		ai.logDebug(unit.getDef().getName());
 		Task tmp = getTasktoassign();
 		unit.setTask(tmp);
 		if (tmp != null)
@@ -152,17 +152,14 @@ public class TBuild extends Task {
 
 	@Override
 	public void unitMoveFailed(AGUnit unit) {
-		ai.msg("");
+		ai.logDebug("");
 	}
 
 	@Override
 	public void unitWeaponFired() {
-		ai.msg("");
+		ai.logDebug("");
 	}
 
-	public IResource getPrice(){
-		return ai.getUnits().getPrice(unitdef);
-	}
 	@Override
 	public void execute(AGUnit unit) {
 		if (pos==null){ //task has no buildpos, assign one!
@@ -183,5 +180,9 @@ public class TBuild extends Task {
 	public void assign(AGUnit unit){
 		ai.getInfos().IncPlannedUnit(unitdef);
 		execute(unit);
+	}
+
+	public IResource getPrice() {
+		return ai.getInfos().getAGB().getPrice(this.unitdef);
 	}
 }

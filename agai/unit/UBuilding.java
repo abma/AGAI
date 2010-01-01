@@ -48,7 +48,7 @@ public class UBuilding extends AGUnit {
 
 	@Override
 	public int moveTo(AIFloat3 pos) {
-		ai.msg("a building can't move!");
+		ai.logDebug("a building can't move!");
 		return 0;
 	}
 

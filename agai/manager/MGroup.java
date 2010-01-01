@@ -69,7 +69,7 @@ public class MGroup extends Manager {
 	}
 
 	public void remove(TGroup taskGroup) {
-		ai.msg("group died!");
+		ai.logInfo("group died!");
 		list.remove(taskGroup);
 	}
 

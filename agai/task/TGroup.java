@@ -58,7 +58,7 @@ public class TGroup extends Task {
 
 	@Override
 	public void unitDestroyed(AGUnit unit) {
-		ai.msg("");
+		ai.logDebug("");
 		if (!go)
 			return;
 		group.remove(unit);
@@ -74,17 +74,17 @@ public class TGroup extends Task {
 	 */
 	@Override
 	public void unitFinished(AGUnit builder, AGUnit unit) {
-		ai.msg("");
+		ai.logDebug("");
 		group.add(unit);
 		if (group.size() == size) {
-			ai.msg("clear to start!");
+			ai.logDebug("clear to start!");
 			go = true;
 		}
 	}
 
 	@Override
 	public void execute(AGUnit unit) {
-		ai.msg(""); // wait until enough units have finished...
+		ai.logDebug(""); // wait until enough units have finished...
 		group.getPos();
 		if (!go)
 			return;

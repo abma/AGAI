@@ -106,19 +106,22 @@ public class IPoIs {
 	 * 
 	 * @return the nearest poi
 	 */
-	private IPoI getNearestPoi(AIFloat3 curpos, int type, boolean ignorefree, boolean ignorevisited, boolean recursion) {
+	private IPoI getNearestPoi(AIFloat3 curpos, int type, boolean ignorefree, boolean ignorevisited, boolean ignoreenemystructures, boolean recursion) {
 		double mindistance = Double.MAX_VALUE;
 		double tmp;
 		IPoI ret = null;
 		if (poi.size() == 0) {
-			ai.msg("No PoI found, list is empty!");
+			ai.logError("No PoI found, list is empty!");
 			return ret;
 		}
-		ai.msg(" "+ type +" "+ignorefree + ignorevisited);
+		ai.logDebug(" "+ type +" "+ignorefree + ignorevisited);
 		for (int i = 0; i < poi.size(); i++) {
-			if (((type == PoIAny) || (poi.get(i).getType() == type))
-					&& (ignorevisited || !poi.get(i).isVisited())
-					&& (ignorefree || !poi.get(i).isBuilt())) {
+			IPoI p = poi.get(i);
+			if (((type == PoIAny) || (p.getType() == type))
+					&& (ignorevisited || !p.isVisited())
+					&& (ignorefree || !p.isBuilt())
+					&& (ignoreenemystructures || !p.isEnemyStructure())
+					) {
 				tmp = ai.getInfos().getDistance(curpos, poi.get(i).getPos());
 				if (tmp < mindistance) {
 					mindistance = tmp;
@@ -130,14 +133,14 @@ public class IPoIs {
 			if (recursion){
 				return null;
 			}
-			ai.msg("no valid point found, clearing visited flag");
+			ai.logInfo("no valid point found, clearing visited flag");
 			for (int i = 0; i < poi.size(); i++) {
 				poi.get(i).setVisited(false);
 			}
-			ret=getNearestPoi(curpos, type, ignorefree, ignorevisited, true);
+			ret=getNearestPoi(curpos, type, ignorefree, ignorevisited, ignoreenemystructures, true);
 		}
 		if (ret==null)
-			ai.msg("no poi found");
+			ai.logError("no poi found");
 		return ret;
 	}
 
@@ -158,9 +161,6 @@ public class IPoIs {
 		return count;
 	}
 
-	public IPoI getNearestPoi(AIFloat3 curpos, int type, boolean ignorefree, boolean ignorevisited) {
-		return getNearestPoi( curpos,  type, ignorefree,  ignorevisited, false);
-	}
 	/**
 	 * Gets the nearest poi where no building is built. (for scouting and building there)
 	 * 
@@ -172,11 +172,11 @@ public class IPoIs {
 	 * @return the nearest free poi
 	 */
 	public IPoI getNearestFreeBuildPoi(AIFloat3 curpos, int type) {
-		return getNearestPoi(curpos, type, false, true, false);
+		return getNearestPoi(curpos, type, false, true, false, false);
 	}
 
 	public IPoI getNearestFreeScoutPoi(AGUnit unit) {
-		return getNearestPoi(unit.getPos(), PoIAny, false, false, false);
+		return getNearestPoi(unit.getPos(), PoIAny, false, false, false, false);
 	}
 
 }

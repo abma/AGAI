@@ -19,7 +19,7 @@ package agai.task;
 import java.util.List;
 
 import agai.AGAI;
-import agai.AGUnits;
+import agai.info.IElement;
 import agai.info.ISector;
 import agai.manager.Manager;
 import agai.unit.AGUnit;
@@ -37,7 +37,7 @@ public class TAttack extends Task {
 	ISector currentsec;
 
 	/** The type. */
-	private AGUnits.ElementType type;
+	private IElement type;
 
 	/**
 	 * Instantiates a new task attack.
@@ -49,7 +49,7 @@ public class TAttack extends Task {
 	 * @param manager
 	 *            the manager
 	 */
-	public TAttack(AGAI ai, Manager manager, AGUnits.ElementType type) {
+	public TAttack(AGAI ai, Manager manager, IElement type) {
 		super(ai, manager);
 		this.type = type;
 	}
@@ -59,7 +59,7 @@ public class TAttack extends Task {
 	 * 
 	 * @return the type
 	 */
-	public AGUnits.ElementType getType() {
+	public IElement getType() {
 		return type;
 	}
 
@@ -70,7 +70,7 @@ public class TAttack extends Task {
 	 */
 	@Override
 	public void unitCommandFinished(AGUnit unit) {
-		ai.msg("" + unit);
+		ai.logDebug("" + unit);
 		execute(unit);
 	}
 
@@ -89,13 +89,13 @@ public class TAttack extends Task {
 		ISector sec = ai.getInfos().getSectors().getNextEnemyTarget(unit.getPos(),0);
 		if (sec != null) {
 			unit.patrolTo(sec.getPos());
-			ai.msg("attacking at " + sec.getPos().x + " " + sec.getPos().y
+			ai.logDebug("attacking at " + sec.getPos().x + " " + sec.getPos().y
 					+ " " + sec.getPos().z);
 			this.currentsec = sec;
 			return;
 		}
 		unit.setTask(null);
-		ai.msg("nothing to attack found!");
+		ai.logDebug("nothing to attack found!");
 	}
 
 }

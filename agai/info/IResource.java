@@ -62,6 +62,11 @@ public class IResource{
 	public IResource(AGAI ai){
 		resources=ai.getClb().getResources();
 		res=new float[count][resources.size()];
+		for (int i=0; i<res.length; i++){
+			for (int j=0; j<res[i].length; j++){
+				res[i][j]=0;
+			}
+		}
 		this.ai=ai;
 	}
 	
@@ -209,7 +214,7 @@ public class IResource{
 	 */
 	public void divide(int divider){
 		if (divider==0){
-			ai.msg("");
+			ai.logError("");
 			return;
 		}
 		for (int i=0; i<res.length; i++){
@@ -243,28 +248,28 @@ public class IResource{
 	 * @return the total
 	 */
 	public float getTotal(int ResID, int time){
-		return getCurrent(ResID) + (time+1)*(getIncome(ResID) - getUseage(ResID));
+		return getCurrent(ResID) + (time)*(getIncome(ResID) - getUseage(ResID));
 	}
 
 	/**
-	 * Less or equal.
+	 * Checks if the resources produced are less cost
 	 *
-	 * @param resource the resource
+	 * @param cost the resource
 	 * @param time the time
 	 *
 	 * @return true, if successful
 	 */
-	public boolean lessOrEqual(IResource resource, int time) {
+	public boolean lessOrEqual(IResource cost, int time) {
 		for (int i=0; i<resources.size(); i++){
-			float r1, r2;
-			r1=getTotal(i, time);
-			r2=resource.getTotal(i, time);
-			if (r1<r2){
-				ai.msg("" +resources.get(i).getName()+" is missing: " + (r1-r2));
+			float current, less;
+			current=getTotal(i, time);
+			less=cost.getTotal(i, 0);
+			if (current-less>=0){
+				ai.logWarning("" +resources.get(i).getName()+" is missing: " + (current-less) + " "+ this +"  "+cost);
 				return false;
 			}
 		}
-		ai.msg("Enough resources!");
+		ai.logDebug("Enough resources!");
 		return true;
 	}
 	

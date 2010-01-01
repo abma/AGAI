@@ -224,4 +224,31 @@ public class IBuildTreeUnit {
 	public void incPlannedUnits() {
 		plannedunits++;
 	}
+
+	private IResource price=null;
+	public IResource getPrice(){
+		if (price==null){
+			price = new IResource(ai);
+			List <Resource> tmp=ai.getClb().getResources();
+			for (int i=0; i<tmp.size(); i++){
+				price.setCurrent(i, unit.getCost(tmp.get(i)));
+			}
+		}
+		return price;
+	}
+
+	/**
+	 * Gets the total price.
+	 * 
+	 * @return the total price
+	 */
+	public float getTotalPrice() {
+		float cost = 0;
+		List<Resource> res = ai.getClb().getResources();
+		for (int i = 0; i < res.size(); i++) {
+			cost = cost + unit.getCost(res.get(i));
+		}
+		return cost;
+	}
+
 }

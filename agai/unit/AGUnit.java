@@ -114,7 +114,7 @@ public class AGUnit {
 	 * @return the int
 	 */
 	public int buildUnit(UnitDef type, AIFloat3 pos, int facing) {
-		ai.msg(""+unit.getDef().getName() +" builds " + type.getName() + pos + facing);
+		ai.logDebug(""+unit.getDef().getName() +" builds " + type.getName() + pos + facing);
 		AICommand command = new BuildUnitAICommand(unit, -1,
 				new ArrayList<AICommand.Option>(), 10000, type, pos, facing);
 		return ai.handleEngineCommand(command);
@@ -143,10 +143,10 @@ public class AGUnit {
 				pos=unit.getPos();
 			AIFloat3 tmp = ai.getClb().getMap().findClosestBuildSite(tobuilt, pos, radius, minDistance, 0);
 			if ((tmp.x == -1) && (tmp.y == 0) && (tmp.z == 0)) {
-				ai.msg(tobuilt.getName());
+				ai.logDebug(tobuilt.getName());
 				if (pos==null)
 					pos=new AIFloat3();
-				ai.msg("Can't build here: " + tobuilt.getName() + " radius " + radius
+				ai.logInfo("Can't build here: " + tobuilt.getName() + " radius " + radius
 						+ " x " + pos.x + " y " + pos.y + " z " + pos.z);
 				return null;
 			}
@@ -154,7 +154,7 @@ public class AGUnit {
 		}
 		if (canMoveTo(pos))
 			return pos;
-		ai.msg("Can't build at " + pos.x + " " + pos.y + " " + pos.z);
+		ai.logInfo("Can't build at " + pos.x + " " + pos.y + " " + pos.z);
 		return null;
 	}
 
@@ -361,6 +361,8 @@ public class AGUnit {
 	public float getLOS() {
 		float ret, tmp;
 		ret=unit.getDef().getLosRadius();
+/*		unit.getDef().getAirLosRadius();
+		unit.getDef().getLosHeight()*/
 		tmp=unit.getDef().getRadarRadius();
 		if (tmp>ret)
 			ret=tmp;
@@ -368,6 +370,10 @@ public class AGUnit {
 		if (tmp>ret)
 			ret=tmp;
 		return ret;
+	}
+	@Override
+	public int hashCode(){
+		return unit.hashCode();
 	}
 	
 }

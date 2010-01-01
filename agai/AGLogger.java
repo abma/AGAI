@@ -40,8 +40,9 @@ public class AGLogger {
 	}
 	
 	/**
-	 * Print a debug message on console.
-	 * 
+	 * Print a debug message on console, print only messages where
+	 * level is < debuglevel and the calling class is in debuginfo
+	 *
 	 * @param str the str
 	 * @param level the level
 	 */
@@ -98,8 +99,8 @@ public class AGLogger {
 			debug = opt.getValueByKey("debuginfos");
 		}
 		if (debug==null){
-			debug="IResource:MExpensiveBuild:MAttack:MScout";
-			System.out.println("Couldn't load debuginfos from AIOptions.lua, using default values: "+debug);
+			debug="IResource:MExpensiveBuild:MAttack:Manager";
+			System.out.println("using default values: "+debug);
 		}
 		String[] list = debug.split(":");
 		debuginfo=new ArrayList<String>();

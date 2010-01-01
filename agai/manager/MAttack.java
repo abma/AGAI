@@ -18,8 +18,8 @@
 package agai.manager;
 
 import agai.AGAI;
-import agai.AGUnits;
 import agai.info.IBuildTreeUnit;
+import agai.info.IElement;
 import agai.info.ISearchUnitAttacker;
 import agai.info.ISector;
 import agai.task.TAttack;
@@ -44,16 +44,17 @@ public class MAttack extends Manager {
 		super(ai);
 		list = ai.getInfos().getSearch().Filter(new ISearchUnitAttacker(ai));
 		for (int i = 0; i < list.size(); i++) {
-			ai.msg(list.get(i).getUnit().getName() + "\t"
-					+ ai.getUnits().getTotalPrice(list.get(i).getUnit()));
+			ai.logDebug(list.get(i).getUnit().getName() + "\t"
+					+ list.get(i).getPrice());
 		}
+		
 	}
 
 	/**
 	 * Dump.
 	 */
 	public void dump() {
-		ai.msg("Task Attack");
+		ai.logNormal("Task Attack");
 	}
 
 	public int getGroups() {
@@ -81,7 +82,7 @@ public class MAttack extends Manager {
 	public void check(){
 		ISector target = ai.getInfos().getSectors().getNextEnemyTarget(ai.getStartpos(), 0);
 		if (target==null){ //no targets, build scouts
-			ai.msg("Giving all resources to scouts, because no target exists");
+			ai.logInfo("Giving all resources to scouts, because no target exists");
 			MScout scout=(MScout) ai.getManagers().get(MScout.class);
 			scout.incResToUse(resToUse);
 			resToUse.zero();
@@ -91,13 +92,13 @@ public class MAttack extends Manager {
 			IBuildTreeUnit u = list.get(i); 
 			if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is available
 				if (u.getCost().lessOrEqual(resToUse, 1000)){
-					ai.msg("building "+u.getUnit().getName());
+					ai.logDebug("building "+u.getUnit().getName());
 					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
-					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TAttack(ai, this, AGUnits.ElementType.unitAny)));
+					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TAttack(ai, this, new IElement(IElement.any))));
 					resToUse.sub(u.getCost());
 					return;
 				}else{
-					ai.msg("to few resources to build "+u.getUnit().getName());
+					ai.logWarning("to few resources to build "+u.getUnit().getName());
 				}
 			}
 		}

@@ -75,9 +75,9 @@ public class AGManagers {
 	 * Dump all Tasks.
 	 */
 	public void dump() {
-		ai.msg("Tasks: ");
+		ai.logNormal("Tasks: ");
 		for (int i = 0; i < tasks.size(); i++) {
-			ai.msg(i + " " + tasks.get(i).getClass().getName() + " Priority "
+			ai.logNormal(i + " " + tasks.get(i).getClass().getName() + " Priority "
 					+ tasks.get(i).getPriority() + " "
 					+ tasks.get(i).toString());
 		}
@@ -96,7 +96,7 @@ public class AGManagers {
 			if (list.get(i).getClass() == classname)
 				return list.get(i);
 		}
-		ai.msg("Couldn't find required class!" + classname.getCanonicalName());
+		ai.logError("Couldn't find required class!" + classname.getCanonicalName());
 		return null;
 	}
 
@@ -114,7 +114,7 @@ public class AGManagers {
 				ms.add(list.get(i));
 			}
 		}
-		ai.msg("Good: "+ms.size() + " Managers need resources:" + res);
+		ai.logDebug("Good: "+ms.size() + " Managers need resources:" + res);
 		for (int i=0; i<ms.size(); i++){
 			ms.get(i).setResToUse(res, timetonextchange);
 		}

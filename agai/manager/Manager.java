@@ -49,14 +49,14 @@ public abstract class Manager {
 
 	public void setResToUse(IResource res, int timetonextchange) {
 		resToUse.setFrom(res);
-		ai.msg("Resources to be used: "+res);
+		ai.logDebug(""+this.getClass()+res);
 		check();
 	}
 	
 	public void incResToUse(IResource res){
-		ai.msg("");
+		ai.logDebug(""+this.getClass()+res);
 		resToUse.add(res);
-		setResToUse(res, 0);
+		check();
 	}
 
 	/**
@@ -66,7 +66,7 @@ public abstract class Manager {
 	 *            the ai
 	 */
 	protected Manager(AGAI ai) {
-		ai.msg("Initialized AGTaskManager " + this.getClass() + " " + ai);
+		ai.logDebug("Initialized AGTaskManager " + this.getClass() + " " + ai);
 		this.ai = ai;
 		this.resToUse = new IResource(ai);
 		this.idleTasks=0;
@@ -81,7 +81,7 @@ public abstract class Manager {
 	 * @return true, if successful
 	 */
 	public boolean assignTask(AGUnit unit){
-		ai.msg(this.getClass().getName()+ " Warning: assignTask() needs to be implemented!");
+		ai.logDebug(this.getClass().getName()+ " Warning: assignTask() needs to be implemented!");
 		return false;
 	}
     

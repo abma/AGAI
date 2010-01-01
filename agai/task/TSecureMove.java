@@ -51,7 +51,7 @@ public class TSecureMove extends Task {
 
 	@Override
 	public void assign(AGUnit unit) {
-		ai.msg("");
+		ai.logDebug("");
 		ISector cursec = ai.getInfos().getSectors().getSector(unit.getPos());
 		path = ai.getInfos().getSectors().getSecurePath(cursec, destination, unit);
 		execute(unit);
@@ -64,25 +64,25 @@ public class TSecureMove extends Task {
 	private void retreat(AGUnit unit){
 		if (!retreat)
 			return;
-		if (retreating==true){
-			ai.msg("unit already retreats!");
+		if (retreating){
+			ai.logDebug("unit already retreats!");
 			return;
 		}
 		destination=ai.getInfos().getSectors().getSector(retreatpos);
 		retreating=true;
-		ai.msg("retreating!");
+		ai.logDebug("retreating!");
 		ai.drawPoint(retreatpos, "safe area");
 		unit.moveTo(destination.getPos());
 	}
 	@Override
 	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction,WeaponDef weaponDef, boolean paralyzer) {
-		ai.msg("");
+		ai.logDebug("");
 		retreat(unit);
 	}
 
 	@Override
 	public void enemyEnterLOS(AGUnit unit, Unit enemy){
-		ai.msg("");
+		ai.logDebug("");
 		float dist=enemy.getDef().getLosRadius();
 		if (dist>minDistance)
 			minDistance=dist;
@@ -91,7 +91,7 @@ public class TSecureMove extends Task {
 
 	@Override
 	public void unitEnemyDamaged(AGUnit u, Unit enemy) {
-		ai.msg("");
+		ai.logDebug("");
 		u.setTask(taskWhenReached);
 		this.taskWhenReached.unitEnemyDamaged(u, enemy);
 	}
@@ -109,14 +109,14 @@ public class TSecureMove extends Task {
 		}
 
 		if (ai.getInfos().getSectors().isPosInSec(unit.getPos(), destination)) {
-			ai.msg("Destination reached, back to the old task!");
+			ai.logDebug("Destination reached, back to the old task!");
 			unit.setTask(taskWhenReached);
 		} else { // when moving, try to avoid danger sectors
 			if ((path!=null) &&  (path.size() > 0)){
-				ai.msg("Time left: "+ai.getInfos().getTime().getMoveTime(unit, path));
+				ai.logDebug("Time left: "+ai.getInfos().getTime().getMoveTime(unit, path));
 				unit.moveTo(path.remove(0).getPos());
 			}else{
-				ai.msg("move to pos, but unit isn't in sec? "+unit);
+				ai.logError("move to pos, but unit isn't in sec? "+unit);
 			}
 		}
 	}

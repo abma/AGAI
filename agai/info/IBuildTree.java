@@ -120,7 +120,7 @@ public class IBuildTree {
 	public void dumpUnits() {
 		for (int i = 0; i < unitList.size(); i++) {
 			UnitDef u = unitList.get(i).getUnit();
-			ai.msg(u.getName() + " " + u.hashCode());
+			ai.logNormal(u.getName() + " " + u.hashCode());
 		}
 	}
 
@@ -128,7 +128,7 @@ public class IBuildTree {
 	 * Links the Nodes together
 	 */
 	private void generateGraph() {
-		ai.msg("Initializing Build Graph....");
+		ai.logInfo("Initializing Build Graph....");
 		Iterator<IBuildTreeUnit> it = unitList.values().iterator();
 		while (it.hasNext()){
 			IBuildTreeUnit cur = it.next();
@@ -216,9 +216,7 @@ public class IBuildTree {
 	 * @return the price
 	 */
 	public float getPrice(IBuildTreeUnit unit, int resource) {
-		if ((resource < ress.size()) && (resource >= 0))
-			return unit.getUnit().getCost(ress.get(resource));
-		return 0;
+		return unit.getUnit().getCost(ress.get(resource));
 	}
 
 	/**
@@ -318,7 +316,7 @@ public class IBuildTree {
 						return res;
 					tmp.setMark(mark); //mark to avoid loops
 					res.add(tmp.getUnit());
-					ai.msg(tmp.getUnit().getName());
+					ai.logDebug(tmp.getUnit().getName());
 					tmp=tmp.getParent();
 				}
 				if (res.size()==0)
@@ -335,4 +333,14 @@ public class IBuildTree {
 		}
 		return null;
 	}
+
+	public IResource getPrice(UnitDef unit){
+		IResource price=new IResource(ai);
+		for (int i=0; i<price.size(); i++){
+			Resource r=ai.getClb().getResources().get(i);
+			price.setCurrent(i, unit.getCost(r));
+		}
+		return price;
+	}
+
 }

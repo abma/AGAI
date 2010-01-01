@@ -73,7 +73,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void assign(AGUnit unit) {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 		execute(unit);
 	}
 
@@ -135,14 +135,14 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unassign(AGUnit unit) {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 
 	/**
 	 * Unit captured.
 	 */
 	public void unitCaptured() {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 
 	/**
@@ -151,7 +151,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unitCommandFinished(AGUnit unit) {
-		ai.msg(unit.getDef().getName() + " "+this.getClass().getSimpleName());
+		ai.logDebug(unit.getDef().getName() + " "+this.getClass().getSimpleName());
 	}
 
 	/**
@@ -161,7 +161,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unitCreated(AGUnit builder, AGUnit unit) {
-		ai.msg(this.getClass().getName() + " " + builder.getDef().getName()
+		ai.logDebug(this.getClass().getName() + " " + builder.getDef().getName()
 				+ " " + unit.getDef().getName());
 	}
 
@@ -175,7 +175,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param paralyzer the paralyzer
 	 */
 	public void unitDamaged(AGUnit unit, float damage, AIFloat3 direction, WeaponDef weaponDef, boolean paralyzer) {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 
 	/**
@@ -184,7 +184,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unitDestroyed(AGUnit unit) {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 
 	/**
@@ -194,14 +194,14 @@ public abstract class Task implements Comparable<Object> {
 	 * @param enemy the enemy
 	 */
 	public void unitEnemyDamaged(AGUnit u, Unit enemy) {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 
 	/**
 	 * Unit enemy destroyed.
 	 */
 	public void unitEnemyDestroyed() {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 
 	/**
@@ -211,7 +211,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unitFinished(AGUnit builder, AGUnit unit) {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 		execute(unit);
 	}
 
@@ -219,7 +219,7 @@ public abstract class Task implements Comparable<Object> {
 	 * Unit given.
 	 */
 	public void unitGiven() {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 
 	/**
@@ -228,7 +228,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unitIdle(AGUnit unit) {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 		execute(unit);
 	}
 
@@ -238,7 +238,7 @@ public abstract class Task implements Comparable<Object> {
 	 * @param unit the unit
 	 */
 	public void unitMoveFailed(AGUnit unit) {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 		execute(unit);
 	}
 
@@ -246,7 +246,7 @@ public abstract class Task implements Comparable<Object> {
 	 * Unit weapon fired.
 	 */
 	public void unitWeaponFired() {
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 	
 	/**
@@ -275,6 +275,6 @@ public abstract class Task implements Comparable<Object> {
 	}
 
 	public void enemyEnterLOS(AGUnit unit, Unit enemy){
-		ai.msg(this.getClass().getName());
+		ai.logDebug(this.getClass().getName());
 	}
 }

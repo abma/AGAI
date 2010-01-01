@@ -46,8 +46,8 @@ public class MScout extends Manager {
 		super(ai);
 		list = ai.getInfos().getSearch().Filter(new ISearchUnitScout(ai));
 		for (int i = 0; i < list.size(); i++) {
-			ai.msg(list.get(i).getUnit().getName() + "\t"
-					+ ai.getUnits().getTotalPrice(list.get(i).getUnit()) + " "+list.get(i).getUnit().getHumanName());
+			ai.logDebug(list.get(i).getUnit().getName() + "\t"
+					+ list.get(i).getPrice() + " "+list.get(i).getUnit().getHumanName());
 		}
 	}
 
@@ -56,7 +56,7 @@ public class MScout extends Manager {
 	 */
 	public void decScouts() {
 		scouts--;
-		ai.msg("" + scouts);
+		ai.logDebug("" + scouts);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class MScout extends Manager {
 	 */
 	public void incScouts() {
 		scouts++;
-		ai.msg("" + scouts);
+		ai.logDebug("" + scouts);
 	}
 
 	@Override
@@ -84,24 +84,24 @@ public class MScout extends Manager {
 	}
 	@Override
 	public void check(){
-		ai.msg(""+resToUse);
+		ai.logDebug(""+resToUse);
 		int i=0;
 		for(i=0; i<list.size();i++){
 			IBuildTreeUnit u = list.get(i); 
 			if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is avaiable
 				if (u.getCost().lessOrEqual(resToUse, 1000)){
-					ai.msg("building scout");
+					ai.logDebug("building scout");
 					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
 					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TScout(ai, this)));
 					resToUse.sub(u.getCost());
 					return;
 				}else{
-					ai.msg("to few resources to built "+u.getUnit().getName());
+					ai.logInfo("to few resources to built "+u.getUnit().getName());
 				}
 			}
 		}
 		//no factory, build factory!
-		ai.msg("Giving all resources to build factory");
+		ai.logInfo("Giving all resources to build factory");
 		MExpensiveBuild m= (MExpensiveBuild) ai.getManagers().get(MExpensiveBuild.class);
 		if (list.size()>0){
 			LinkedList<UnitDef> tmp = ai.getInfos().getAGB().getAllBuilders(list.get(list.size()-1).getUnit()); //FIXME: could be null if no builder is avaiable
