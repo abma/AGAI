@@ -23,6 +23,7 @@ function release(){
 		NEWFILE=AGAI-`date +"%Y%m%d%H%M%S"`-`git rev-parse HEAD`.zip
 		_c mv release/AGAI.zip $1/$NEWFILE
 		cd $1
+		chmod 644 $NEWFILE 
 		ln -s -f $NEWFILE AGAI-current.zip
 		cd -
 	else
