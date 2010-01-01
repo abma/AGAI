@@ -19,10 +19,12 @@ function release(){
 	_c cd release
 	_c zip -r AGAI.zip .
 	_c cd ..
-	_c rm -rf release
 	if [ -d $1 ]; then
-		_c mv AGAI.zip $1
+		_c mv release/AGAI.zip $1
+	else
+		_c mv release/AGAI.zip .
 	fi
+	_c rm -rf release
 }
 
 function _c(){
