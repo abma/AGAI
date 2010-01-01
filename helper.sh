@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# helper script: is used by buildbot
+# commands:
+#	build
+#	test
+#	release
 
 function run(){
 	cp script.txt ~/.spring/testai.txt
