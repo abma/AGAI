@@ -57,8 +57,8 @@ function build(){
 
 function clean (){
 	FILES=CMakeFiles/
-	echo rm -rf $FILES
-	rm -rf $FILES
+	_c echo rm -rf $FILES
+	_c rm -rf $FILES
 }
 
 function test(){
