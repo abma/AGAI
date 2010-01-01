@@ -5,6 +5,7 @@
 #	build
 #	test
 #	release
+#	clean
 
 function run(){
 	cp script.txt ~/.spring/testai.txt
