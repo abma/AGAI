@@ -75,7 +75,11 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 		System.gc();
 		System.gc();
 		this.subAI = reloadTheClass();
-		subAI.init(teamId, clb);
+		try{
+			subAI.init(teamId, clb);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -213,7 +217,6 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 				doReload(teamId, callback);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -1;
 		}
 		return 0;
 	}
@@ -251,6 +254,7 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	public IAGAI reloadTheClass() throws Exception {
 		subAI = null;
+		//FIXME: hard coded url
 		URLClassLoader urlLoader = getURLClassLoader(new URL("file", null,
 				"/home/matze/Projects/agai/SkirmishAIReal.jar"));
 		Class<?> cl = urlLoader.loadClass("agai.AGAI");
