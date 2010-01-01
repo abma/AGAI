@@ -13,14 +13,16 @@ function run(){
 }
 
 function release(){
-	mkdir -p release/AI/Skirmish/AGAI/0.1
-	cp AIInfo.lua release
-	cp *.jar release/AI/Skirmish/AGAI/0.1
-	cd release
-	zip -r AGAI.zip .
-	cd ..
-	rm -rf release
-	echo AGAI.zip is ready!
+	_c mkdir -p release/AI/Skirmish/AGAI/0.1
+	_c cp AIInfo.lua release
+	_c cp *.jar release/AI/Skirmish/AGAI/0.1
+	_c cd release
+	_c zip -r AGAI.zip .
+	_c cd ..
+	_c rm -rf release
+	if [ -d $1 ]; then
+		_c mv AGAI.zip $1
+	fi
 }
 
 function _c(){
