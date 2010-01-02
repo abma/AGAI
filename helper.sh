@@ -54,8 +54,10 @@ function build(){
 	JAVASRC=`find src-ai -type f -name "*.java"`
 	JAVASRCLOADER=`find src-loader -type f -name "*.java"`
 	echo building loader
-	_c javac ${JAVAOTPS} ${JAVASRCLOADER};
-	_c jar cf SkirmishAI.jar -C classes agai/loader
+	if [ ! -s SkirmishAI.jar ]; then
+		_c javac ${JAVAOTPS} ${JAVASRCLOADER};
+		_c jar cf SkirmishAI.jar -C classes agai/loader
+	fi
 	_c javac ${JAVAOTPS} ${JAVASRC}
 	_c jar cf UnderlyingAI-src.jar -C classes agai
 }
