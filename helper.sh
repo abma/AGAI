@@ -19,7 +19,7 @@ function run(){
 function release(){
 	RELEASEPATH=release/AI/Skirmish/AGAI/`cat VERSION`
 	_c mkdir -p ${RELEASEPATH}
-	_c cp AIInfo.lua AIOptions.lua *.jar ${RELEASEPATH}
+	_c cp data/* *.jar ${RELEASEPATH}
 	_c cd release
 	_c zip -r AGAI.zip .
 	_c cd ..
@@ -40,7 +40,7 @@ function _c(){
 	echo $@
 	if ! $@; then
 		echo failed
-		exit 
+		exit -1
 	fi
 }
 
