@@ -9,7 +9,7 @@
 
 function run(){
 	cp script.txt ~/.spring/testai.txt
-	nice /usr/bin/spring --window -x 1024 -y 768 testai.txt
+	exec nice /usr/bin/spring --window -x 1024 -y 768 testai.txt
 }
 
 function release(){
@@ -61,8 +61,7 @@ function build(){
 }
 
 function clean (){
-	FILES=CMakeFiles/
-	_c echo rm -rf $FILES
+	FILES="CMakeFiles/ classes/ SkirmishAI.jar UnderlyingAI-src.jar AGAI.zip"
 	_c rm -rf $FILES
 }
 
