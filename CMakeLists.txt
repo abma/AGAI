@@ -64,7 +64,7 @@
 				"-d" "${myJavaLoaderBuildDir}"
 				${myLoaderSources}
 			COMMAND "${JAVA_ARCHIVE}"
-				"cmf" "${myDir}/manifest.mf" "${myBuildDir}/${myLoaderBinJarFile}"
+				"cf" "${myBuildDir}/${myLoaderBinJarFile}"
 				"-C" "${myJavaLoaderBuildDir}" "${myJavaPkgFirstPart}"
 			WORKING_DIRECTORY "${myLoaderSourceDir}"
 			COMMENT "  Creating library ${myLoaderBinJarFile}" VERBATIM)
@@ -80,7 +80,7 @@
 				"-d" "${myJavaAiBuildDir}"
 				${myAiSources}
 			COMMAND "${JAVA_ARCHIVE}"
-				"cmf" "${myDir}/manifest.mf" "${myBuildDir}/${myAiBinJarFile}"
+				"cf" "${myBuildDir}/${myAiBinJarFile}"
 				"-C" "${myJavaAiBuildDir}" "${myJavaPkgFirstPart}"
 			WORKING_DIRECTORY "${myAiSourceDir}"
 			COMMENT "  Creating library ${myAiBinJarFile}" VERBATIM)

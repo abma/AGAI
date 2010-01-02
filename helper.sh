@@ -6,16 +6,20 @@
 #	test
 #	release
 #	clean
+# run is used to run spring with agai
 
 function run(){
-	cp script.txt ~/.spring/testai.txt
-	exec nice /usr/bin/spring --window -x 1024 -y 768 testai.txt
+	AIPATH=~/.spring/AI/Skirmish/AGAI/`cat VERSION`
+	_c mkdir -p $AIPATH
+	_c cp script.txt ~/.spring/testai.txt
+	_c cp data/* *.jar $AIPATH
+	_c exec nice spring --window -x 1024 -y 768 testai.txt
 }
 
 function release(){
-	_c mkdir -p release/AI/Skirmish/AGAI/0.1
-	_c cp AIInfo.lua release
-	_c cp *.jar release/AI/Skirmish/AGAI/0.1
+	RELEASEPATH=release/AI/Skirmish/AGAI/`cat VERSION`
+	_c mkdir -p ${RELEASEPATH}
+	_c cp AIInfo.lua AIOptions.lua *.jar ${RELEASEPATH}
 	_c cd release
 	_c zip -r AGAI.zip .
 	_c cd ..
@@ -59,11 +63,11 @@ function build(){
 		_c jar cf SkirmishAI.jar -C classes agai/loader
 	fi
 	_c javac ${JAVAOTPS} ${JAVASRC}
-	_c jar cf UnderlyingAI-src.jar -C classes agai
+	_c jar cf UnderlyingAI.jar -C classes agai
 }
 
 function clean (){
-	FILES="CMakeFiles/ classes/ SkirmishAI.jar UnderlyingAI-src.jar AGAI.zip"
+	FILES="CMakeFiles/ classes/ SkirmishAI.jar UnderlyingAI.jar AGAI.zip"
 	_c rm -rf $FILES
 }
 

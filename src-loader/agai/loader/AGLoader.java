@@ -256,7 +256,7 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 		subAI = null;
 		String path = clb.getDataDirs().getConfigDir() + new String( new byte[]{ (byte)(clb.getDataDirs().getPathSeparator() ) } );
 		URLClassLoader urlLoader = getURLClassLoader(new URL("file", null,
-				path + "/UnderlyingAI-src.jar"));
+				path + "/UnderlyingAI.jar"));
 		Class<?> cl = urlLoader.loadClass("agai.AGAI");
 		if (!IAGAI.class.isAssignableFrom(cl)) {
 			throw new RuntimeException("Invalid class");
