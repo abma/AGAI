@@ -26,10 +26,10 @@ function release(){
 	if [ "$1" != "" ]; then
 		NEWFILE=AGAI-`date +"%Y%m%d%H%M%S"`-`git rev-parse HEAD`.zip
 		_c mv release/AGAI.zip $1/$NEWFILE
-		cd $1
-		chmod 644 $NEWFILE 
-		ln -s -f $NEWFILE AGAI-current.zip
-		cd -
+		_c cd $1
+		_c chmod 644 $NEWFILE 
+		_c ln -s -f $NEWFILE AGAI-current.zip
+		_c cd -
 	else
 		_c mv release/AGAI.zip .
 	fi
