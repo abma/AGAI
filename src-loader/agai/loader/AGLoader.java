@@ -41,6 +41,9 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	/** The team id. */
 	private int teamId;
 
+	/** The disable events. */
+	private boolean disableEvents;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -50,26 +53,24 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int commandFinished(Unit unit, int commandId, int commandTopicId) {
-		try {
-			subAI.commandFinished(unit, commandId, commandTopicId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.commandFinished(unit, commandId, commandTopicId);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
 	/**
 	 * Do reload.
 	 * 
-	 * @param teamId
-	 *            the team id
-	 * @param clb
-	 *            the clb
+	 * @param teamId the team id
+	 * @param clb the clb
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
-	public void doReload(int teamId, OOAICallback clb) throws Exception {
+	private void doReload(int teamId, OOAICallback clb) throws Exception {
 		subAI = null;
 		System.runFinalization();
 		System.gc();
@@ -93,12 +94,13 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	@Override
 	public int enemyDamaged(Unit enemy, Unit attacker, float damage,
 			AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
-		try {
-			subAI.enemyDamaged(enemy, attacker, damage, dir, weaponDef,
-					paralyzer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.enemyDamaged(enemy, attacker, damage, dir, weaponDef,
+						paralyzer);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -111,11 +113,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int enemyDestroyed(Unit enemy, Unit attacker) {
-		try {
-			subAI.enemyDestroyed(enemy, attacker);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.enemyDestroyed(enemy, attacker);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -127,11 +130,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int enemyEnterLOS(Unit enemy) {
-		try {
-			subAI.enemyEnterLOS(enemy);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.enemyEnterLOS(enemy);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -143,13 +147,13 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 * Unit)
 	 */
 	@Override
-	public int enemyEnterRadar(Unit enemy) { // never call
-												// enemy.getDef().getName()!!
-		try {
-			subAI.enemyEnterRadar(enemy);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public int enemyEnterRadar(Unit enemy) { // never call enemy.getDef().getName()!!
+		if (!disableEvents)
+			try {
+				subAI.enemyEnterRadar(enemy);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -161,11 +165,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int enemyLeaveLOS(Unit enemy) {
-		try {
-			subAI.enemyLeaveLOS(enemy);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.enemyLeaveLOS(enemy);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -177,21 +182,20 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 * Unit)
 	 */
 	@Override
-	public int enemyLeaveRadar(Unit enemy) { // never call
-												// enemy.getDef().getName()!!
-		try {
-			subAI.enemyLeaveRadar(enemy);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public int enemyLeaveRadar(Unit enemy) { // never call enemy.getDef().getName()!!
+		if (!disableEvents)
+			try {
+				subAI.enemyLeaveRadar(enemy);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
 	/**
 	 * Gets the uRL class loader.
 	 * 
-	 * @param jarURL
-	 *            the jar url
+	 * @param jarURL the jar url
 	 * 
 	 * @return the uRL class loader
 	 */
@@ -234,7 +238,13 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		else {
+		else if (message.equalsIgnoreCase("pause")) {
+			disableEvents= ! disableEvents;
+			if (disableEvents)
+				System.out.println("agai paused");
+			else
+				System.out.println("agai unpaused");
+		} else {
 			try {
 				subAI.message(player, message);
 			} catch (Exception e) {
@@ -249,10 +259,9 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 * 
 	 * @return the iAGAI
 	 * 
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
-	public IAGAI reloadTheClass() throws Exception {
+	private IAGAI reloadTheClass() throws Exception {
 		subAI = null;
 		String path = clb.getDataDirs().getConfigDir() + new String( new byte[]{ (byte)(clb.getDataDirs().getPathSeparator() ) } );
 		URLClassLoader urlLoader = getURLClassLoader(new URL("file", null,
@@ -274,11 +283,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int unitCreated(Unit unit, Unit builder) {
-		try {
-			subAI.unitCreated(unit, builder);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.unitCreated(unit, builder);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -291,15 +301,15 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 * com.springrts.ai.oo.WeaponDef, boolean)
 	 */
 	@Override
-	public int unitDamaged(Unit unit, Unit attacker, float damage,
-			AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
-		try {
-			subAI
-					.unitDamaged(unit, attacker, damage, dir, weaponDef,
-							paralyzer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public int unitDamaged(Unit unit, Unit attacker, float damage, AIFloat3 dir, WeaponDef weaponDef, boolean paralyzer) {
+		if (!disableEvents)
+			try {
+				subAI
+						.unitDamaged(unit, attacker, damage, dir, weaponDef,
+								paralyzer);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -312,11 +322,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int unitDestroyed(Unit unit, Unit attacker) {
-		try {
-			subAI.unitDestroyed(unit, attacker);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.unitDestroyed(unit, attacker);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -328,11 +339,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int unitFinished(Unit unit) {
-		try {
-			subAI.unitFinished(unit);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.unitFinished(unit);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -343,11 +355,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int unitIdle(Unit unit) {
-		try {
-			subAI.unitIdle(unit);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.unitIdle(unit);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -359,11 +372,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int unitMoveFailed(Unit unit) {
-		try {
-			subAI.unitMoveFailed(unit);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.unitMoveFailed(unit);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 
@@ -374,11 +388,12 @@ public class AGLoader extends AbstractOOAI implements OOAI {
 	 */
 	@Override
 	public int update(int frame) {
-		try {
-			subAI.update(frame);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (!disableEvents)
+			try {
+				subAI.update(frame);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		return 0;
 	}
 }
