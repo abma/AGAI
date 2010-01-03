@@ -76,7 +76,12 @@ function clean (){
 }
 
 function test(){
-	echo no tests implemented
+	install
+	if [ "`spring --list-skirmish-ais |grep AGAI`" == "" ]; then
+		echo "AGAI couldn't be detected by the spring engine"
+		exit -1
+	fi
+
 }
 
 echo $@
