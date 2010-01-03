@@ -8,11 +8,15 @@
 #	clean
 # run is used to run spring with agai
 
-function run(){
+function install(){
 	AIPATH=~/.spring/AI/Skirmish/AGAI/`cat VERSION`
 	_c mkdir -p $AIPATH
 	_c cp script.txt ~/.spring/testai.txt
 	_c cp data/* *.jar $AIPATH
+}
+
+function run(){
+	install
 	_c exec nice spring --window -x 1024 -y 768 testai.txt
 }
 
