@@ -465,18 +465,29 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	@Override
 	public int message(int player, String message) {
 		String[] argv = message.split(" ");
-		if (argv.length > 0) {
-			if (argv[0].equalsIgnoreCase("dumpunits")) {
-				units.dump();
-			} else if (argv[0].equalsIgnoreCase("dumpbuildtree")) {
-				infos.getAGB().dumpUnits();
-			} else if (argv[0].equalsIgnoreCase("dumpmap")) {
-				infos.getSectors().dump();
-			} else if (argv[0].equalsIgnoreCase("clear")) {
-				clear();
-			} else if (argv[0].equalsIgnoreCase("dumpgraph")) {
-				logDebug(infos.getAGB().toString());
-			}
+		switch (argv.length){
+			case 1:
+				if (argv[0].equalsIgnoreCase("dumpunits")) {
+					units.dump();
+				} else if (argv[0].equalsIgnoreCase("dumpbuildtree")) {
+					infos.getAGB().dumpUnits();
+				} else if (argv[0].equalsIgnoreCase("dumpmap")) {
+					infos.getSectors().dump();
+				} else if (argv[0].equalsIgnoreCase("clear")) {
+					clear();
+				} else if (argv[0].equalsIgnoreCase("dumpgraph")) {
+					logDebug(infos.getAGB().toString());
+				} else if (argv[0].equalsIgnoreCase("logclear")) {
+					logger.clear();
+				}
+				break;
+			case 2:
+				if (argv[0].equalsIgnoreCase("log")){
+					this.logger.addLogger(argv[1]);
+				}else if (argv[0].equalsIgnoreCase("logdel")){
+					this.logger.delLogger(argv[1]);
+				}
+				break;
 		}
 		return 0;
 	}

@@ -86,6 +86,26 @@ public class AGLogger {
 			
 		System.out.println(fstr+" "+str);
 	}
+
+	public void addLogger(String classname){
+		for (int i=0; i<debuginfo.size(); i++){
+			if (classname.compareTo(debuginfo.get(i))==0){
+				System.out.println("addLogger: already there "+classname);
+				return;
+			}
+		}
+		debuginfo.add(classname);
+	}
+
+	public void delLogger(String classname){
+		for (int i=0; i<debuginfo.size(); i++){
+			if (classname.compareTo(debuginfo.get(i))==0){
+				debuginfo.remove(i);
+				return;
+			}
+		}
+		System.out.println("delLogger: String not found "+classname);
+	}
 	
 	private void loadSettings(){
 		OptionValues opt = ai.getClb().getSkirmishAI().getOptionValues();
@@ -105,7 +125,7 @@ public class AGLogger {
 		String[] list = debug.split(":");
 		debuginfo=new ArrayList<String>();
 		for (int i=0; i<list.length; i++){
-			debuginfo.add(list[i]);
+			addLogger(list[i]);
 		}
 	}
 	public void error(String msg){
@@ -122,6 +142,10 @@ public class AGLogger {
 	}
 	public void debug(String msg){
 		msg(msg, debug);
+	}
+
+	public void clear() {
+		debuginfo.clear();
 	}
 	
 }
