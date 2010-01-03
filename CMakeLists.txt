@@ -1,5 +1,5 @@
 ### AGAI config
-#
+# thanks go to Hugh Perkins for this file
 
 # ConfigureJavaSkirmishAI()
 
