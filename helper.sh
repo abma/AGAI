@@ -8,6 +8,17 @@
 #	clean
 # run is used to run spring with agai
 
+SPRINGINTERFACEPATHS="$HOME/.spring /usr/share/games/spring"
+for i in $SPRINGINTERFACEPATHS; do
+	SPRINGINTERFACE=$i/AI/Interfaces/Java/0.1
+	if [ -e $SPRINGINTERFACE/AIInterface.jar ]; then
+		echo found ai interface: $SPRINGINTERFACE
+		SPRINGINTERFACE=${SPRINGINTERFACE}/AIInterface.jar:${SPRINGINTERFACE}/jlib/vecmath.jar:${SPRINGINTERFACE}/jlib/jna.jar
+		break;
+	fi
+done
+unset SPRINGINTERFACEPATHS
+
 function install(){
 	AIPATH=~/.spring/AI/Skirmish/AGAI/`cat VERSION`
 	_c mkdir -p $AIPATH
@@ -50,15 +61,7 @@ function _c(){
 
 function build(){
 	mkdir classes
-	SPRINGINTERFACEPATHS="$HOME/.spring /usr/share/games/spring"
-	for i in $SPRINGINTERFACEPATHS; do
-		SPRINGINTERFACE=$i/AI/Interfaces/Java/0.1
-		if [ -e $SPRINGINTERFACE/AIInterface.jar ]; then
-			echo found ai interface: $SPRINGINTERFACE
-			break;
-		fi
-	done
-	JAVAOTPS="-d classes -classpath ${SPRINGINTERFACE}/AIInterface.jar:${SPRINGINTERFACE}/jlib/vecmath.jar:${SPRINGINTERFACE}/jlib/jna.jar:SkirmishAI.jar"
+	JAVAOTPS="-d classes -classpath $SPRINGINTERFACE:SkirmishAI.jar"
 	JAVASRC=`find src-ai -type f -name "*.java"`
 	JAVASRCLOADER=`find src-loader -type f -name "*.java"`
 	echo building loader
@@ -89,7 +92,8 @@ function doc(){
 		echo "javadoc: needs path to create doc"
 		exit -1
 	fi
-	_c javadoc -sourcepath . -d $1 `find -type f -name "*.java"`
+	AGAICLASS=$SPRINGINTERFACE
+	_c javadoc -sourcepath . -classpath $AGAICLASS -d "$1" `find -type f -name "*.java"`
 	_c chmod -R 755 $1
 }
 
