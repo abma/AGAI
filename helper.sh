@@ -90,6 +90,7 @@ function doc(){
 		exit -1
 	fi
 	_c javadoc -sourcepath . -d $1 `find -type f -name "*.java"`
+	_c chmod -R 755 $1
 }
 
 echo $@
