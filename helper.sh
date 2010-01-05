@@ -84,5 +84,13 @@ function test(){
 
 }
 
+function doc(){
+	if [ "$1" == "" ] || [ -d $1 ]; then
+		echo "javadoc: $1 couldn't be found"
+		exit -1
+	fi
+	_c javadoc -sourcepath . -d $1 `find -type f -name "*.java"`
+}
+
 echo $@
 $@ $2 $3 $4
