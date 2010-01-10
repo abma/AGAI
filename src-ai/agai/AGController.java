@@ -16,6 +16,8 @@
  */
 package agai;
 
+import agai.info.IResources;
+
 
 // TODO: Auto-generated Javadoc
 /*
@@ -153,9 +155,10 @@ public class AGController {
 		switch (i){
 			case 1:
 				ai.logDebug("");
-				if (lastupdate!=ai.getInfos().getResources().getLastchanged()){
-					ai.getManagers().update(ai.getInfos().getResources().update(), 1000);
-					lastupdate=ai.getInfos().getResources().getLastchanged();
+				IResources res=ai.getInfos().getResources();
+				if (lastupdate!=res.getLastchanged()){
+					ai.getManagers().update(res.update(), 1000);
+					lastupdate=res.getLastchanged();
 				}
 				break;
 			case 60:

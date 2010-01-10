@@ -104,6 +104,12 @@ public abstract class Manager {
 	 */
 	public abstract void check();
 
+	
+	/**
+	 * Returns True, if the Manager needs resources.
+	 * 
+	 * @return true, if successful
+	 */
 	public boolean needsResources() {
 		return false;
 	}

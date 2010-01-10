@@ -34,15 +34,13 @@ import com.springrts.ai.oo.Map;
 import com.springrts.ai.oo.Resource;
 import com.springrts.ai.oo.UnitDef;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class AGTBuildResource.
  */
 public class MResource extends Manager {
 
-	/**
-	 * The list with units to build resource, the first id is the resid, the
-	 * secound for the units sorted by priority to built (best units first)
-	 */
+	/** The list with units to build resource, the first id is the resid, the secound for the units sorted by priority to built (best units first). */
 	protected ArrayList<List<IBuildTreeUnit>> list;
 
 	/** The map. */
@@ -51,8 +49,7 @@ public class MResource extends Manager {
 	/**
 	 * Instantiates a new aGT build AGTBuildResource.
 	 * 
-	 * @param ai
-	 *            the ai
+	 * @param ai the ai
 	 */
 	public MResource(AGAI ai) {
 		super(ai);
@@ -84,8 +81,7 @@ public class MResource extends Manager {
 	/**
 	 * Initialize spots.
 	 * 
-	 * @param res
-	 *            the res
+	 * @param res the res
 	 */
 	private void initializeSpots(Resource res) {
 		ai.logDebug("initializeSpots Function " + ai);
@@ -96,6 +92,15 @@ public class MResource extends Manager {
 		}
 	}
 
+	/**
+	 * Try tobuild.
+	 * 
+	 * @param builder the builder
+	 * @param resource the resource
+	 * @param time the time
+	 * 
+	 * @return the t build
+	 */
 	private TBuild tryTobuild(AGUnit builder, Resource resource, int time) {
 		UnitDef unit = null;
 		IPoI poi = null;
@@ -159,7 +164,7 @@ public class MResource extends Manager {
 	
 	
 	/**
-	 * Decide which resource to built
+	 * Decide which resource to built.
 	 * 
 	 * @return the resource
 	 */
@@ -199,11 +204,17 @@ public class MResource extends Manager {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#setResToUse(agai.info.IResource, int)
+	 */
 	@Override
 	public void setResToUse(IResource res, int timetonextchange){
 		resToUse.setFrom(res);
 	}
 
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#assignTask(agai.unit.AGUnit)
+	 */
 	@Override
 	public boolean assignTask(AGUnit unit){
 		Resource r=decide();
@@ -215,16 +226,28 @@ public class MResource extends Manager {
 		}
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#canSolve(agai.unit.AGUnit)
+	 */
 	@Override
 	public boolean canSolve(AGUnit unit){ 
 		if (unit.getDef().getBuildOptions().size()<=0)
 			return false;
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#needsResources()
+	 */
 	@Override
 	public boolean needsResources() {
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#check()
+	 */
 	@Override
 	public void check(){
 	}

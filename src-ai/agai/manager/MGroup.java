@@ -22,6 +22,7 @@ import agai.AGAI;
 import agai.task.TGroup;
 import agai.unit.AGUnit;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class AGTGroupManager.
  */
@@ -33,8 +34,7 @@ public class MGroup extends Manager {
 	/**
 	 * Instantiates a new aGT group manager.
 	 * 
-	 * @param ai
-	 *            the ai
+	 * @param ai the ai
 	 */
 	public MGroup(AGAI ai) {
 		super(ai);
@@ -44,18 +44,16 @@ public class MGroup extends Manager {
 	/**
 	 * Adds the group.
 	 * 
-	 * @param group
-	 *            the group
+	 * @param group the group
 	 */
 	public void addGroup(TGroup group) {
 		list.add(group);
 	}
 
 	/**
-	 * Gets the count of type group
+	 * Gets the count of type group.
 	 * 
-	 * @param cn
-	 *            the cn
+	 * @param cn the cn
 	 * 
 	 * @return the groups
 	 */
@@ -68,15 +66,27 @@ public class MGroup extends Manager {
 		return count;
 	}
 
+	/**
+	 * Removes the.
+	 * 
+	 * @param taskGroup the task group
+	 */
 	public void remove(TGroup taskGroup) {
 		ai.logInfo("group died!");
 		list.remove(taskGroup);
 	}
 
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#canSolve(agai.unit.AGUnit)
+	 */
 	@Override
 	public boolean canSolve(AGUnit unit){
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#check()
+	 */
 	@Override
 	public void check(){
 	}

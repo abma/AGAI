@@ -50,6 +50,10 @@ public class MSuperWeapon extends Manager {
 		// TODO Auto-generated method stub
 
 	}
+	
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#check()
+	 */
 	@Override
 	public void check(){
 	}

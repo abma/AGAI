@@ -28,19 +28,19 @@ import agai.task.TBuild;
 import agai.task.TScout;
 import agai.unit.AGUnit;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class AGTScout.
  */
 public class MScout extends Manager {
 
-	/** The count of all scouts */
+	/** The count of all scouts. */
 	private int scouts = 0;
 
 	/**
 	 * Instantiates a new aG task scout.
 	 * 
-	 * @param ai
-	 *            the ai
+	 * @param ai the ai
 	 */
 	public MScout(AGAI ai) {
 		super(ai);
@@ -67,6 +67,9 @@ public class MScout extends Manager {
 		ai.logDebug("" + scouts);
 	}
 
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#assignTask(agai.unit.AGUnit)
+	 */
 	@Override
 	public boolean assignTask(AGUnit unit){
 		for (int i=0; i<list.size(); i++){
@@ -78,10 +81,17 @@ public class MScout extends Manager {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#needsResources()
+	 */
 	@Override
 	public boolean needsResources() {
 		return true;
 	}
+
+	/* (non-Javadoc)
+	 * @see agai.manager.Manager#check()
+	 */
 	@Override
 	public void check(){
 		ai.logDebug(""+resToUse);
