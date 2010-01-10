@@ -53,6 +53,11 @@ public class AGUnit {
 	/** The task. */
 	private Task task = null;
 
+	/**
+	 * Checks if is built.
+	 * 
+	 * @return true, if is built
+	 */
 	public boolean isBuilt() {
 		return unit.isBeingBuilt();
 	}
@@ -63,10 +68,8 @@ public class AGUnit {
 	/**
 	 * Instantiates a new aG unit.
 	 * 
-	 * @param ai
-	 *            the ai
-	 * @param unit
-	 *            the unit
+	 * @param ai the ai
+	 * @param unit the unit
 	 */
 	public AGUnit(AGAI ai, Unit unit) {
 		this.unit = unit;
@@ -76,8 +79,7 @@ public class AGUnit {
 	/**
 	 * Attack at position.
 	 * 
-	 * @param pos
-	 *            the position to attack
+	 * @param pos the position to attack
 	 * 
 	 * @return the int
 	 */
@@ -90,8 +92,7 @@ public class AGUnit {
 	/**
 	 * Attack unit.
 	 * 
-	 * @param unit
-	 *            the unit
+	 * @param unit the unit
 	 * 
 	 * @return the int
 	 */
@@ -104,12 +105,9 @@ public class AGUnit {
 	/**
 	 * Builds the unit.
 	 * 
-	 * @param type
-	 *            the type
-	 * @param pos
-	 *            the pos
-	 * @param facing
-	 *            the facing
+	 * @param type the type
+	 * @param pos the pos
+	 * @param facing the facing
 	 * 
 	 * @return the int
 	 */
@@ -164,6 +162,11 @@ public class AGUnit {
 	public void destroyed() {
 	}
 
+	/**
+	 * Gets the builder.
+	 * 
+	 * @return the builder
+	 */
 	public AGUnit getBuilder() {
 		return builder;
 	}
@@ -207,8 +210,7 @@ public class AGUnit {
 	/**
 	 * Gets the unit definiton.
 	 * 
-	 * @param str
-	 *            Short string of the definition (for ex. armcom)
+	 * @param str Short string of the definition (for ex. armcom)
 	 * 
 	 * @return the unit definiton
 	 */
@@ -230,8 +232,7 @@ public class AGUnit {
 	/**
 	 * Move to position.
 	 * 
-	 * @param pos
-	 *            the pos
+	 * @param pos the pos
 	 * 
 	 * @return the int
 	 */
@@ -241,12 +242,17 @@ public class AGUnit {
 		return ai.handleEngineCommand(command);
 	}
 
+	/**
+	 * Sets the builder.
+	 * 
+	 * @param builder the new builder
+	 */
 	public void setBuilder(AGUnit builder) {
 		this.builder = builder;
 	}
 
 	/**
-	 * Sets Unit to Idle (Stop current command)
+	 * Sets Unit to Idle (Stop current command).
 	 */
 	public void setIdle() {
 		AICommand command = new StopUnitAICommand(unit, -1,
@@ -257,8 +263,7 @@ public class AGUnit {
 	/**
 	 * Sets the power.
 	 * 
-	 * @param power
-	 *            the new power
+	 * @param power the new power
 	 */
 	public void setPower(boolean power) {
 		AICommand command = new SetOnOffUnitAICommand(unit, -1,
@@ -269,8 +274,7 @@ public class AGUnit {
 	/**
 	 * Sets the task.
 	 * 
-	 * @param task
-	 *            the new task
+	 * @param task the new task
 	 */
 	public void setTask(Task task) {
 		if (this.task != null) {
@@ -296,6 +300,13 @@ public class AGUnit {
 		return str;
 	}
 	
+	/**
+	 * Checks if is able to built.
+	 * 
+	 * @param type the type
+	 * 
+	 * @return true, if is able to built
+	 */
 	public boolean isAbleToBuilt(UnitDef type){
 		List<UnitDef> buildOptions = unit.getDef().getBuildOptions();
 		for (int i = 0; i < buildOptions.size(); i++) {
@@ -305,7 +316,15 @@ public class AGUnit {
 		}
 		return false;
 	}
+	
+	/** The production. */
 	private IResource production=null;
+	
+	/**
+	 * Gets the production.
+	 * 
+	 * @return the production
+	 */
 	public IResource getProduction(){
 		if (production==null){
 			production = new IResource(ai);
@@ -317,17 +336,40 @@ public class AGUnit {
 		return production;
 	}
 
+	/**
+	 * Gets the max slope.
+	 * 
+	 * @return the max slope
+	 */
 	public float getMaxSlope() {
 		return unit.getDef().getMaxSlope();
 	}
 
+	/**
+	 * Gets the min water depth.
+	 * 
+	 * @return the min water depth
+	 */
 	public float getMinWaterDepth() {
 		return unit.getDef().getMinWaterDepth();
 	}
 
+	/**
+	 * Gets the max water depth.
+	 * 
+	 * @return the max water depth
+	 */
 	public float getMaxWaterDepth() {
 		return unit.getDef().getMaxWaterDepth();
 	}
+	
+	/**
+	 * Can move to.
+	 * 
+	 * @param pos the pos
+	 * 
+	 * @return true, if successful
+	 */
 	public boolean canMoveTo(AIFloat3 pos){
 		if (pos==null) //null means unit pos, so it is already there!
 			return true;
@@ -339,14 +381,29 @@ public class AGUnit {
 		return (path!=null);
 	}
 
+	/**
+	 * Gets the builds the speed.
+	 * 
+	 * @return the builds the speed
+	 */
 	public int getBuildSpeed() {
 		return Math.round(unit.getDef().getBuildSpeed());
 	}
 
+	/**
+	 * Fetch task.
+	 */
 	public void fetchTask() {
 		ai.getManagers().assignTask(this);
 	}
 
+	/**
+	 * Patrol to.
+	 * 
+	 * @param pos the pos
+	 * 
+	 * @return the int
+	 */
 	public int patrolTo(AIFloat3 pos) {
 		AICommand command = new PatrolUnitAICommand(unit, -1,
 				new ArrayList<AICommand.Option>(), 10000, pos);
@@ -355,7 +412,7 @@ public class AGUnit {
 
 	/**
 	 * Gets the lOS.
-	 *
+	 * 
 	 * @return the lOS
 	 */
 	public float getLOS() {
@@ -371,6 +428,10 @@ public class AGUnit {
 			ret=tmp;
 		return ret;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode(){
 		return unit.hashCode();
