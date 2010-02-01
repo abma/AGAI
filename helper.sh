@@ -60,7 +60,9 @@ _c(){
 }
 
 build(){
-	mkdir classes
+	if ! [ -d classes ] ; then
+		mkdir classes
+	fi
 	JAVAOTPS="-d classes -classpath $SPRINGINTERFACE:SkirmishAI.jar"
 	JAVASRC=`find src-ai -type f -name "*.java"`
 	JAVASRCLOADER=`find src-loader -type f -name "*.java"`
