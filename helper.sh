@@ -19,19 +19,19 @@ for i in $SPRINGINTERFACEPATHS; do
 done
 unset SPRINGINTERFACEPATHS
 
-function install(){
+install(){
 	AIPATH=~/.spring/AI/Skirmish/AGAI/`cat VERSION`
 	_c mkdir -p $AIPATH
 	_c cp script.txt ~/.spring/testai.txt
 	_c cp data/* *.jar $AIPATH
 }
 
-function run(){
+run(){
 	install
 	_c exec nice spring --window -x 1024 -y 768 testai.txt
 }
 
-function release(){
+release(){
 	RELEASEPATH=release/AI/Skirmish/AGAI/`cat VERSION`
 	_c mkdir -p ${RELEASEPATH}
 	_c cp data/* *.jar ${RELEASEPATH}
@@ -51,7 +51,7 @@ function release(){
 	_c rm -rf release
 }
 
-function _c(){
+_c(){
 	echo $@
 	if ! $@; then
 		echo failed
@@ -59,7 +59,7 @@ function _c(){
 	fi
 }
 
-function build(){
+build(){
 	mkdir classes
 	JAVAOTPS="-d classes -classpath $SPRINGINTERFACE:SkirmishAI.jar"
 	JAVASRC=`find src-ai -type f -name "*.java"`
@@ -73,12 +73,12 @@ function build(){
 	_c jar cf UnderlyingAI.jar -C classes agai
 }
 
-function clean (){
+clean(){
 	FILES="CMakeFiles/ classes/ SkirmishAI.jar UnderlyingAI.jar AGAI.zip"
 	_c rm -rf $FILES
 }
 
-function test(){
+test(){
 	install
 	if [ "`spring --list-skirmish-ais |grep AGAI`" == "" ]; then
 		echo "AGAI couldn't be detected by the spring engine"
@@ -87,7 +87,7 @@ function test(){
 
 }
 
-function doc(){
+doc(){
 	if [ "$1" == "" ];  then
 		echo "javadoc: needs path to create doc"
 		exit -1
