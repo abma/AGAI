@@ -80,7 +80,7 @@ clean(){
 
 test(){
 	install
-	if [ "`spring --list-skirmish-ais |grep AGAI`" == "" ]; then
+	if [ "`spring --list-skirmish-ais |grep AGAI`" == "" ] ; then
 		echo "AGAI couldn't be detected by the spring engine"
 		exit -1
 	fi
@@ -88,7 +88,7 @@ test(){
 }
 
 doc(){
-	if [ "$1" == "" ];  then
+	if [ "$1" = "" ];  then
 		echo "javadoc: needs path to create doc"
 		exit -1
 	fi
