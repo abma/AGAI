@@ -161,9 +161,6 @@ public class AGController {
 					lastupdate=res.getLastchanged();
 				}
 				break;
-			case 60:
-				ai.getUnits().employIdle();
-				break;
 			case 120:
 				ai.getManagers().check();
 				break;

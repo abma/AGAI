@@ -116,18 +116,6 @@ public class AGUnits {
 	}
 
 	/**
-	 * Employ idle.
-	 */
-	public void employIdle() {
-		Iterator<AGUnit> iterator = units.values().iterator();
-		while (iterator.hasNext()) {
-			AGUnit u = iterator.next();
-			if (u.isIdle())
-				u.fetchTask();
-		}
-	}
-
-	/**
 	 * Gets the element type.
 	 * 
 	 * @param unit
@@ -198,7 +186,7 @@ public class AGUnits {
 		AGUnit ret = units.get(unit.hashCode());
 		if (ret == null)
 			ret = add(unit);
-		else {
+		else { //FIXME
 			if (ret.getDef() == null) {// unit died?!
 				units.remove(unit.hashCode());
 				return null;

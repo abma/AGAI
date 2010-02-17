@@ -420,9 +420,10 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 	 * @return the int
 	 */
 	public int handleEngineCommand(AICommand command) {
-		return clb.getEngine().handleCommand(
-				com.springrts.ai.AICommandWrapper.COMMAND_TO_ID_ENGINE, -1,
-				command);
+		if (clb.getEngine().handleCommand(com.springrts.ai.AICommandWrapper.COMMAND_TO_ID_ENGINE, -1,command)!=0){
+			logger.error("Invalid AI Command");
+		}
+		return 0;
 	}
 
 	/**
@@ -449,6 +450,13 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 		infos = new AGInfos(this);
 		controller = new AGController(this);
 		managers = new AGManagers(this);
+		List<Unit> unitlist = this.clb.getFriendlyUnits();
+		for (int i=0; i< unitlist.size();i++){
+			if (unitlist.get(i).getTeam()==teamId){
+				this.unitCreated(unitlist.get(i), null);
+				units.getUnit(unitlist.get(i)).wait(100);
+			}
+		}
 		return 0;
 	}
 
@@ -479,6 +487,13 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 					logDebug(infos.getAGB().toString());
 				} else if (argv[0].equalsIgnoreCase("logclear")) {
 					logger.clear();
+				} else if (argv[0].equalsIgnoreCase("filter")) {
+					logger.setFilter(!logger.isFilter());
+				} else if (argv[0].equalsIgnoreCase("fetch")){
+					List<Unit> unitslist = this.getClb().getSelectedUnits();
+					for (int i=0; i<unitslist.size(); i++){
+						units.getUnit(unitslist.get(i)).fetchTask();
+					}
 				}
 				break;
 			case 2:

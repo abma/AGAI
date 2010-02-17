@@ -25,20 +25,31 @@ public class AGLogger {
 	private String lastclass="";
 	private AGAI ai;
 
-	public static final int error = 4;
-	public static final int warning = 3;
+	public static final int error = 0;
+	public static final int warning = 1;
 	public static final int normal = 2;
-	public static final int info = 1;
-	public static final int debug = 0;
+	public static final int info = 3;
+	public static final int debug = 4;
 	
-	private int debuglevel=normal;
+	private int debuglevel=debug;
 	private ArrayList<String> debuginfo;
+	private boolean filter;
 	
 	AGLogger(AGAI ai){
 		this.ai=ai;
+		this.filter=false;
 		loadSettings();
 	}
 	
+	public boolean isFilter() {
+		return filter;
+	}
+
+	public void setFilter(boolean filter) {
+		this.filter = filter;
+		this.debuglevel=debug;
+	}
+
 	/**
 	 * Print a debug message on console, print only messages where
 	 * level is < debuglevel and the calling class is in debuginfo
@@ -47,7 +58,7 @@ public class AGLogger {
 	 * @param level the level
 	 */
 	private void msg(String str, int level) {
-		if (level<debuglevel)
+		if (level>debuglevel)
 			return;
 		try {
 			throw new Exception();
@@ -55,13 +66,15 @@ public class AGLogger {
 			String cur=e.getStackTrace()[3].getFileName();
 			cur=cur.substring(0, cur.length()-5); //remove .java
 			boolean found=false;
-			for (int i=0; i<debuginfo.size(); i++){
-				if (debuginfo.get(i).equals(cur)){
-					found=true;
+			if (filter){
+				for (int i=0; i<debuginfo.size(); i++){
+					if (debuginfo.get(i).equals(cur)){
+						found=true;
+					}
 				}
+				if (!found)
+					return;
 			}
-			if (!found)
-				return;
 			if (lastclass.contains(cur)){
 				cur="";
 				for (int i=0; i<lastclass.length(); i++)
@@ -113,11 +126,8 @@ public class AGLogger {
 		for (int i=0; i<opt.getSize(); i++){
 			System.out.println(opt.getKey(i) +"="+opt.getValue(i));
 		}
-		String use=opt.getValueByKey("ignoredebugsettings");
 		String debug=null;
-		if (use.equals("false")){
-			debug = opt.getValueByKey("debuginfos");
-		}
+		debug = opt.getValueByKey("debuginfos");
 		if (debug==null){
 			debug="IResource:MExpensiveBuild:MAttack:Manager";
 			System.out.println("using default values: "+debug);

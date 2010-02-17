@@ -88,7 +88,8 @@ public class TScout extends Task {
 		}
 		if (unit.canMoveTo(destination.getPos())){
 			ai.logDebug("moving to "+destination.getPos());
-			unit.setTask(new TSecureMove(ai, null, this, destination.getSector(), true, unit.getPos()));
+//			unit.setTask(new TSecureMove(ai, null, this, destination.getSector(), true, unit.getPos()));
+			unit.moveTo(destination.getPos());
 		}else{
 			ai.logDebug("Unit can't move to PoI");
 			ai.drawPoint(destination.getPos(), "");

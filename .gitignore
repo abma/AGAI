@@ -1,0 +1,12 @@
+/docs/*[.pdf|.svg|.dia|.odt|.*~]
+/classes/
+/.classpath
+/.project
+/.settings
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/*[.jar|.zip]
+/Makefile
+.~lock*#
+

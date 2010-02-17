@@ -49,15 +49,6 @@ local options = {
 		max=4,
 		step=1.0,
 	},
-	{
-		key="ignoredebugsettings",
-                section = "debug",
-                name="Ignore debug settings",
-                desc="This settings is used to develop, the hard-coded values are used",
-                type="bool",
-                def=false,
-        },
-
 }
 
 return options

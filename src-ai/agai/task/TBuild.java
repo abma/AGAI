@@ -162,7 +162,7 @@ public class TBuild extends Task {
 
 	@Override
 	public void execute(AGUnit unit) {
-		if (pos==null){ //task has no buildpos, assign one!
+/*		if (pos==null){ //task has no buildpos, assign one!
 			pos=unit.getPos();
 			if (unitdef.getSpeed()<=0) //unit to build can move itself, ignore position
 				pos=unit.getBuildPos(pos , unitdef, this.radius, this.mindistance);
@@ -170,11 +170,11 @@ public class TBuild extends Task {
 				pos=new AIFloat3();
 		}
 		ISector target=ai.getInfos().getSectors().getSector(pos);
-		if ((ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)) || (unit.getDef().getSpeed()<=0)){
+		if ((ai.getInfos().getSectors().isPosInSec(unit.getPos(), target)) || (unit.getDef().getSpeed()<=0)){*/
 			unit.buildUnit(unitdef, pos, AGAI.defaultFacing);
-		}else
+/*		}else
 			unit.setTask(new TSecureMove(ai, null, this, target, true, unit.getPos()));
-			
+*/			
 	}
 	@Override
 	public void assign(AGUnit unit){
