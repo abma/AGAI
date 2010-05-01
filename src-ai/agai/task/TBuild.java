@@ -174,7 +174,6 @@ public class TBuild extends Task {
 			unit.buildUnit(unitdef, pos, AGAI.defaultFacing);
 		}else
 			unit.setTask(new TSecureMove(ai, null, this, target, true, unit.getPos()));
-			
 	}
 	@Override
 	public void assign(AGUnit unit){

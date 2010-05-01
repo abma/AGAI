@@ -35,6 +35,7 @@ import com.springrts.ai.command.MoveUnitAICommand;
 import com.springrts.ai.command.PatrolUnitAICommand;
 import com.springrts.ai.command.SetOnOffUnitAICommand;
 import com.springrts.ai.command.StopUnitAICommand;
+import com.springrts.ai.command.TimeWaitUnitAICommand;
 import com.springrts.ai.oo.Unit;
 import com.springrts.ai.oo.UnitDef;
 
@@ -237,8 +238,7 @@ public class AGUnit {
 	 * @return the int
 	 */
 	public int moveTo(AIFloat3 pos) {
-		AICommand command = new MoveUnitAICommand(unit, -1,
-				new ArrayList<AICommand.Option>(), 10000, pos);
+		AICommand command = new MoveUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 10000, pos);
 		return ai.handleEngineCommand(command);
 	}
 
@@ -405,8 +405,12 @@ public class AGUnit {
 	 * @return the int
 	 */
 	public int patrolTo(AIFloat3 pos) {
-		AICommand command = new PatrolUnitAICommand(unit, -1,
-				new ArrayList<AICommand.Option>(), 10000, pos);
+		AICommand command = new PatrolUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 10000, pos);
+		return ai.handleEngineCommand(command);
+	}
+	
+	public int wait(int frames){
+		AICommand command = new TimeWaitUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 10000, frames);
 		return ai.handleEngineCommand(command);
 	}
 

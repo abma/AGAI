@@ -94,8 +94,11 @@ public abstract class Manager {
 	 */
 	public boolean canSolve(AGUnit unit){
     	for (int i=0; i<list.size(); i++)
-    		if (unit.getDef().getUnitDefId()==list.get(i).getUnit().getUnitDefId())
+    		if (unit.getDef().getUnitDefId()==list.get(i).getUnit().getUnitDefId()){
+    	    	ai.logInfo("Can solve: " + unit.getUnit().toString());
     			return true;
+    		}
+    	ai.logWarning("Can't solve: " + unit.getUnit().toString());
     	return false;
     }
 	
