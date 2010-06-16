@@ -140,13 +140,18 @@ public class IBuildTree {
 	}
 
 	/**
-	 * Fill unitList with all avaiable Units from Graph.
+	 * Fill unitList with all available Units from Graph.
 	 * @param list 
 	 */
 	private void generateList(List<UnitDef> list) {
 		unitList = new HashMap<Integer, IBuildTreeUnit>();
 		for (int i=0; i<list.size(); i++){
-			unitList.put(list.get(i).getUnitDefId(), new IBuildTreeUnit(ai, list.get(i)));
+			UnitDef u= list.get(i);
+			if (u!=null){
+				unitList.put(u.getUnitDefId(), new IBuildTreeUnit(ai, list.get(i)));
+			}else{
+				ai.logError("generateList called with a null entry in list");
+			}
 		}
 		List<Unit> units = ai.getClb().getFriendlyUnits();
 		for (int i=0; i<units.size(); i++){
