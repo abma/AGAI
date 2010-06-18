@@ -16,11 +16,10 @@
  */
 package agai.info;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.List;
 
 import agai.AGAI;
+import agai.Str;
 
 import com.springrts.ai.oo.Resource;
 
@@ -265,7 +264,7 @@ public class IResource{
 			current=getTotal(i, time);
 			less=cost.getTotal(i, 0);
 			if (current-less>=0){
-				ai.logWarning("" +resources.get(i).getName()+" is missing: " + (current-less) + " "+ this +"  "+cost);
+				ai.logWarning("" +resources.get(i).getName()+" is missing: " + new Str(current) + new Str(less) + new Str(this.toString()) + new Str(cost.toString() + new Str(time)));
 				return false;
 			}
 		}
@@ -275,18 +274,14 @@ public class IResource{
 	
 	private String getType(int i){
 		switch (i){
-			case 0: return "current";
-			case 1: return "useage";
-			case 2: return "income";
-			case 3: return "storage";
+			case 0: return "cur";
+			case 1: return "use";
+			case 2: return "inc";
+			case 3: return "sto";
 		}
 		return "Unknown type!";
 	}
 
-	private String format(float value){
-		NumberFormat numberFormat = new DecimalFormat("######.##");
-		return numberFormat.format(value);
-	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -298,7 +293,7 @@ public class IResource{
 				str=str+"                              ";
 			str = str + resources.get(j).getName();
 			for (i=0; i<res.length; i++){
-				str=str+"\t" +getType(i) + "\t" +format(res[i][j]);
+				str=str+new Str(getType(i),8)+new Str(res[i][j],8);
 			}
 			if (j<res[0].length-1)
 				str = str+  "\n";

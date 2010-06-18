@@ -85,7 +85,7 @@ public class MExpensiveBuild extends Manager{
 			TBuild t=buildtasks.get(i);
 			AIFloat3 pos=unit.getBuildPos(t.getPos(), t.getUnitDef(), t.getRadius(), t.getMinDistance());
 			if (pos!=null){
-				if (resToUse.lessOrEqual(buildtasks.get(i).getPrice(), unit.getBuildSpeed())){
+				if (buildtasks.get(i).getPrice().lessOrEqual(ai.getInfos().getResources().get(), unit.getBuildSpeed())){
 					ai.logDebug("");
 					t.setPos(pos);
 					resToUse.sub(t.getPrice());

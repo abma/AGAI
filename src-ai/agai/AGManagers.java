@@ -123,10 +123,14 @@ public class AGManagers {
 	public boolean assignTask(AGUnit unit) {
 		for (int i=0; i<list.size(); i++){
 			if (list.get(i).canSolve(unit)){
-				if (list.get(i).assignTask(unit)){
-					ai.logError("assignTask");
+				if (list.get(i).assignTask(unit))
 					return true;
-				}
+			}
+			System.out.println("try build");
+			if (list.get(i).canBuild(unit)){
+				System.out.println("build");
+				if (list.get(i).setBuildTask(unit));
+					return true;
 			}
 		}
 		ai.logError("assignTask false");

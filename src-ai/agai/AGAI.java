@@ -492,7 +492,9 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				} else if (argv[0].equalsIgnoreCase("fetch")){
 					List<Unit> unitslist = this.getClb().getSelectedUnits();
 					for (int i=0; i<unitslist.size(); i++){
-						units.getUnit(unitslist.get(i)).fetchTask();
+						AGUnit unit = units.getUnit(unitslist.get(i));
+						unit.fetchTask();
+						this.logError(""+unit.getTask());
 					}
 				} else if (argv[0].equalsIgnoreCase("fetchtask")){
 					List<Unit> list = clb.getSelectedUnits();

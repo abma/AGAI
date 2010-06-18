@@ -1,7 +1,11 @@
 package agai;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class Str {
 	private static String str;
+	private static int defaultlen=10;
 	
 	public Str(String str, int align){
 		align(str,align);
@@ -12,15 +16,21 @@ public class Str {
 	}
 	
 	public Str(String str) {
-		align(str, 15);
+		align(str, defaultlen);
 	}
 
 	public Str(int val) {
-		align(Integer.toString(val),10);
+		align(Integer.toString(val),defaultlen);
 	}
 
 	public Str(float f) {
-		align(Float.toString(f),10);
+		NumberFormat numberFormat = new DecimalFormat("######.##");
+		align(numberFormat.format(f),defaultlen);
+	}
+
+	public Str(float f, int align) {
+		NumberFormat numberFormat = new DecimalFormat("######.##");
+		align(numberFormat.format(f),align);
 	}
 
 	private static void align(String stri, int align) {
@@ -28,7 +38,8 @@ public class Str {
 		str="";
 		for(int i=0; i<align-val.length(); i++)
 			str+=" ";
-		str=str+val;
+		for(int i=0; i<Math.min(align,stri.length()); i++)
+			str=str+stri.charAt(i);
 	}
 	
 	@Override

@@ -20,6 +20,8 @@ package agai.manager;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.springrts.ai.oo.UnitDef;
+
 import agai.AGAI;
 import agai.info.IBuildTreeUnit;
 import agai.info.IResource;
@@ -98,10 +100,28 @@ public abstract class Manager {
     	    	ai.logInfo("Can solve: " + unit.getUnit().toString());
     			return true;
     		}
-    	ai.logWarning("Can't solve: " + unit.getUnit().toString());
+    	ai.logWarning("Can't solve: " + this + unit.toString());
     	return false;
     }
 	
+	/**
+	 * Check if a Unit can build a Unit needed by a Manager
+	 * 
+	 * @param unit the unit
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean canBuild(AGUnit unit){
+		List<UnitDef> targets = unit.getDef().getBuildOptions();
+		for (int i=0; i<targets.size(); i++){
+			for (int j=0; j<list.size(); j++)
+				if (targets.get(i).getUnitDefId()==list.get(j).getUnit().getUnitDefId())
+					return true;
+		}
+		return false;
+	}
+	
+
 	/**
 	 * This function is called regulary to do some checks
 	 */
@@ -117,4 +137,21 @@ public abstract class Manager {
 		return false;
 	}
 
+	/**
+	 * Sets a Build task to the unit according to the manager units list
+	 * @param unit the unit that will receive the task
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean setBuildTask(AGUnit unit) {
+		for (int i=0; i<list.size(); i++){
+			if (unit.isAbleToBuilt(list.get(i).getUnit())){
+				unit.buildUnit(list.get(i).getUnit(), unit.getPos(), 0);
+				return true;
+			}
+		}
+		ai.logError("Can't build to solve: " + this + unit.toString());
+		return false;
+		
+	}
 }

@@ -173,7 +173,7 @@ public class MResource extends Manager {
 		float maxpercent=0;
 		int pos=0;;
 		ai.logDebug("");
-		IResource cur=ai.getInfos().getResources().get();
+		IResource cur=ai.getInfos().getResources().update();
 		ai.logDebug(""+cur);
 		for (int i=0; i<ai.getResourcecount(); i++){ //build resource whos usage has most percent
 			float income=cur.getIncome(i);
