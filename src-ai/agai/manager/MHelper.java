@@ -32,7 +32,7 @@ public class MHelper extends Manager{
 				if (unit.getUnit().getCurrentCommands().size()>0){
 					CurrentCommand command = unit.getUnit().getCurrentCommands().get(0);
 					System.out.println(unit.toString() + command.getCommandId() +" " +command.getId());
-					if (command.getId()==-173){ //FIXME, seems to be a bug in the interface
+					if (command.getId()==-173){ //FIXME, this is the internal command, not the id from c-interface
 						u.setTask(new THelp(ai, this, unit));
 						return true;
 					}
