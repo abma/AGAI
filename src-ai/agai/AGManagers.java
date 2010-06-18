@@ -24,6 +24,7 @@ import agai.info.IResource;
 import agai.manager.MAttack;
 import agai.manager.MBuild;
 import agai.manager.MExpensiveBuild;
+import agai.manager.MHelper;
 import agai.manager.MResource;
 import agai.manager.MScout;
 import agai.manager.Manager;
@@ -57,7 +58,8 @@ public class AGManagers {
 		tasks = new LinkedList<Task>();
 		list = new LinkedList<Manager>();
 
-		list.add(new MAttack(ai)); //ordered by priority!
+		list.add(new MHelper(ai));//ordered by priority!
+		list.add(new MAttack(ai));
 		list.add(new MScout(ai));
 		list.add(new MExpensiveBuild(ai));
 		list.add(new MBuild(ai));
@@ -122,16 +124,10 @@ public class AGManagers {
 
 	public boolean assignTask(AGUnit unit) {
 		for (int i=0; i<list.size(); i++){
-			if (list.get(i).canSolve(unit)){
-				if (list.get(i).assignTask(unit))
-					return true;
-			}
-			System.out.println("try build");
-			if (list.get(i).canBuild(unit)){
-				System.out.println("build");
-				if (list.get(i).setBuildTask(unit));
-					return true;
-			}
+			if (list.get(i).assignTask(unit))
+				return true;
+			if (list.get(i).setBuildTask(unit))
+				return true;
 		}
 		ai.logError("assignTask false");
 		return false;

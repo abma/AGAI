@@ -102,16 +102,6 @@ public class MExpensiveBuild extends Manager{
 	}
 
 	/* (non-Javadoc)
-	 * @see agai.manager.Manager#canSolve(agai.unit.AGUnit)
-	 */
-	@Override
-	public boolean canSolve(AGUnit unit){
-		if (unit.getDef().getBuildOptions().size()<=0)
-			return false;
-		return true;
-	}
-	
-	/* (non-Javadoc)
 	 * @see agai.manager.Manager#check()
 	 */
 	@Override

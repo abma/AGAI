@@ -58,12 +58,6 @@ public class MBuild extends Manager {
 	}
 	
 	@Override
-	public boolean canSolve(AGUnit unit){
-		if (unit.getDef().getBuildOptions().size()<=0)
-			return false;
-		return true;
-	}
-	@Override
 	public void check(){
 	}
 }

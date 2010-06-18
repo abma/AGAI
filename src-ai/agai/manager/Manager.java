@@ -20,8 +20,6 @@ package agai.manager;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.springrts.ai.oo.UnitDef;
-
 import agai.AGAI;
 import agai.info.IBuildTreeUnit;
 import agai.info.IResource;
@@ -87,41 +85,6 @@ public abstract class Manager {
 		return false;
 	}
     
-	/**
-	 * Check if a Unit can help a Manager to solve a Task
-	 * 
-	 * @param unit the unit
-	 * 
-	 * @return true, if successful
-	 */
-	public boolean canSolve(AGUnit unit){
-    	for (int i=0; i<list.size(); i++)
-    		if (unit.getDef().getUnitDefId()==list.get(i).getUnit().getUnitDefId()){
-    	    	ai.logInfo("Can solve: " + unit.getUnit().toString());
-    			return true;
-    		}
-    	ai.logWarning("Can't solve: " + this + unit.toString());
-    	return false;
-    }
-	
-	/**
-	 * Check if a Unit can build a Unit needed by a Manager
-	 * 
-	 * @param unit the unit
-	 * 
-	 * @return true, if successful
-	 */
-	public boolean canBuild(AGUnit unit){
-		List<UnitDef> targets = unit.getDef().getBuildOptions();
-		for (int i=0; i<targets.size(); i++){
-			for (int j=0; j<list.size(); j++)
-				if (targets.get(i).getUnitDefId()==list.get(j).getUnit().getUnitDefId())
-					return true;
-		}
-		return false;
-	}
-	
-
 	/**
 	 * This function is called regulary to do some checks
 	 */

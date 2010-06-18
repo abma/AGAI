@@ -20,7 +20,6 @@ import java.util.LinkedList;
 
 import agai.AGAI;
 import agai.task.TGroup;
-import agai.unit.AGUnit;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -76,14 +75,6 @@ public class MGroup extends Manager {
 		list.remove(taskGroup);
 	}
 
-	/* (non-Javadoc)
-	 * @see agai.manager.Manager#canSolve(agai.unit.AGUnit)
-	 */
-	@Override
-	public boolean canSolve(AGUnit unit){
-		return true;
-	}
-	
 	/* (non-Javadoc)
 	 * @see agai.manager.Manager#check()
 	 */

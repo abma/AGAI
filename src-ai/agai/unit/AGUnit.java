@@ -31,6 +31,7 @@ import com.springrts.ai.AIFloat3;
 import com.springrts.ai.command.AttackAreaUnitAICommand;
 import com.springrts.ai.command.AttackUnitAICommand;
 import com.springrts.ai.command.BuildUnitAICommand;
+import com.springrts.ai.command.GuardUnitAICommand;
 import com.springrts.ai.command.MoveUnitAICommand;
 import com.springrts.ai.command.PatrolUnitAICommand;
 import com.springrts.ai.command.SetOnOffUnitAICommand;
@@ -439,6 +440,11 @@ public class AGUnit {
 	@Override
 	public int hashCode(){
 		return unit.hashCode();
+	}
+
+	public boolean help(AGUnit unitToHelp) {
+		AICommand command =new GuardUnitAICommand(unit, -1, new ArrayList<AICommand.Option>(), 10000, unitToHelp.getUnit());
+		return ai.handleEngineCommand(command)==0;
 	}
 	
 }
