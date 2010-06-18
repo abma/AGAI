@@ -17,9 +17,11 @@
 package agai.info;
 
 import java.util.LinkedList;
+
 import java.util.List;
 
 import agai.AGAI;
+import agai.Str;
 
 import com.springrts.ai.oo.Resource;
 import com.springrts.ai.oo.UnitDef;
@@ -211,10 +213,11 @@ public class IBuildTreeUnit {
 	public boolean canBuild() {
 		return (ai.getInfos().getAGB().getBuilder(unit)!=null);
 	}
-	
+	@Override
 	public String toString(){
 		String res="";
-		res = unit.getName() +"\t" +unitcount +"\t" + plannedunits;  
+		res = "" + new Str(unit.getName()) +new Str(unitcount) + new Str(plannedunits);
+		
 		return res;
 	}
 	public int getId(){

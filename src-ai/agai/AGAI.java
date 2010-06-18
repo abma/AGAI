@@ -478,7 +478,7 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 				if (argv[0].equalsIgnoreCase("dumpunits")) {
 					units.dump();
 				} else if (argv[0].equalsIgnoreCase("dumpbuildtree")) {
-					infos.getAGB().dumpUnits();
+					infos.getAGB().toString();
 				} else if (argv[0].equalsIgnoreCase("dumpmap")) {
 					infos.getSectors().dump();
 				} else if (argv[0].equalsIgnoreCase("clear")) {
@@ -493,6 +493,11 @@ public class AGAI extends AbstractOOAI implements IAGAI {
 					List<Unit> unitslist = this.getClb().getSelectedUnits();
 					for (int i=0; i<unitslist.size(); i++){
 						units.getUnit(unitslist.get(i)).fetchTask();
+					}
+				} else if (argv[0].equalsIgnoreCase("fetchtask")){
+					List<Unit> list = clb.getSelectedUnits();
+					for (int i=0; i<list.size(); i++){
+						units.getUnit(list.get(i)).fetchTask();
 					}
 				}
 				break;

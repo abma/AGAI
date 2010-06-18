@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agai.AGAI;
+import agai.Str;
 import agai.info.IBuildTreeUnit;
 import agai.info.IPoI;
 import agai.info.IResource;
@@ -70,10 +71,10 @@ public class MResource extends Manager {
 		for (int i = 0; i < list.size(); i++) {
 			for (int j = 0; j < list.get(i).size(); j++) {
 				UnitDef u = list.get(i).get(j).getUnit();
-				ai.logDebug(i + " " + u.getName() + "\tPrice: "
-						+ list.get(i).get(j).getPrice() + "\t"
-						+ u.getHumanName() + "\t"
-						+ ai.getUnits().getProduction(u, res.get(i)));
+				ai.logDebug(i + " " + new Str(u.getName()) + new Str("Price:")
+						+new Str(""+list.get(i).get(j).getPrice())
+						+new Str(u.getHumanName())
+						+new Str(ai.getUnits().getProduction(u, res.get(i))));
 			}
 		}
 	}
