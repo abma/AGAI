@@ -26,6 +26,7 @@ public class IResources {
 	private AGAI ai;
 	private List <Resource> resources;
 	private IResource res;
+	private int lastupdate=-1;
 	
 	private int lastchanged;
 	public int getLastchanged() {
@@ -33,6 +34,7 @@ public class IResources {
 	}
 
 	public IResource get() {
+		this.update();
 		return res;
 	}
 
@@ -41,16 +43,21 @@ public class IResources {
 		resources=ai.getClb().getResources();
 		this.res=new IResource(ai);
 	}
+	
+	/*
+	 * update the resource infos to the current state
+	 */
 	public IResource update(){
-		for (int i=0; i<resources.size(); i++){
-			res.setIncome(i, ai.getClb().getEconomy().getIncome(resources.get(i)));
-			res.setCurrent(i, ai.getClb().getEconomy().getCurrent(resources.get(i)));
-			res.setUseage(i, ai.getClb().getEconomy().getUsage(resources.get(i)));
-			res.setStorage(i, ai.getClb().getEconomy().getStorage(resources.get(i)));
-		}
+		if (ai.getFrame()<lastupdate)
+			for (int i=0; i<resources.size(); i++){
+				res.setIncome(i, ai.getClb().getEconomy().getIncome(resources.get(i)));
+				res.setCurrent(i, ai.getClb().getEconomy().getCurrent(resources.get(i)));
+				res.setUseage(i, ai.getClb().getEconomy().getUsage(resources.get(i)));
+				res.setStorage(i, ai.getClb().getEconomy().getStorage(resources.get(i)));
+			}
+		lastupdate=ai.getFrame();
 		return res;
 	}
-	
 	public void UnitCreated(AGUnit u) {
 		if (!u.getProduction().isZero())
 			lastchanged=ai.getFrame();
@@ -59,6 +66,16 @@ public class IResources {
 	public void UnitDestroyed(AGUnit u) {
 		if (!u.getProduction().isZero())
 			lastchanged=ai.getFrame();
+	}
+	
+	/*
+	 * Check storage useage, 0.0 means empty 1.0 means full
+	 */
+	public float getStore(int resid) {
+		this.update();
+		if (res.getStorage(resid)==0)
+			return 0;
+		return res.getCurrent(resid)/res.getStorage(resid);
 	}
 
 }

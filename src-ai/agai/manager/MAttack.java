@@ -91,7 +91,7 @@ public class MAttack extends Manager {
 		for(int i = 0; i<list.size();i++){
 			IBuildTreeUnit u = list.get(i); 
 			if (ai.getInfos().getAGB().getBuilder(u.getUnit())!=null){ //factory is available
-				if (u.getCost().lessOrEqual(resToUse, 1000)){
+				if (u.getCost().lessOrEqual(resToUse, 100)){
 					ai.logDebug("building "+u.getUnit().getName());
 					MBuild m= (MBuild) ai.getManagers().get(MBuild.class);
 					m.add(new TBuild(ai, m, u.getUnit(), null, 0, 0, new TAttack(ai, this, new IElement(IElement.any))));

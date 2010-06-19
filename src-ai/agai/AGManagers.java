@@ -121,15 +121,26 @@ public class AGManagers {
 			ms.get(i).setResToUse(res, timetonextchange);
 		}
 	}
-
+	/*
+	 * assigns a task to an unit, it asks all managers to do so
+	 */
 	public boolean assignTask(AGUnit unit) {
+		ai.getInfos().getResources().update();
 		for (int i=0; i<list.size(); i++){
+			for (int resid=0; resid<ai.getInfos().getResources().get().size();resid++){
+				float store=ai.getInfos().getResources().getStore(resid);
+				if (store>0.75){
+					System.out.println("we need more storage / buildpower!"+store);
+					if (list.get(i).setBuildTask(unit))
+						return true;
+				}
+			}
 			if (list.get(i).assignTask(unit))
 				return true;
 			if (list.get(i).setBuildTask(unit))
 				return true;
 		}
-		ai.logError("assignTask false");
+		System.out.println("assignTask false");
 		return false;
 	}
 

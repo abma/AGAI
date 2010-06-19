@@ -35,10 +35,17 @@ public abstract class Manager {
 	protected IResource resToUse; 
 	private int idleTasks;
 	protected List <IBuildTreeUnit> list;
+	
+	public List<IBuildTreeUnit> getList() {
+		return list;
+	}
+
+
 	public int getIdleTasks() {
 		return idleTasks;
 	}
 
+	
 	public void setIdleTasks(int idleTasks) {
 		this.idleTasks = idleTasks;
 	}

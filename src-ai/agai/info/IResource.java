@@ -70,7 +70,7 @@ public class IResource{
 	}
 	
 	/**
-	 * Gets the income.
+	 * Gets the current income.
 	 * 
 	 * @param ResID the res id
 	 * 
@@ -92,7 +92,7 @@ public class IResource{
 	}
 	
 	/**
-	 * Gets the current.
+	 * Gets the current value in storage
 	 * 
 	 * @param ResID the res id
 	 * 
@@ -103,7 +103,7 @@ public class IResource{
 	}
 	
 	/**
-	 * Gets the storage.
+	 * Gets the size of storage
 	 * 
 	 * @param ResID the res id
 	 * 
@@ -304,7 +304,7 @@ public class IResource{
 	/**
 	 * Size.
 	 *
-	 * @return the int
+	 * @return the count of resources (in default Metal + Energy)
 	 */
 	public int size(){
 		return resources.size();
