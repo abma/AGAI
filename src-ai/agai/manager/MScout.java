@@ -23,6 +23,7 @@ import com.springrts.ai.oo.UnitDef;
 
 import agai.AGAI;
 import agai.info.IBuildTreeUnit;
+import agai.info.IPoIs;
 import agai.info.ISearchUnitScout;
 import agai.task.TBuild;
 import agai.task.TScout;
@@ -74,6 +75,8 @@ public class MScout extends Manager {
 	public boolean assignTask(AGUnit unit){
 		for (int i=0; i<list.size(); i++){
 			if (unit.getDef().equals(list.get(i).getUnit())){
+				if (scouts>=ai.getInfos().getAGP().size(IPoIs.PoIAny))
+					return false;
 				unit.setTask(new TScout(ai, this));
 				return true;
 			}

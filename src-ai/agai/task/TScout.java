@@ -72,23 +72,13 @@ public class TScout extends Task {
 			destination.setVisited(true);
 		}
 
-/*		List<Unit> units = ai.getClb().getEnemyUnitsIn(unit.getPos(), unit.getLOS());
-		if (units.size()>=0){ //enemy units in LOS, move to secure pos
-			ai.msg("");
-			for (int i=0; i<units.size(); i++){
-				ai.getInfos().getSectors().addDanger(units.get(i));
-			}
-			ISector sec=ai.getInfos().getSectors().getSecureSector(unit.getPos(), 0);
-			unit.moveTo(sec.getPos());
-			return;
-		}*/
 		if (destination == null) {
 			ai.logDebug("No point to scout found!");
+			unassign(unit);
 			return;
 		}
 		if (unit.canMoveTo(destination.getPos())){
 			ai.logDebug("moving to "+destination.getPos());
-//			unit.setTask(new TSecureMove(ai, null, this, destination.getSector(), true, unit.getPos()));
 			unit.moveTo(destination.getPos());
 		}else{
 			ai.logDebug("Unit can't move to PoI");

@@ -34,6 +34,8 @@ public class MHelper extends Manager{
 			return false;
 		if (u.getUnit().getDef().getBuildSpeed()<=0)
 			return false;
+		if (u.getUnit().getDef().getBuildOptions().size()<=0)
+			return false;
 		Iterator<AGUnit> it = ai.getUnits().getUnits().iterator();
 		while(it.hasNext()){
 			AGUnit unit =it.next();
